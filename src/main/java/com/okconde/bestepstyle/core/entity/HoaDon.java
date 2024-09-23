@@ -1,6 +1,5 @@
 package com.okconde.bestepstyle.core.entity;
 
-import com.okconde.bestepstyle.core.until.enumutil.StatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Created by TuanIf on 9/23/2024 21:30:19
@@ -40,7 +38,6 @@ public class HoaDon {
     private String soDienThoaiKhachHang;
     private String ghiChu;
 
-    git
 
     @OneToMany(mappedBy = "khach_hang",
             fetch = FetchType.LAZY)

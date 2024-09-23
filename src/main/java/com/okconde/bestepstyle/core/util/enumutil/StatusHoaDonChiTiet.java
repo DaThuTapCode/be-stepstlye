@@ -1,4 +1,4 @@
-package com.okconde.bestepstyle.core.until.enumutil;
+package com.okconde.bestepstyle.core.util.enumutil;
 
 /**
  * Created by TuanIf on 9/23/2024 21:35:51

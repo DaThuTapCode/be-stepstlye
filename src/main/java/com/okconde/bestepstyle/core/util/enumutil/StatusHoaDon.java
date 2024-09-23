@@ -1,10 +1,10 @@
 package com.okconde.bestepstyle.core.util.enumutil;
 
 /**
- * Created by Trong Phu on 23/09/2024 21:35
+ * Created by TuanIf on 9/23/2024 21:35:14
  *
- * @author Trong Phu
+ * @author TuanIf
  */
-public enum StatusSPCT {
+public enum StatusHoaDon {
     ACTIVE, INACTIVE, OUTSTOCK
 }

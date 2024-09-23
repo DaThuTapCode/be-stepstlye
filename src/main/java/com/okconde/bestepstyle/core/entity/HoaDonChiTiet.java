@@ -1,6 +1,6 @@
 package com.okconde.bestepstyle.core.entity;
 
-import com.okconde.bestepstyle.core.until.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
