@@ -39,21 +39,19 @@ public class HoaDon {
     private String ghiChu;
 
 
-    @OneToMany(mappedBy = "khach_hang",
-            fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_khach_hang")
     private KhachHang khachHang;
 
-    @OneToMany(mappedBy = "nhan_vien",
-            fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_nhan_vien")
     private NhanVien nhanVien;
 
-    @OneToOne(mappedBy = "id_thanh_toan")
+    @ManyToOne
     @JoinColumn(name = "id_thanh_toan")
     private ThanhToan thanhToan;
 
-    @OneToOne(mappedBy = "id_phieu_giam_gia")
+    @ManyToOne
     @JoinColumn(name = "id_phieu_giam_gia")
     private PhieuGiamGia phieuGiamGia;
 }
