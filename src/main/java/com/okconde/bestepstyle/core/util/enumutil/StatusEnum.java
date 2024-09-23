@@ -6,5 +6,5 @@ package com.okconde.bestepstyle.core.util.enumutil;
  * @author: Ngo Tu
  */
 public enum StatusEnum {
-    ACTIVE, INACTIVE, OUTSTOCK
+    ACTIVE, INACTIVE
 }
