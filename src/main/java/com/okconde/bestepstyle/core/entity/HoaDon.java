@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -27,9 +28,9 @@ public class HoaDon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idHoaDon;
     private LocalDateTime ngayTaoDon;
-    private Double phiVanChuyen;
-    private Double tongTien;
-    private Double tongTienSauGiam;
+    private BigDecimal phiVanChuyen;
+    private BigDecimal tongTien;
+    private BigDecimal tongTienSauGiam;
     private LocalDateTime ngayChinhSua;
     private LocalDateTime ngayXacNhan;
     private LocalDateTime ngayNhanHang;
@@ -39,8 +40,7 @@ public class HoaDon {
     private String soDienThoaiKhachHang;
     private String ghiChu;
 
-    @Enumerated(EnumType.STRING)
-    private StatusEnum trangThai;
+    git
 
     @OneToMany(mappedBy = "khach_hang",
             fetch = FetchType.LAZY)
