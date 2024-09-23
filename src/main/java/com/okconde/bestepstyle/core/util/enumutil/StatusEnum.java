@@ -1,4 +1,4 @@
-package com.okconde.bestepstyle.core.util.enumUtil;
+package com.okconde.bestepstyle.core.util.enumutil;
 
 /**
  * Created at 23/09/2024 by Ngo Tu
