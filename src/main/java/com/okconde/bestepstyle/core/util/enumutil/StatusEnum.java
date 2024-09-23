@@ -6,7 +6,5 @@ package com.okconde.bestepstyle.core.util.enumutil;
  * @author Quang Minh
  */
 public enum StatusEnum {
-
     ACTIVE, INACTIVE
-
 }
