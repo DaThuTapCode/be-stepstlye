@@ -6,5 +6,9 @@ package com.okconde.bestepstyle.core.util.enumutil;
  * @author TuanIf
  */
 public enum StatusHoaDon {
-    ACTIVE, INACTIVE, OUTSTOCK
+    PENDING,        // Đang chờ xử lý
+    PAID,           // Đã thanh toán
+    CANCELLED,      // Đã hủy
+    REFUNDED,       // Đã hoàn tiền
+    OVERDUE         // Quá hạn
 }
