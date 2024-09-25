@@ -11,16 +11,22 @@ import java.util.List;
  */
 public interface IBaseService<E, ID, RQ, RP> {
 
+    //Lấy phân trang
     List<RP> getPage(Pageable pageable);
 
+    //Lấy ra toàn bộ bản ghi
     List<RP> getAll();
 
+    //Tạo bản ghi mới
     RP create(RQ rq);
 
+    //Chỉnh sửa
     RP update(ID id, RQ rq);
 
+    //Xóa
     void delete(ID id);
 
+    //Lấy đối tượng theo id
     RP getById(ID id);
 
 }
