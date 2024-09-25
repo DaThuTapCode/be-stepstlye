@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author Trong Phu
  */
-public interface    IBaseService<E, ID, RQ, RP> {
+public interface IBaseService<E, ID, RQ, RP> {
 
     //Lấy phân trang
     List<RP> getPage(Pageable pageable);
