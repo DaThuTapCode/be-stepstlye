@@ -1,10 +1,10 @@
 package com.okconde.bestepstyle.core.util.enumutil;
 
 /**
- * Created by Quang Minh on 9/23/2024 21:34:12
+ * Created by TuanIf on 9/23/2024 21:37:02
  *
- * @author Quang Minh
- */
+ * @author TuanIf
+ **/
 public enum StatusEnum {
     ACTIVE, INACTIVE
 }
