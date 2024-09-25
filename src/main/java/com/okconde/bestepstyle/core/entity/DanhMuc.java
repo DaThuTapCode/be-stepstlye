@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Created by Trong Phu on 23/09/2024 21:29
@@ -33,4 +34,7 @@ public class DanhMuc {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
+    @OneToMany(mappedBy = "danhMuc")
+    private List<SanPham> sanPham;
 }

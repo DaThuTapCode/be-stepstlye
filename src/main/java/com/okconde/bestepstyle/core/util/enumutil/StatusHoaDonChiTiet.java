@@ -6,5 +6,5 @@ package com.okconde.bestepstyle.core.util.enumutil;
  * @author TuanIf
  */
 public enum StatusHoaDonChiTiet {
-    ACTIVE, INACTIVE, OUTSTOCK
+    ACTIVE, INACTIVE
 }

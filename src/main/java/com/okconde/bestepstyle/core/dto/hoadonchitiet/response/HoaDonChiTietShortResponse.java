@@ -1,17 +1,17 @@
-package com.okconde.bestepstyle.core.entity;
+package com.okconde.bestepstyle.core.dto.hoadonchitiet.response;
 
+import com.okconde.bestepstyle.core.entity.HoaDon;
+import com.okconde.bestepstyle.core.entity.SanPhamChiTiet;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 /**
- * Created by TuanIf on 9/23/2024 21:30:28
+ * Created by TuanIf on 9/25/2024 21:43:50
  *
  * @author TuanIf
  */
@@ -20,24 +20,23 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Builder
 
-public class HoaDonChiTiet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class HoaDonChiTietShortResponse {
+
     private Long idHoaDonChiTiet;
+
     private int soLuong;
+
     private BigDecimal donGia;
+
     private BigDecimal tongTien;
 
     @Enumerated(EnumType.STRING)
     private StatusHoaDonChiTiet trangThai;
 
-    @ManyToOne
-    @JoinColumn(name = "id_hoa_don")
+
     private HoaDon hoaDon;
 
-//    @ManyToOne
-//    @JoinColumn(name = "id_spct")
-//    private SanPhamChiTiet sanPhamChiTiet;
+    private SanPhamChiTiet sanPhamChiTiet;
 }

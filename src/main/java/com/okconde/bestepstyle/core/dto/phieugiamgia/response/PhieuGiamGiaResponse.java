@@ -1,18 +1,15 @@
-package com.okconde.bestepstyle.core.entity;
+package com.okconde.bestepstyle.core.dto.phieugiamgia.response;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
-import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Created by TuanIf on 9/23/2024 21:31:04
+ * Created by TuanIf on 9/25/2024 21:14:50
  *
  * @author TuanIf
  */
@@ -21,11 +18,10 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Builder
 
-public class PhieuGiamGia {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PhieuGiamGiaResponse {
+
     private Long idPhieuGiamGia;
     private String tenPhieuGiamGia;
     private String moTa;
@@ -37,5 +33,6 @@ public class PhieuGiamGia {
     private BigDecimal giaTriGiam;
 
     @Enumerated(EnumType.STRING)
-    private StatusPhieuGiamGia trangThai;
+    private StatusEnum trangThai;
+
 }

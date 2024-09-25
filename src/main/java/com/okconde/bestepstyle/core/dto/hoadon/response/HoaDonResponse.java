@@ -1,17 +1,20 @@
-package com.okconde.bestepstyle.core.entity;
+package com.okconde.bestepstyle.core.dto.hoadon.response;
 
+import com.okconde.bestepstyle.core.entity.KhachHang;
+import com.okconde.bestepstyle.core.entity.NhanVien;
+import com.okconde.bestepstyle.core.entity.ThanhToan;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Created by TuanIf on 9/23/2024 21:30:19
+ * Created by TuanIf on 9/25/2024 21:13:35
  *
  * @author TuanIf
  */
@@ -20,42 +23,45 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Builder
 
-public class HoaDon {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class HoaDonResponse {
+
     private Long idHoaDon;
+
     private LocalDateTime ngayTaoDon;
+
     private BigDecimal phiVanChuyen;
+
     private BigDecimal tongTien;
+
     private BigDecimal tongTienSauGiam;
+
     private LocalDateTime ngayChinhSua;
+
     private LocalDateTime ngayXacNhan;
+
     private LocalDateTime ngayNhanHang;
+
     private String loaiHoaDon;
+
     private String tenKhachHang;
+
     private String diaChiGiaoHang;
+
     private String soDienThoaiKhachHang;
+
     private String ghiChu;
+
 
     @Enumerated(EnumType.STRING)
     private StatusHoaDon trangThai;
 
-
-    @ManyToOne
-    @JoinColumn(name = "id_khach_hang")
     private KhachHang khachHang;
 
-    @ManyToOne
-    @JoinColumn(name = "id_nhan_vien")
     private NhanVien nhanVien;
 
-    @ManyToOne
-    @JoinColumn(name = "id_thanh_toan")
     private ThanhToan thanhToan;
 
-    @ManyToOne
-    @JoinColumn(name = "id_phieu_giam_gia")
-    private PhieuGiamGia phieuGiamGia;
+    private PhieuGiamGiaResponse phieuGiamGia;
 }
