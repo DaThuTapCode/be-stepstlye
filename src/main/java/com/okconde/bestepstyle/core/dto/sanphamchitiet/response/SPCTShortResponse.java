@@ -1,6 +1,8 @@
-package com.okconde.bestepstyle.core.entity;
+package com.okconde.bestepstyle.core.dto.sanphamchitiet.response;
 
+import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
+import com.okconde.bestepstyle.core.dto.anh.response.AnhShortResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,18 +11,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Created by Trong Phu on 23/09/2024 21:28
+ * Created by Trong Phu on 25/09/2024 21:32
  *
  * @author Trong Phu
  */
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "san_pham_chi_tiet")
-public class SanPhamChiTiet {
+@NoArgsConstructor
+@Builder
+public class SPCTShortResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idSpct;
@@ -33,37 +33,19 @@ public class SanPhamChiTiet {
 
     private LocalDateTime ngayChinhSua;
 
-    @Enumerated(EnumType.STRING)
     private StatusSPCT trangThai;
 
-    @ManyToOne
-    @JoinColumn(name = "id_san_pham")
-    private SanPham sanPham;
-
-    @ManyToOne
-    @JoinColumn(name = "id_chat_lieu")
     private ChatLieu chatLieu;
 
-    @ManyToOne
-    @JoinColumn(name = "id_kieu_de_giay")
     private KieuDeGiay kieuDeGiay;
 
-    @ManyToOne
-    @JoinColumn(name = "id_chat_lieu_de_giay")
     private ChatLieuDeGiay chatLieuDeGiay;
 
-    @ManyToOne
-    @JoinColumn(name = "id_trong_luong")
     private TrongLuong trongLuong;
 
-    @ManyToOne
-    @JoinColumn(name = "id_mau_sac")
     private MauSac mauSac;
 
-    @ManyToOne
-    @JoinColumn(name = "id_kich_co")
     private KichCo kichCo;
 
-    @OneToMany(mappedBy = "sanPhamChiTiet")
-    private List<Anh> anhs;
+    private List<AnhShortResponse> anhs;
 }

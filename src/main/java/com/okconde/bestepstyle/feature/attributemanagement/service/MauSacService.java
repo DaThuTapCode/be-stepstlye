@@ -1,0 +1,64 @@
+package com.okconde.bestepstyle.feature.attributemanagement.service;
+
+import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
+import com.okconde.bestepstyle.core.entity.MauSac;
+import com.okconde.bestepstyle.core.mapper.mausac.request.MauSacRequestMapper;
+import com.okconde.bestepstyle.core.mapper.mausac.response.MauSacResponseMapper;
+import com.okconde.bestepstyle.core.repository.MauSacRepository;
+import com.okconde.bestepstyle.core.service.IBaseService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * Created at 25/09/2024 by Ngo Tu
+ *
+ * @author: Ngo Tu
+ */
+@Service
+public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest, MauSacResponse> {
+    private final MauSacRepository mauSacRepository;
+
+    private final MauSacResponseMapper mauSacResponseMapper;
+
+    public MauSacService(
+            MauSacRepository mauSacRepository,
+            MauSacResponseMapper mauSacResponseMapper
+    ) {
+        this.mauSacRepository = mauSacRepository;
+        this.mauSacResponseMapper = mauSacResponseMapper;
+    }
+
+    @Override
+    public List<MauSacResponse> getPage(Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public List<MauSacResponse> getAll() {
+        List<MauSac> mauSacList = mauSacRepository.findAll();
+        return mauSacResponseMapper.listToDTO(mauSacList);
+    }
+
+    @Override
+    public MauSacResponse create(MauSacRequest mauSacRequest) {
+        return null;
+    }
+
+    @Override
+    public MauSacResponse update(Long aLong, MauSacRequest mauSacRequest) {
+        return null;
+    }
+
+    @Override
+    public void delete(Long aLong) {
+
+    }
+
+    @Override
+    public MauSacResponse getById(Long aLong) {
+        return null;
+    }
+}
