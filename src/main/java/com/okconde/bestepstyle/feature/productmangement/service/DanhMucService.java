@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.feature.productmangement.service;
 import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucRequest;
 import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.danhmuc.response.DanhMucResponseMapper;
 import com.okconde.bestepstyle.core.repository.DanhMucRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
@@ -60,6 +61,8 @@ public class DanhMucService implements IBaseService <DanhMuc, Long, DanhMucReque
 
     @Override
     public DanhMucResponse getById(Long aLong) {
-        return null;
+        DanhMuc danhMuc = danhMucRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục với id: " +aLong));
+        return danhMucResponseMapper.toDTO(danhMuc);
     }
 }

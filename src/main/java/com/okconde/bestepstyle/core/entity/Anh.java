@@ -21,7 +21,7 @@ public class Anh {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idAnh;
 
-    private String moTa;
+    private String tenAnh;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;

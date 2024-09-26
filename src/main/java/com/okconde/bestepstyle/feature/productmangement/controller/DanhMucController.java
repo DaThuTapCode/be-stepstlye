@@ -8,6 +8,7 @@ import com.okconde.bestepstyle.feature.productmangement.service.DanhMucService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +30,21 @@ public class DanhMucController {
         this.danhMucService = danhMucService;
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<ResponseData<DanhMucResponse>> getDanhMucById(
+            @PathVariable Long id
+    ){
+        return ResponseEntity.ok(new ResponseData(
+                HttpStatus.OK.value(),
+                "Lấy thành danh mục với id: " + id,
+                danhMucService.getById(id)));
+    }
     @GetMapping("get-all")
     public ResponseEntity<ResponseData<List<DanhMucResponse>>> getAllDanhMuc(){
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công dang mục", danhMucService.getAll()));
+        return ResponseEntity.ok(
+                new ResponseData(HttpStatus.OK.value(),
+                        "Lấy thành công danh sách danh mục",
+                        danhMucService.getAll()));
     }
+
 }

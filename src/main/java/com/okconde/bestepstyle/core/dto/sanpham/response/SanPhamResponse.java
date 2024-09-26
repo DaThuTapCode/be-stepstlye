@@ -1,5 +1,9 @@
 package com.okconde.bestepstyle.core.dto.sanpham.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
+import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucShortResponse;
+import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSP;
@@ -28,8 +32,10 @@ public class SanPhamResponse {
 
     private String moTa;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayTao;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayChinhSua;
 
     private String nguoiTao;
@@ -37,9 +43,9 @@ public class SanPhamResponse {
     @Enumerated(EnumType.STRING)
     private StatusSP trangThai;
 
-    private DanhMuc danhMuc;
+    private DanhMucResponse danhMuc;
 
-    private ThuongHieu thuongHieu;
+    private ThuongHieuResponse thuongHieu;
 
     private List<SPCTShortResponse> sanPhamChiTiets;
 
