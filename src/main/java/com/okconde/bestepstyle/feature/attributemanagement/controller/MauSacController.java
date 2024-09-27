@@ -6,6 +6,8 @@ import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.feature.attributemanagement.service.MauSacService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +34,16 @@ public class MauSacController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công màu sắc", mauSacService.getAll()));
     }
 
+    @GetMapping("get-page")
+    public ResponseEntity<ResponseData<List<MauSacResponse>>> getPageMauSac(
+            @RequestParam(value = "currentPage", defaultValue = "0") Integer current
+    ){
+        int size = 5;
+        Pageable pageable = PageRequest.of(current, size);
+        List<MauSacResponse> list = mauSacService.getPage(pageable);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),"Lấy trang thành công", list));
+
+    }
 
     // thêm màu sắc
     @PostMapping("create")

@@ -33,8 +33,10 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
 
     @Override
     public List<MauSacResponse> getPage(Pageable pageable) {
-        return null;
+        List<MauSac> mauSacList = mauSacRepository.findAll(pageable).getContent();
+        return mauSacResponseMapper.listToDTO(mauSacList);
     }
+
 
     @Override
     public List<MauSacResponse> getAll() {
