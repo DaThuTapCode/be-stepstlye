@@ -79,6 +79,8 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
 
     @Override
     public MauSacResponse getById(Long aLong) {
-        return null;
+        MauSac ms = mauSacRepository.findById(aLong).orElseThrow(() ->
+            new IllegalArgumentException("Màu sắc không tồn tại id"));
+        return mauSacResponseMapper.toDTO(ms);
     }
 }

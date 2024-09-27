@@ -67,4 +67,11 @@ public class MauSacController {
         mauSacService.delete(id);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Xóa thành công màu sắc"));
     }
+
+    @GetMapping("get-by-id")
+    public ResponseEntity<ResponseData<MauSacResponse>> getMauSacById(@RequestParam Long id) {
+        MauSacResponse mauSac = mauSacService.getById(id);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy màu sắc thành công", mauSac));
+    }
+
 }
