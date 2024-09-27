@@ -49,4 +49,10 @@ public class MauSacController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Cập nhật màu sắc thành công", updateMS));
     }
+
+    @DeleteMapping("delete")
+    public ResponseEntity<ResponseData<MauSacResponse>> deleteMauSac(@RequestParam Long id){
+        mauSacService.delete(id);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Xóa thành công màu sắc"));
+    }
 }

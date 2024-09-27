@@ -68,7 +68,11 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
 
     @Override
     public void delete(Long aLong) {
-
+        if (!mauSacRepository.existsById(aLong)){
+            throw new IllegalArgumentException("Màu sắc không tồn tại");
+        }
+        mauSacRepository.deleteById(aLong);
+        System.out.println("Đã xóa thành công màu sắc với ID: " + aLong);
     }
 
     @Override
