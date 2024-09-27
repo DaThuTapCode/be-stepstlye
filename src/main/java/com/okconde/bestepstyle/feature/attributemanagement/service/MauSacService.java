@@ -44,12 +44,26 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
 
     @Override
     public MauSacResponse create(MauSacRequest mauSacRequest) {
-        return null;
+
+        MauSac ms = new MauSac();
+        ms.setTenMau(mauSacRequest.getTenMau());
+        ms.setGiaTri(mauSacRequest.getGiaTri());
+        ms.setMoTa(mauSacRequest.getMoTa());
+        ms.setTrangThai(mauSacRequest.getTrangThai());
+        MauSac savems = mauSacRepository.save(ms);
+        return mauSacResponseMapper.toDTO(savems);
     }
 
     @Override
     public MauSacResponse update(Long aLong, MauSacRequest mauSacRequest) {
-        return null;
+        MauSac ms = mauSacRepository.findById(aLong)
+                .orElseThrow(() -> new IllegalArgumentException("Màu sắc không tồn tại"));
+        ms.setTenMau(mauSacRequest.getTenMau());
+        ms.setGiaTri(mauSacRequest.getGiaTri());
+        ms.setMoTa(mauSacRequest.getMoTa());
+        ms.setTrangThai(mauSacRequest.getTrangThai());
+        MauSac updatems = mauSacRepository.save(ms);
+        return mauSacResponseMapper.toDTO(updatems);
     }
 
     @Override
