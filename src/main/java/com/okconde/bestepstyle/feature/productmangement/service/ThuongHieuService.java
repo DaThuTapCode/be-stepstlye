@@ -4,9 +4,11 @@ import com.okconde.bestepstyle.core.dto.thuonghieu.request.ThuongHieuRequest;
 import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.thuonghieu.request.ThuongHieuRequestMapper;
 import com.okconde.bestepstyle.core.mapper.thuonghieu.response.ThuongHieuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ThuongHieuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +27,13 @@ public class ThuongHieuService implements IBaseService<ThuongHieu, Long, ThuongH
 
     //mapper
     private final ThuongHieuResponseMapper thuongHieuResponseMapper;
+    private final ThuongHieuRequestMapper thuongHieuRequestMapper;
 
     //Constructor
-    public ThuongHieuService(ThuongHieuRepository thuongHieuRepository, ThuongHieuResponseMapper thuongHieuResponseMapper) {
+    public ThuongHieuService(ThuongHieuRepository thuongHieuRepository, ThuongHieuResponseMapper thuongHieuResponseMapper, ThuongHieuRequestMapper thuongHieuRequestMapper) {
         this.thuongHieuRepository = thuongHieuRepository;
         this.thuongHieuResponseMapper = thuongHieuResponseMapper;
+        this.thuongHieuRequestMapper = thuongHieuRequestMapper;
     }
 
 
@@ -45,12 +49,24 @@ public class ThuongHieuService implements IBaseService<ThuongHieu, Long, ThuongH
 
     @Override
     public ThuongHieuResponse create(ThuongHieuRequest thuongHieuRequest) {
-        return null;
+        ThuongHieu thuongHieuNew = thuongHieuRequestMapper.toEntity(thuongHieuRequest);
+        thuongHieuNew.setTrangThai(StatusEnum.ACTIVE);
+        ThuongHieu thuongHieuSaved = thuongHieuRepository.save(thuongHieuNew);
+        return thuongHieuResponseMapper.toDTO(thuongHieuSaved);
     }
 
     @Override
-    public ThuongHieuResponse update(Long aLong, ThuongHieuRequest thuongHieuRequest) {
-        return null;
+    public ThuongHieuResponse update(Long id, ThuongHieuRequest thuongHieuRequest) {
+        ThuongHieu thuongHieuExisting = thuongHieuRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thương hiệu với id: " + id));
+        ThuongHieu thuongHieuToUpdate = thuongHieuRequestMapper.toEntity(thuongHieuRequest);
+
+        thuongHieuExisting.setTenThuongHieu(thuongHieuToUpdate.getTenThuongHieu());
+        thuongHieuExisting.setXuatXu(thuongHieuToUpdate.getXuatXu());
+        thuongHieuExisting.setMoTa(thuongHieuToUpdate.getXuatXu());
+
+        ThuongHieu thuongHieuUpdated = thuongHieuRepository.save(thuongHieuExisting);
+        return thuongHieuResponseMapper.toDTO(thuongHieuUpdated);
     }
 
     @Override
