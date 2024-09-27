@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
 import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
 import com.okconde.bestepstyle.core.entity.ChatLieu;
+import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.chatlieu.response.ChatLieuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
@@ -33,7 +34,8 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
 
     @Override
     public List<ChatLieuResponse> getPage(Pageable pageable) {
-        return null;
+        List<ChatLieu> list = chatLieuRepository.findAll(pageable).getContent();
+        return chatLieuResponseMapper.listToDTO(list);
     }
 
     @Override
@@ -44,21 +46,40 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
 
     @Override
     public ChatLieuResponse create(ChatLieuRequest chatLieuRequest) {
-        return null;
+        ChatLieu chatLieu = new ChatLieu();
+        chatLieu.setTenChatLieu(chatLieuRequest.getTenChatLieu());
+        chatLieu.setDoBen(chatLieuRequest.getDoBen());
+        chatLieu.setMoTa(chatLieuRequest.getMoTa());
+        chatLieu.setTrangThai(chatLieu.getTrangThai());
+        ChatLieu savecl = chatLieuRepository.save(chatLieu);
+        return chatLieuResponseMapper.toDTO(savecl);
     }
 
     @Override
     public ChatLieuResponse update(Long aLong, ChatLieuRequest chatLieuRequest) {
-        return null;
+        ChatLieu chatLieu = chatLieuRepository.findById(aLong)
+                .orElseThrow(() -> new IllegalArgumentException("Chất liệu không tồn tại"));
+        chatLieu.setTenChatLieu(chatLieuRequest.getTenChatLieu());
+        chatLieu.setDoBen(chatLieuRequest.getDoBen());
+        chatLieu.setMoTa(chatLieuRequest.getMoTa());
+        chatLieu.setTrangThai(chatLieu.getTrangThai());
+        ChatLieu updatecl = chatLieuRepository.save(chatLieu);
+        return chatLieuResponseMapper.toDTO(updatecl);
     }
 
     @Override
     public void delete(Long aLong) {
-
+        if (!chatLieuRepository.existsById(aLong)){
+            throw new IllegalArgumentException("Chất liệu không tồn tại");
+        }
+        chatLieuRepository.deleteById(aLong);
+        System.out.println("Đã xóa thành công chất liệu với ID: " + aLong);
     }
 
     @Override
     public ChatLieuResponse getById(Long aLong) {
-        return null;
+        ChatLieu chatLieu = chatLieuRepository.findById(aLong).orElseThrow(() ->
+                new IllegalArgumentException("Chất liệu không tồn tại id"));
+        return chatLieuResponseMapper.toDTO(chatLieu);
     }
 }
