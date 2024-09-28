@@ -34,6 +34,7 @@ public class ChatLieuController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),"Lấy thành công chất liệu!", chatLieuService.getAll()));
     }
 
+    // phân trang chất liệu
     @GetMapping("get-page")
     public ResponseEntity<ResponseData<List<ChatLieuResponse>>> getPageChatLieu(
             @RequestParam(value = "currentPage", defaultValue = "0") Integer current
@@ -44,11 +45,14 @@ public class ChatLieuController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy trang thành công",list));
     }
 
+    // thêm chất liệu
     @PostMapping("create-chat-lieu")
     public ResponseEntity<ResponseData<ChatLieuResponse>> createChatLieu(@RequestBody ChatLieuRequest chatLieuRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm chất liệu thành công", chatLieuService.create(chatLieuRequest)));
     }
+
+    // update chất liệu
     @PutMapping("update-chat-lieu")
     public ResponseEntity<ResponseData<ChatLieuResponse>> updateChatLieu(
             @RequestBody ChatLieuRequest chatLieuRequest,
@@ -58,6 +62,8 @@ public class ChatLieuController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Cập nhật chất liệu thành công", updateCL));
     }
+
+    // xóa chất liệu
     @DeleteMapping("delete")
     public ResponseEntity<ResponseData<ChatLieuResponse>> deleteChatLieu(@RequestParam Long id) {
         ChatLieuResponse chatLieu = chatLieuService.getById(id);
@@ -70,8 +76,7 @@ public class ChatLieuController {
         }
     }
 
-
-
+    // get by id chất liệu
     @GetMapping("get-by-id")
     public ResponseEntity<ResponseData<ChatLieuResponse>> getChatLieuById(@RequestParam Long id) {
         ChatLieuResponse chatLieuResponse = chatLieuService.getById(id);

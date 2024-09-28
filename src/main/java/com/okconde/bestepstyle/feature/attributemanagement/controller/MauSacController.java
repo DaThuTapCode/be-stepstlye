@@ -34,6 +34,7 @@ public class MauSacController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công màu sắc", mauSacService.getAll()));
     }
 
+    // phân trang màu sắc
     @GetMapping("get-page")
     public ResponseEntity<ResponseData<List<MauSacResponse>>> getPageMauSac(
             @RequestParam(value = "currentPage", defaultValue = "0") Integer current
@@ -46,13 +47,14 @@ public class MauSacController {
     }
 
     // thêm màu sắc
-    @PostMapping("create")
+    @PostMapping("create-mau-sac")
     public ResponseEntity<ResponseData<MauSacResponse>> createMauSac(@RequestBody MauSacRequest mauSacRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm màu sắc thành công", mauSacService.create(mauSacRequest)));
     }
 
-    @PutMapping("update")
+    // update màu sắc
+    @PutMapping("update-mau-sac")
     public ResponseEntity<ResponseData<MauSacResponse>> updateMauSac(
             @RequestBody MauSacRequest mauSacRequest,
             @RequestParam Long id
@@ -62,12 +64,14 @@ public class MauSacController {
                 "Cập nhật màu sắc thành công", updateMS));
     }
 
-    @DeleteMapping("delete")
+    // xóa màu sắc
+    @DeleteMapping("delete-mau-sac")
     public ResponseEntity<ResponseData<MauSacResponse>> deleteMauSac(@RequestParam Long id){
         mauSacService.delete(id);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Xóa thành công màu sắc"));
     }
 
+    // get by id màu sắc
     @GetMapping("get-by-id")
     public ResponseEntity<ResponseData<MauSacResponse>> getMauSacById(@RequestParam Long id) {
         MauSacResponse mauSac = mauSacService.getById(id);

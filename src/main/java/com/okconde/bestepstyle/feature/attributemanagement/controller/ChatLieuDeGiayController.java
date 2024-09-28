@@ -33,6 +33,8 @@ public class ChatLieuDeGiayController {
     public ResponseEntity<ResponseData<List<ChatLieuDeGiayResponse>>> getAllChatLieu(){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),"Lấy thành công chất liệu để giày", chatLieuDeGiayService.getAll()));
     }
+
+    // phân trang chất liệu đế giày
     @GetMapping("get-page")
     public ResponseEntity<ResponseData<List<ChatLieuDeGiayResponse>>> getPageChatLieuDeGiay(
             @RequestParam(value = "currentPage", defaultValue = "0") Integer current
@@ -43,11 +45,14 @@ public class ChatLieuDeGiayController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy trang thành công",list));
     }
 
+    // thêm chất liệu đế giày
     @PostMapping("create-chat-lieu-de-giay")
     public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> createChatLieuDeGiay(@RequestBody ChatLieuDeGiayRequest chatLieuDeGiayRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm chất liệu đế giày thành công", chatLieuDeGiayService.create(chatLieuDeGiayRequest)));
     }
+
+    // update chất liệu đế giày
     @PutMapping("update-chat-lieu-de-giay")
     public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> updateChatLieuDeGiay(
             @RequestBody ChatLieuDeGiayRequest chatLieuDeGiayRequest,
@@ -58,6 +63,7 @@ public class ChatLieuDeGiayController {
                 "Cập nhật chất liệu đế giày thành công", updateCLDG));
     }
 
+    // get by id chất liệu đế giày
     @GetMapping("get-by-id")
     public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> getChatLieuDeGiayById(@RequestParam Long id) {
         ChatLieuDeGiayResponse chatLieuDeGiayResponse = chatLieuDeGiayService.getById(id);

@@ -33,7 +33,7 @@ public class KichCoController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công kích cỡ!",kichCoService.getAll()));
     }
 
-    // phân trang
+    // phân trang kích cỡ
     @GetMapping("get-page")
     public ResponseEntity<ResponseData<List<KichCoResponse>>> getPageKichCo(
             @RequestParam(value = "currentPage", defaultValue = "0") Integer current
@@ -45,13 +45,14 @@ public class KichCoController {
 
     }
 
-    // thêm màu sắc
+    // thêm kích cỡ
     @PostMapping("create-kich-co")
     public ResponseEntity<ResponseData<KichCoResponse>> createKichCo(@RequestBody KichCoRequest kichCoRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm kích cỡ thành công", kichCoService.create(kichCoRequest)));
     }
 
+    // update kích cỡ
     @PutMapping("update-kich-co")
     public ResponseEntity<ResponseData<KichCoResponse>> updateKichCo(
             @RequestBody KichCoRequest kichCoRequest,
@@ -62,6 +63,7 @@ public class KichCoController {
                 "Cập nhật kích cỡ thành công", updateKC));
     }
 
+    // get by id kích cỡ
     @GetMapping("get-by-id")
     public ResponseEntity<ResponseData<KichCoResponse>> getKichCoById(@RequestParam Long id) {
         KichCoResponse kichCoResponse = kichCoService.getById(id);
