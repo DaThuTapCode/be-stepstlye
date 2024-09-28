@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.entity.KichCo;
+import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.kichco.response.KichCoResponseMapper;
 import com.okconde.bestepstyle.core.repository.KichCoRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
@@ -30,7 +31,8 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
 
     @Override
     public List<KichCoResponse> getPage(Pageable pageable) {
-        return null;
+        List<KichCo> kichCoList = kichCoRepository.findAll(pageable).getContent();
+        return kichCoResponseMapper.listToDTO(kichCoList);
     }
 
     @Override
@@ -41,12 +43,23 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
 
     @Override
     public KichCoResponse create(KichCoRequest kichCoRequest) {
-        return null;
+        KichCo kc = new KichCo();
+        kc.setGiaTri(kichCoRequest.getGiaTri());
+        kc.setMoTa(kichCoRequest.getMoTa());
+        kc.setTrangThai(kichCoRequest.getTrangThai());
+        KichCo savekc = kichCoRepository.save(kc);
+        return kichCoResponseMapper.toDTO(savekc);
     }
 
     @Override
     public KichCoResponse update(Long aLong, KichCoRequest kichCoRequest) {
-        return null;
+        KichCo kc = kichCoRepository.findById(aLong)
+                .orElseThrow(() -> new IllegalArgumentException("Kích cỡ không tồn tại"));
+        kc.setGiaTri(kichCoRequest.getGiaTri());
+        kc.setMoTa(kichCoRequest.getMoTa());
+        kc.setTrangThai(kichCoRequest.getTrangThai());
+        KichCo updatekc = kichCoRepository.save(kc);
+        return kichCoResponseMapper.toDTO(updatekc);
     }
 
     @Override
@@ -56,6 +69,8 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
 
     @Override
     public KichCoResponse getById(Long aLong) {
-        return null;
+        KichCo kc = kichCoRepository.findById(aLong).orElseThrow(() ->
+                new IllegalArgumentException("Kích cỡ không tồn tại id"));
+        return kichCoResponseMapper.toDTO(kc);
     }
 }
