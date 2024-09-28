@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.chatlieu.response.ChatLieuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.feature.attributemanagement.controller.ChatLieuController;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -69,11 +70,11 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
 
     @Override
     public void delete(Long aLong) {
-        if (!chatLieuRepository.existsById(aLong)){
-            throw new IllegalArgumentException("Chất liệu không tồn tại");
-        }
-        chatLieuRepository.deleteById(aLong);
-        System.out.println("Đã xóa thành công chất liệu với ID: " + aLong);
+        ChatLieu chatLieu = chatLieuRepository.findById(aLong)
+                .orElseThrow(() -> new IllegalArgumentException("Chất liệu không tồn tại"));
+        chatLieu.setDeleted(true);  // Đánh dấu đã xóa
+        chatLieuRepository.save(chatLieu);
+        System.out.println("Đã xóa mềm chất liệu với ID: " + aLong);
     }
 
     @Override
@@ -82,4 +83,5 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
                 new IllegalArgumentException("Chất liệu không tồn tại id"));
         return chatLieuResponseMapper.toDTO(chatLieu);
     }
+
 }

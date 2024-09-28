@@ -26,4 +26,11 @@ public class ChatLieuResponse {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 }

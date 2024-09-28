@@ -59,14 +59,23 @@ public class ChatLieuController {
                 "Cập nhật chất liệu thành công", updateCL));
     }
     @DeleteMapping("delete")
-    public ResponseEntity<ResponseData<ChatLieuResponse>> deleteChatLieu(@RequestParam Long id){
-        chatLieuService.delete(id);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Xóa thành công chất liệu"));
+    public ResponseEntity<ResponseData<ChatLieuResponse>> deleteChatLieu(@RequestParam Long id) {
+        ChatLieuResponse chatLieu = chatLieuService.getById(id);
+        if (chatLieu != null) {
+            chatLieu.setDeleted(true);  // Đánh dấu là đã xóa mềm
+            chatLieuService.create(ChatLieuRequest.builder().build());  // Lưu bản ghi đã cập nhật
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Xóa thành công chất liệu"));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), "Chất liệu không tồn tại"));
+        }
     }
+
+
 
     @GetMapping("get-by-id")
     public ResponseEntity<ResponseData<ChatLieuResponse>> getChatLieuById(@RequestParam Long id) {
         ChatLieuResponse chatLieuResponse = chatLieuService.getById(id);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy chất liệu thành công", chatLieuResponse));
     }
+
 }

@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayRequest;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.entity.ChatLieuDeGiay;
+import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.chatlieudegiay.response.ChatLieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
@@ -33,7 +34,8 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
 
     @Override
     public List<ChatLieuDeGiayResponse> getPage(Pageable pageable) {
-        return null;
+        List<ChatLieuDeGiay> chatLieuDeGiayList = chatLieuDeGiayRepository.findAll(pageable).getContent();
+        return chatLieuDeGiayResponseMapper.listToDTO(chatLieuDeGiayList);
     }
 
     @Override
@@ -44,12 +46,25 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
 
     @Override
     public ChatLieuDeGiayResponse create(ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
-        return null;
+        ChatLieuDeGiay cldg = new ChatLieuDeGiay();
+        cldg.setTenChatLieuDeGiay(chatLieuDeGiayRequest.getTenChatLieuDeGiay());
+        cldg.setGiaTri(chatLieuDeGiayRequest.getGiaTri());
+        cldg.setMoTa(chatLieuDeGiayRequest.getMoTa());
+        cldg.setTrangThai(chatLieuDeGiayRequest.getTrangThai());
+        ChatLieuDeGiay savecldg = chatLieuDeGiayRepository.save(cldg);
+        return chatLieuDeGiayResponseMapper.toDTO(savecldg);
     }
 
     @Override
     public ChatLieuDeGiayResponse update(Long aLong, ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
-        return null;
+        ChatLieuDeGiay cldg = chatLieuDeGiayRepository.findById(aLong)
+                .orElseThrow(() -> new IllegalArgumentException("Chất liệu để giày không tồn tại"));
+        cldg.setTenChatLieuDeGiay(chatLieuDeGiayRequest.getTenChatLieuDeGiay());
+        cldg.setGiaTri(chatLieuDeGiayRequest.getGiaTri());
+        cldg.setMoTa(chatLieuDeGiayRequest.getMoTa());
+        cldg.setTrangThai(chatLieuDeGiayRequest.getTrangThai());
+        ChatLieuDeGiay updatecldg = chatLieuDeGiayRepository.save(cldg);
+        return chatLieuDeGiayResponseMapper.toDTO(updatecldg);
     }
 
     @Override
@@ -59,6 +74,8 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
 
     @Override
     public ChatLieuDeGiayResponse getById(Long aLong) {
-        return null;
+        ChatLieuDeGiay cldg = chatLieuDeGiayRepository.findById(aLong).orElseThrow(() ->
+                new IllegalArgumentException("Chất liệu để giày không tồn tại id"));
+        return chatLieuDeGiayResponseMapper.toDTO(cldg);
     }
 }
