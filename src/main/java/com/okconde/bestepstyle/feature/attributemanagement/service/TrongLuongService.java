@@ -2,6 +2,7 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
 import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
+import com.okconde.bestepstyle.core.entity.KichCo;
 import com.okconde.bestepstyle.core.entity.TrongLuong;
 import com.okconde.bestepstyle.core.mapper.trongluong.response.TrongLuongResponseMapper;
 import com.okconde.bestepstyle.core.repository.TrongLuongRepository;
@@ -34,7 +35,8 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
 
     @Override
     public List<TrongLuongResponse> getPage(Pageable pageable) {
-        return null;
+        List<TrongLuong> trongLuongList = trongLuongRepository.findAll(pageable).getContent();
+        return trongLuongResponseMapper.listToDTO(trongLuongList);
     }
 
     @Override
@@ -45,12 +47,23 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
 
     @Override
     public TrongLuongResponse create(TrongLuongRequest trongLuongRequest) {
-        return null;
+        TrongLuong tl = new TrongLuong();
+        tl.setGiaTri(trongLuongRequest.getGiaTri());
+        tl.setMoTa(trongLuongRequest.getMoTa());
+        tl.setTrangThai(trongLuongRequest.getTrangThai());
+        TrongLuong savetl = trongLuongRepository.save(tl);
+        return trongLuongResponseMapper.toDTO(savetl);
     }
 
     @Override
     public TrongLuongResponse update(Long aLong, TrongLuongRequest trongLuongRequest) {
-        return null;
+        TrongLuong tl = trongLuongRepository.findById(aLong)
+                .orElseThrow(() -> new IllegalArgumentException("Trọng lượng không tồn tại"));
+        tl.setGiaTri(trongLuongRequest.getGiaTri());
+        tl.setMoTa(trongLuongRequest.getMoTa());
+        tl.setTrangThai(trongLuongRequest.getTrangThai());
+        TrongLuong updatetl = trongLuongRepository.save(tl);
+        return trongLuongResponseMapper.toDTO(updatetl);
     }
 
     @Override
@@ -60,6 +73,8 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
 
     @Override
     public TrongLuongResponse getById(Long aLong) {
-        return null;
+        TrongLuong tl = trongLuongRepository.findById(aLong).orElseThrow(() ->
+                new IllegalArgumentException("Trọng lượng không tồn tại id"));
+        return trongLuongResponseMapper.toDTO(tl);
     }
 }
