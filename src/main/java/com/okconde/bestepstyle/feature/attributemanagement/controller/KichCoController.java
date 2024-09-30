@@ -76,7 +76,7 @@ public class KichCoController {
     public ResponseEntity<ResponseData<String>> deleteKichCo(@PathVariable Long id){
         try {
             kichCoService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xóa thành công kích cỡ", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }

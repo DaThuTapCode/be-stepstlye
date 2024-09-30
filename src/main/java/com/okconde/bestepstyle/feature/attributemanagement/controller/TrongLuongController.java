@@ -78,7 +78,7 @@ public class TrongLuongController {
     public ResponseEntity<ResponseData<String>> deleteTrongLuong(@PathVariable Long id){
         try {
             trongLuongService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xóa thành công trọng lượng", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }

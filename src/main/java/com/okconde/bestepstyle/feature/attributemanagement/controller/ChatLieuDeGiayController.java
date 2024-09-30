@@ -71,12 +71,12 @@ public class ChatLieuDeGiayController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy chất liệu đế giày thành công", chatLieuDeGiayResponse));
     }
 
-    // delete kich co
+    // delete chất liệu đế giày
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseData<String>> deleteChatLieuDeGiay(@PathVariable Long id){
         try {
             chatLieuDeGiayService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xóa thành công chất liệu đế giày", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }

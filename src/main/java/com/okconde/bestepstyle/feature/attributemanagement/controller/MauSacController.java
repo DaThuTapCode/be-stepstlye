@@ -70,7 +70,7 @@ public class MauSacController {
     public ResponseEntity<ResponseData<String>> deleteMauSac(@PathVariable Long id){
         try {
             mauSacService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xóa thành công màu sắc", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }

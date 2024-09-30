@@ -77,7 +77,7 @@ public class KieuDeGiayController {
     public ResponseEntity<ResponseData<String>> deleteKieuDeGiay(@PathVariable Long id){
         try {
             kieuDeGiayService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xóa thành công kiểu đế giày", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }
