@@ -7,9 +7,11 @@ import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.kieudegiay.response.KieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.KieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,24 +57,25 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
     @Override
     public KieuDeGiayResponse update(Long aLong, KieuDeGiayRequest kieuDeGiayRequest) {
         Optional<KieuDeGiay> optionalKieuDeGiay = kieuDeGiayRepository.findById(aLong);
-        if(optionalKieuDeGiay.isPresent() && !optionalKieuDeGiay.get().isDeleted()) {
-            KieuDeGiay kieuDeGiay = optionalKieuDeGiay.get();
-            // Update các trường từ Resquet
-            kieuDeGiay = kieuDeGiayResponseMapper.toEntity(kieuDeGiayRequest);
-            kieuDeGiay.setIdKieuDeGiay(aLong);
-            kieuDeGiay = kieuDeGiayRepository.save(kieuDeGiay);
-            return kieuDeGiayResponseMapper.toDTO(kieuDeGiay);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-        }
+//        if(optionalKieuDeGiay.isPresent() && !optionalKieuDeGiay.get().isDeleted()) {
+//            KieuDeGiay kieuDeGiay = optionalKieuDeGiay.get();
+//            kieuDeGiay = kieuDeGiayResponseMapper.toEntity(kieuDeGiayRequest);
+//            kieuDeGiay.setIdKieuDeGiay(aLong);
+//            kieuDeGiay = kieuDeGiayRepository.save(kieuDeGiay);
+//            return kieuDeGiayResponseMapper.toDTO(kieuDeGiay);
+//        } else {
+//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+//        }
+        return null;
     }
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
         Optional<KieuDeGiay> optionalKieuDeGiay = kieuDeGiayRepository.findById(aLong);
         if (optionalKieuDeGiay.isPresent()){
             KieuDeGiay kieuDeGiay = optionalKieuDeGiay.get();
-            kieuDeGiay.setDeleted(true);
+            kieuDeGiay.setTrangThai(StatusEnum.INACTIVE);
             kieuDeGiayRepository.save(kieuDeGiay);
         }
         else {

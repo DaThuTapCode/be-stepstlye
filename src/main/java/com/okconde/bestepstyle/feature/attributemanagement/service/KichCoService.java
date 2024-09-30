@@ -8,9 +8,11 @@ import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.kichco.response.KichCoResponseMapper;
 import com.okconde.bestepstyle.core.repository.KichCoRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,24 +56,25 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
     @Override
     public KichCoResponse update(Long aLong, KichCoRequest kichCoRequest) {
         Optional<KichCo> optionalKichCo = kichCoRepository.findById(aLong);
-        if(optionalKichCo.isPresent() && !optionalKichCo.get().isDeleted()) {
-            KichCo kichCo = optionalKichCo.get();
-            // Update các trường từ Resquet
-            kichCo = kichCoResponseMapper.toEntity(kichCoRequest);
-            kichCo.setIdKichCo(aLong);
-            kichCo = kichCoRepository.save(kichCo);
-            return kichCoResponseMapper.toDTO(kichCo);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-        }
+//        if(optionalKichCo.isPresent() && !optionalKichCo.get().isDeleted()) {
+//            KichCo kichCo = optionalKichCo.get();
+//            kichCo = kichCoResponseMapper.toEntity(kichCoRequest);
+//            kichCo.setIdKichCo(aLong);
+//            kichCo = kichCoRepository.save(kichCo);
+//            return kichCoResponseMapper.toDTO(kichCo);
+//        } else {
+//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+//        }
+        return null;
     }
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
         Optional<KichCo> optionalKichCo = kichCoRepository.findById(aLong);
         if (optionalKichCo.isPresent()){
             KichCo kichCo = optionalKichCo.get();
-            kichCo.setDeleted(true);
+            kichCo.setTrangThai(StatusEnum.INACTIVE);
             kichCoRepository.save(kichCo);
         }
         else {

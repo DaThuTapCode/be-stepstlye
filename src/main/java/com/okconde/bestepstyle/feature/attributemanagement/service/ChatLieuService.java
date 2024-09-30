@@ -8,10 +8,12 @@ import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.chatlieu.response.ChatLieuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.feature.attributemanagement.controller.ChatLieuController;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +51,7 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
     }
 
     @Override
+    @Transactional
     public ChatLieuResponse create(ChatLieuRequest chatLieuRequest) {
         ChatLieu entity = chatLieuResponseMapper.toEntity(chatLieuRequest);
         ChatLieu chatLieu = chatLieuRepository.save(entity);
@@ -58,24 +61,25 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
     @Override
     public ChatLieuResponse update(Long aLong, ChatLieuRequest chatLieuRequest) {
         Optional<ChatLieu> optionalChatLieu = chatLieuRepository.findById(aLong);
-        if(optionalChatLieu.isPresent() && !optionalChatLieu.get().isDeleted()) {
-            ChatLieu chatLieu = optionalChatLieu.get();
-            // Update các trường từ Resquet
-            chatLieu = chatLieuResponseMapper.toEntity(chatLieuRequest);
-            chatLieu.setIdChatLieu(aLong);
-            chatLieu = chatLieuRepository.save(chatLieu);
-            return chatLieuResponseMapper.toDTO(chatLieu);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-        }
+//        if(optionalChatLieu.isPresent() && !optionalChatLieu.get().isDeleted()) {
+//            ChatLieu chatLieu = optionalChatLieu.get();
+//            chatLieu = chatLieuResponseMapper.toEntity(chatLieuRequest);
+//            chatLieu.setIdChatLieu(aLong);
+//            chatLieu = chatLieuRepository.save(chatLieu);
+//            return chatLieuResponseMapper.toDTO(chatLieu);
+//        } else {
+//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+//        }
+        return null;
     }
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
         Optional<ChatLieu> optionalChatLieu = chatLieuRepository.findById(aLong);
         if (optionalChatLieu.isPresent()){
             ChatLieu chatLieu = optionalChatLieu.get();
-            chatLieu.setDeleted(true);
+            chatLieu.setTrangThai(StatusEnum.INACTIVE);
             chatLieuRepository.save(chatLieu);
         }
         else {

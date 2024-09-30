@@ -57,16 +57,16 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
     @Override
     public MauSacResponse update(Long aLong, MauSacRequest mauSacRequest) {
         Optional<MauSac> optionalMauSac = mauSacRepository.findById(aLong);
-        if(optionalMauSac.isPresent() && !optionalMauSac.get().isDeleted()) {
-            MauSac mauSac = optionalMauSac.get();
-            // Update các trường từ Resquet
-            mauSac = mauSacResponseMapper.toEntity(mauSacRequest);
-            mauSac.setIdMauSac(aLong);
-            mauSac = mauSacRepository.save(mauSac);
-            return mauSacResponseMapper.toDTO(mauSac);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-        }
+//        if(optionalMauSac.isPresent() && !optionalMauSac.get().isDeleted()) {
+//            MauSac mauSac = optionalMauSac.get();
+//            mauSac = mauSacResponseMapper.toEntity(mauSacRequest);
+//            mauSac.setIdMauSac(aLong);
+//            mauSac = mauSacRepository.save(mauSac);
+//            return mauSacResponseMapper.toDTO(mauSac);
+//        } else {
+//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+//        }
+        return null;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
         Optional<MauSac> optionalMauSac = mauSacRepository.findById(aLong);
         if (optionalMauSac.isPresent()){
             MauSac mauSac = optionalMauSac.get();
-            mauSac.setDeleted(true);
+            //mauSac.setDeleted(true);
             mauSacRepository.save(mauSac);
         }
         else {

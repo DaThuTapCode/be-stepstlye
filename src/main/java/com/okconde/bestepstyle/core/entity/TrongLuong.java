@@ -28,5 +28,4 @@ public class TrongLuong {
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
-    private boolean deleted = false;
 }

@@ -57,16 +57,16 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
     @Override
     public TrongLuongResponse update(Long aLong, TrongLuongRequest trongLuongRequest) {
         Optional<TrongLuong> optionalTrongLuong = trongLuongRepository.findById(aLong);
-        if(optionalTrongLuong.isPresent() && !optionalTrongLuong.get().isDeleted()) {
-            TrongLuong trongLuong = optionalTrongLuong.get();
-            // Update các trường từ Resquet
-            trongLuong = trongLuongResponseMapper.toEntity(trongLuongRequest);
-            trongLuong.setIdTrongLuong(aLong);
-            trongLuong = trongLuongRepository.save(trongLuong);
-            return trongLuongResponseMapper.toDTO(trongLuong);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-        }
+//        if(optionalTrongLuong.isPresent() && !optionalTrongLuong.get().isDeleted()) {
+//            TrongLuong trongLuong = optionalTrongLuong.get();
+//            trongLuong = trongLuongResponseMapper.toEntity(trongLuongRequest);
+//            trongLuong.setIdTrongLuong(aLong);
+//            trongLuong = trongLuongRepository.save(trongLuong);
+//            return trongLuongResponseMapper.toDTO(trongLuong);
+//        } else {
+//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+//        }
+        return null;
     }
 
 
@@ -75,7 +75,7 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
         Optional<TrongLuong> optionalTrongLuong = trongLuongRepository.findById(id);
         if (optionalTrongLuong.isPresent()){
             TrongLuong trongLuong = optionalTrongLuong.get();
-            trongLuong.setDeleted(true);
+            //trongLuong.setDeleted(true);
             trongLuongRepository.save(trongLuong);
         }
         else {

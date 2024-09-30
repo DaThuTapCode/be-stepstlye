@@ -30,5 +30,4 @@ public class MauSac {
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
-    private boolean Deleted = false;
 }

@@ -2,15 +2,15 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayRequest;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
-import com.okconde.bestepstyle.core.entity.ChatLieu;
 import com.okconde.bestepstyle.core.entity.ChatLieuDeGiay;
-import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.chatlieudegiay.response.ChatLieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,24 +57,26 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
     @Override
     public ChatLieuDeGiayResponse update(Long aLong, ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
         Optional<ChatLieuDeGiay> optionalChatLieuDeGiay = chatLieuDeGiayRepository.findById(aLong);
-        if(optionalChatLieuDeGiay.isPresent() && !optionalChatLieuDeGiay.get().isDeleted()) {
-            ChatLieuDeGiay chatLieuDeGiay = optionalChatLieuDeGiay.get();
-            // Update các trường từ Resquet
-            chatLieuDeGiay = chatLieuDeGiayResponseMapper.toEntity(chatLieuDeGiayRequest);
-            chatLieuDeGiay.setIdChatLieuDeGiay(aLong);
-            chatLieuDeGiay = chatLieuDeGiayRepository.save(chatLieuDeGiay);
-            return chatLieuDeGiayResponseMapper.toDTO(chatLieuDeGiay);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-        }
+//        if(optionalChatLieuDeGiay.isPresent() && !optionalChatLieuDeGiay.get().isDeleted()) {
+//            ChatLieuDeGiay chatLieuDeGiay = optionalChatLieuDeGiay.get();
+//            // Update các trường từ Resquet
+//            chatLieuDeGiay = chatLieuDeGiayResponseMapper.toEntity(chatLieuDeGiayRequest);
+//            chatLieuDeGiay.setIdChatLieuDeGiay(aLong);
+//            chatLieuDeGiay = chatLieuDeGiayRepository.save(chatLieuDeGiay);
+//            return chatLieuDeGiayResponseMapper.toDTO(chatLieuDeGiay);
+//        } else {
+//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+//        }
+        return null;
     }
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
         Optional<ChatLieuDeGiay> optionalChatLieuDeGiay = chatLieuDeGiayRepository.findById(aLong);
         if (optionalChatLieuDeGiay.isPresent()){
             ChatLieuDeGiay chatLieuDeGiay = optionalChatLieuDeGiay.get();
-            chatLieuDeGiay.setDeleted(true);
+            chatLieuDeGiay.setTrangThai(StatusEnum.INACTIVE);
             chatLieuDeGiayRepository.save(chatLieuDeGiay);
         }
         else {

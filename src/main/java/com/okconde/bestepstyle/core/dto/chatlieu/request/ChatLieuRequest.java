@@ -24,6 +24,4 @@ public class ChatLieuRequest {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
-
-    private boolean deleted = false;
 }
