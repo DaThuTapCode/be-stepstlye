@@ -3,11 +3,15 @@ package com.okconde.bestepstyle.feature.employeemanagement.service;
 import com.okconde.bestepstyle.core.dto.chucvu.request.ChucVuRequest;
 import com.okconde.bestepstyle.core.dto.chucvu.response.ChucVuResponse;
 import com.okconde.bestepstyle.core.entity.ChucVu;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.chucvu.request.ChucVuRequestMapper;
 import com.okconde.bestepstyle.core.mapper.chucvu.response.ChucVuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChucVuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,18 +27,23 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
 
     private final ChucVuResponseMapper chucVuResponseMapper;
 
+    private final ChucVuRequestMapper chucVuRequestMapper;
+
     public ChucVuService(
             ChucVuRepository chucVuRepository,
-            ChucVuResponseMapper chucVuResponseMapper) {
+            ChucVuResponseMapper chucVuResponseMapper,
+            ChucVuRequestMapper chucVuRequestMapper) {
         this.chucVuRepository = chucVuRepository;
-
         this.chucVuResponseMapper = chucVuResponseMapper;
+        this.chucVuRequestMapper = chucVuRequestMapper;
     }
 
 
     @Override
     public List<ChucVuResponse> getPage(Pageable pageable) {
-        return null;
+
+        return chucVuRepository.findAll(pageable).map(chucVuResponseMapper :: toDTO).getContent();
+
     }
 
     @Override
@@ -42,25 +51,64 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
 
         List<ChucVu> chucVuList = chucVuRepository.findAll();
         return chucVuResponseMapper.listToDTO(chucVuList);
+
     }
 
     @Override
+    @Transactional
     public ChucVuResponse create(ChucVuRequest chucVuRequest) {
-        return null;
+
+        ChucVu chucVuMoi = chucVuRequestMapper.toEntity(chucVuRequest);
+        ChucVu addCV = chucVuRepository.save(chucVuMoi);
+        return chucVuResponseMapper.toDTO(addCV);
+
     }
 
     @Override
+    @Transactional
     public ChucVuResponse update(Long aLong, ChucVuRequest chucVuRequest) {
-        return null;
+        // Tìm chức vụ theo id, nếu không tồn tại thì ném ngoại lệ
+        ChucVu existingChucVu = chucVuRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
+
+        // Cập nhật các trường từ request vào đối tượng chức vụ đã tìm thấy
+        if (chucVuRequest.getTenChucVu() != null) {
+            existingChucVu.setTenChucVu(chucVuRequest.getTenChucVu());
+        }
+
+        if (chucVuRequest.getMoTa() != null) {
+            existingChucVu.setMoTa(chucVuRequest.getMoTa());
+        }
+
+        if (chucVuRequest.getTrangThai() != null) {
+            existingChucVu.setTrangThai(chucVuRequest.getTrangThai());
+        }
+
+        // Lưu lại đối tượng chức vụ đã cập nhật vào cơ sở dữ liệu
+        ChucVu updatedChucVu = chucVuRepository.save(existingChucVu);
+
+        // Chuyển đổi từ Entity sang DTO để trả về
+        return chucVuResponseMapper.toDTO(updatedChucVu);
     }
 
+
     @Override
+    @Transactional
     public void delete(Long aLong) {
+
+        ChucVu cv = chucVuRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
+        cv.setTrangThai(StatusEnum.INACTIVE);
+        chucVuRepository.save(cv);
 
     }
 
     @Override
     public ChucVuResponse getById(Long aLong) {
-        return null;
+
+        ChucVu cv = chucVuRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
+        return chucVuResponseMapper.toDTO(cv);
+
     }
 }

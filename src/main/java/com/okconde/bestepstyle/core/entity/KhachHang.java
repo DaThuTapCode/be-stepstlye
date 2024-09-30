@@ -39,12 +39,6 @@ public class KhachHang {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idKhachHang;
 
-    @OneToMany(
-            mappedBy = "khachHang",
-            fetch = FetchType.LAZY
-    )
-    private List<DiaChiKhachHang> diaChiKhachHangs;
-
     private String tenKhachHang;
 
     private String soDienThoai;
@@ -61,4 +55,11 @@ public class KhachHang {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
+    @OneToMany(
+            mappedBy = "khachHang",
+            fetch = FetchType.LAZY
+    )
+    private List<DiaChiKhachHang> diaChiKhachHangs;
+
 }

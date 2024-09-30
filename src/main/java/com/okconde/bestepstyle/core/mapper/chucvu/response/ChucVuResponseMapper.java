@@ -3,7 +3,6 @@ package com.okconde.bestepstyle.core.mapper.chucvu.response;
 import com.okconde.bestepstyle.core.dto.chucvu.response.ChucVuResponse;
 import com.okconde.bestepstyle.core.entity.ChucVu;
 import com.okconde.bestepstyle.core.mapper.IBaseMapper;
-import com.okconde.bestepstyle.core.service.IBaseService;
 import org.mapstruct.Mapper;
 
 /**

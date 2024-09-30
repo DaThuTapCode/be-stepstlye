@@ -34,6 +34,8 @@ public class ChucVuRequest {
 
     private List<NhanVienShortResponse> nhanViens;
 
+    private String tenChucVu;
+
     private String moTa;
 
     @Enumerated(EnumType.STRING)
