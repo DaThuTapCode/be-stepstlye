@@ -1,5 +1,13 @@
 package com.okconde.bestepstyle.core.mapper;
 
+import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
+import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayRequest;
+import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
+import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiayRequest;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
+import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
+import com.okconde.bestepstyle.core.entity.*;
+
 import java.util.List;
 
 /**
@@ -32,4 +40,5 @@ public interface IBaseMapper <E, D>{
      * @param d Danh sách DTO cần chuyển đổi
      * */
     List<E> toListEntity(List<D> d);
+
 }

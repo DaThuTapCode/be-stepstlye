@@ -29,4 +29,5 @@ public class MauSac {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
 }

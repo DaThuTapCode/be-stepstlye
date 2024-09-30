@@ -27,4 +27,5 @@ public class KichCo {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
 }
