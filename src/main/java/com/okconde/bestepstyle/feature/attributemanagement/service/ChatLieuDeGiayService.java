@@ -3,6 +3,9 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayRequest;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.entity.ChatLieuDeGiay;
+import com.okconde.bestepstyle.core.entity.DanhMuc;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.chatlieudegiay.request.ChatLieuDeGiayRequestMapper;
 import com.okconde.bestepstyle.core.mapper.chatlieudegiay.response.ChatLieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
@@ -27,12 +30,16 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
 
     private final ChatLieuDeGiayResponseMapper chatLieuDeGiayResponseMapper;
 
+    private final ChatLieuDeGiayRequestMapper chatLieuDeGiayRequestMapper;
+
     public ChatLieuDeGiayService(
             ChatLieuDeGiayRepository chatLieuDeGiayRepository,
-            ChatLieuDeGiayResponseMapper chatLieuDeGiayResponseMapper
+            ChatLieuDeGiayResponseMapper chatLieuDeGiayResponseMapper,
+            ChatLieuDeGiayRequestMapper chatLieuDeGiayRequestMapper
     ) {
         this.chatLieuDeGiayRepository = chatLieuDeGiayRepository;
         this.chatLieuDeGiayResponseMapper = chatLieuDeGiayResponseMapper;
+        this.chatLieuDeGiayRequestMapper = chatLieuDeGiayRequestMapper;
     }
 
     @Override
@@ -48,26 +55,26 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
     }
 
     @Override
+    @Transactional
     public ChatLieuDeGiayResponse create(ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
-        ChatLieuDeGiay entity = chatLieuDeGiayResponseMapper.toEntity(chatLieuDeGiayRequest);
+        ChatLieuDeGiay entity = chatLieuDeGiayRequestMapper.toEntity(chatLieuDeGiayRequest);
+        entity.setTrangThai(StatusEnum.ACTIVE);
         ChatLieuDeGiay chatLieuDeGiay = chatLieuDeGiayRepository.save(entity);
         return chatLieuDeGiayResponseMapper.toDTO(chatLieuDeGiay);
     }
 
     @Override
-    public ChatLieuDeGiayResponse update(Long aLong, ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
-        Optional<ChatLieuDeGiay> optionalChatLieuDeGiay = chatLieuDeGiayRepository.findById(aLong);
-//        if(optionalChatLieuDeGiay.isPresent() && !optionalChatLieuDeGiay.get().isDeleted()) {
-//            ChatLieuDeGiay chatLieuDeGiay = optionalChatLieuDeGiay.get();
-//            // Update các trường từ Resquet
-//            chatLieuDeGiay = chatLieuDeGiayResponseMapper.toEntity(chatLieuDeGiayRequest);
-//            chatLieuDeGiay.setIdChatLieuDeGiay(aLong);
-//            chatLieuDeGiay = chatLieuDeGiayRepository.save(chatLieuDeGiay);
-//            return chatLieuDeGiayResponseMapper.toDTO(chatLieuDeGiay);
-//        } else {
-//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-//        }
-        return null;
+    @Transactional
+    public ChatLieuDeGiayResponse update(Long id, ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
+        ChatLieuDeGiay chatLieuDeGiay = chatLieuDeGiayRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Không tìm thấy chất liệu sản phẩm với id" + id));
+
+        ChatLieuDeGiay chatLieuDeGiayUpdate = chatLieuDeGiayRequestMapper.toEntity(chatLieuDeGiayRequest);
+        chatLieuDeGiay.setTenChatLieuDeGiay(chatLieuDeGiayUpdate.getTenChatLieuDeGiay());
+        chatLieuDeGiay.setGiaTri(chatLieuDeGiayUpdate.getGiaTri());
+        chatLieuDeGiay.setMoTa(chatLieuDeGiayUpdate.getMoTa());
+        ChatLieuDeGiay chatLieuDeGiayUpdated = chatLieuDeGiayRepository.save(chatLieuDeGiay);
+        return chatLieuDeGiayResponseMapper.toDTO(chatLieuDeGiayUpdated);
     }
 
     @Override
@@ -87,7 +94,7 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
     @Override
     public ChatLieuDeGiayResponse getById(Long aLong) {
         ChatLieuDeGiay cldg = chatLieuDeGiayRepository.findById(aLong).orElseThrow(() ->
-                new IllegalArgumentException("Chất liệu để giày không tồn tại id"));
+                new ResourceNotFoundException("Chất liệu để giày không tồn tại id"));
         return chatLieuDeGiayResponseMapper.toDTO(cldg);
     }
 }

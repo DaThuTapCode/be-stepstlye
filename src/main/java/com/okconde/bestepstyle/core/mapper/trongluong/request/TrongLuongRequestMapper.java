@@ -11,5 +11,6 @@ import org.mapstruct.Mapper;
  *
  * @author: Ngo Tu
  */
-public interface TrongLuongRequestMapper{
+@Mapper(componentModel = "spring")
+public interface TrongLuongRequestMapper extends IBaseMapper<TrongLuong, TrongLuongRequest>{
 }

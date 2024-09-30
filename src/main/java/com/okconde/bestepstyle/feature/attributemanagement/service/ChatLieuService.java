@@ -2,9 +2,9 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
 import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
-import com.okconde.bestepstyle.core.entity.ChatLieu;
-import com.okconde.bestepstyle.core.entity.KichCo;
-import com.okconde.bestepstyle.core.entity.MauSac;
+import com.okconde.bestepstyle.core.entity.*;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.chatlieu.request.ChatLieuRequestMapper;
 import com.okconde.bestepstyle.core.mapper.chatlieu.response.ChatLieuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +30,16 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
 
     private final ChatLieuResponseMapper chatLieuResponseMapper;
 
+    private final ChatLieuRequestMapper chatLieuRequestMapper;
+
     public ChatLieuService(
             ChatLieuRepository chatLieuRepository,
-            ChatLieuResponseMapper chatLieuResponseMapper
+            ChatLieuResponseMapper chatLieuResponseMapper,
+            ChatLieuRequestMapper chatLieuRequestMapper
     ) {
         this.chatLieuRepository = chatLieuRepository;
         this.chatLieuResponseMapper = chatLieuResponseMapper;
+        this.chatLieuRequestMapper = chatLieuRequestMapper;
     }
 
 
@@ -53,24 +58,24 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
     @Override
     @Transactional
     public ChatLieuResponse create(ChatLieuRequest chatLieuRequest) {
-        ChatLieu entity = chatLieuResponseMapper.toEntity(chatLieuRequest);
-        ChatLieu chatLieu = chatLieuRepository.save(entity);
-        return chatLieuResponseMapper.toDTO(chatLieu);
+        ChatLieu chatLieu = chatLieuRequestMapper.toEntity(chatLieuRequest);
+        chatLieu.setTrangThai(StatusEnum.ACTIVE);
+        ChatLieu chatLieuSave = chatLieuRepository.save(chatLieu);
+        return chatLieuResponseMapper.toDTO(chatLieuSave);
     }
 
     @Override
-    public ChatLieuResponse update(Long aLong, ChatLieuRequest chatLieuRequest) {
-        Optional<ChatLieu> optionalChatLieu = chatLieuRepository.findById(aLong);
-//        if(optionalChatLieu.isPresent() && !optionalChatLieu.get().isDeleted()) {
-//            ChatLieu chatLieu = optionalChatLieu.get();
-//            chatLieu = chatLieuResponseMapper.toEntity(chatLieuRequest);
-//            chatLieu.setIdChatLieu(aLong);
-//            chatLieu = chatLieuRepository.save(chatLieu);
-//            return chatLieuResponseMapper.toDTO(chatLieu);
-//        } else {
-//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-//        }
-        return null;
+    @Transactional
+    public ChatLieuResponse update(Long id, ChatLieuRequest chatLieuRequest) {
+        ChatLieu chatLieu = chatLieuRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Không tìm thấy chất liệu với id" + id));
+
+        ChatLieu chatLieuUpdate = chatLieuRequestMapper.toEntity(chatLieuRequest);
+        chatLieu.setTenChatLieu(chatLieuUpdate.getTenChatLieu());
+        chatLieu.setDoBen(chatLieuUpdate.getDoBen());
+        chatLieu.setMoTa(chatLieuUpdate.getMoTa());
+        ChatLieu chatLieuUpdated = chatLieuRepository.save(chatLieu);
+        return chatLieuResponseMapper.toDTO(chatLieuUpdated);
     }
 
     @Override
@@ -90,7 +95,7 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
     @Override
     public ChatLieuResponse getById(Long aLong) {
         ChatLieu chatLieu = chatLieuRepository.findById(aLong).orElseThrow(() ->
-                new IllegalArgumentException("Chất liệu không tồn tại id"));
+                new ResourceNotFoundException("Chất liệu không tồn tại id"));
         return chatLieuResponseMapper.toDTO(chatLieu);
     }
 

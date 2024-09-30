@@ -3,7 +3,8 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiayRequest;
 import com.okconde.bestepstyle.core.entity.KieuDeGiay;
-import com.okconde.bestepstyle.core.entity.MauSac;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.kieudegiay.request.KieuDeGiayRequestMapper;
 import com.okconde.bestepstyle.core.mapper.kieudegiay.response.KieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.KieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
@@ -27,12 +28,15 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
     private final KieuDeGiayRepository kieuDeGiayRepository;
 
     private final KieuDeGiayResponseMapper kieuDeGiayResponseMapper;
+    private final KieuDeGiayRequestMapper kieuDeGiayRequestMapper;
 
     public KieuDeGiayService(KieuDeGiayRepository kieuDeGiayRepository,
-                             KieuDeGiayResponseMapper kieuDeGiayResponseMapper
-    ) {
+                             KieuDeGiayResponseMapper kieuDeGiayResponseMapper,
+
+                             KieuDeGiayRequestMapper kieuDeGiayRequestMapper) {
         this.kieuDeGiayRepository = kieuDeGiayRepository;
         this.kieuDeGiayResponseMapper = kieuDeGiayResponseMapper;
+        this.kieuDeGiayRequestMapper = kieuDeGiayRequestMapper;
     }
 
     @Override
@@ -48,25 +52,26 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
     }
 
     @Override
+    @Transactional
     public KieuDeGiayResponse create(KieuDeGiayRequest kieuDeGiayRequest) {
-        KieuDeGiay entity = kieuDeGiayResponseMapper.toEntity(kieuDeGiayRequest);
+        KieuDeGiay entity = kieuDeGiayRequestMapper.toEntity(kieuDeGiayRequest);
+        entity.setTrangThai(StatusEnum.ACTIVE);
         KieuDeGiay kieuDeGiay = kieuDeGiayRepository.save(entity);
         return kieuDeGiayResponseMapper.toDTO(kieuDeGiay);
     }
 
     @Override
-    public KieuDeGiayResponse update(Long aLong, KieuDeGiayRequest kieuDeGiayRequest) {
-        Optional<KieuDeGiay> optionalKieuDeGiay = kieuDeGiayRepository.findById(aLong);
-//        if(optionalKieuDeGiay.isPresent() && !optionalKieuDeGiay.get().isDeleted()) {
-//            KieuDeGiay kieuDeGiay = optionalKieuDeGiay.get();
-//            kieuDeGiay = kieuDeGiayResponseMapper.toEntity(kieuDeGiayRequest);
-//            kieuDeGiay.setIdKieuDeGiay(aLong);
-//            kieuDeGiay = kieuDeGiayRepository.save(kieuDeGiay);
-//            return kieuDeGiayResponseMapper.toDTO(kieuDeGiay);
-//        } else {
-//            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
-//        }
-        return null;
+    @Transactional
+    public KieuDeGiayResponse update(Long id, KieuDeGiayRequest kieuDeGiayRequest) {
+        KieuDeGiay kieuDeGiay = kieuDeGiayRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Không tìm thấy kiểu đế giầy với id" + id));
+
+        KieuDeGiay kieuDeGiayUpdate = kieuDeGiayRequestMapper.toEntity(kieuDeGiayRequest);
+        kieuDeGiay.setTenKieuDeGiay(kieuDeGiayUpdate.getTenKieuDeGiay());
+        kieuDeGiay.setGiaTri(kieuDeGiayUpdate.getGiaTri());
+        kieuDeGiay.setMoTa(kieuDeGiayUpdate.getMoTa());
+        KieuDeGiay kieuDeGiayUpdated1 = kieuDeGiayRepository.save(kieuDeGiayUpdate);
+        return kieuDeGiayResponseMapper.toDTO(kieuDeGiayUpdated1);
     }
 
     @Override
@@ -86,7 +91,7 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
     @Override
     public KieuDeGiayResponse getById(Long aLong) {
         KieuDeGiay kdg = kieuDeGiayRepository.findById(aLong).orElseThrow(() ->
-                new IllegalArgumentException("Kiểu đế giày không tồn tại id"));
+                new ResourceNotFoundException("Kiểu đế giày không tồn tại id"));
         return kieuDeGiayResponseMapper.toDTO(kdg);
     }
 }

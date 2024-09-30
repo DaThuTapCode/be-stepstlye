@@ -41,15 +41,4 @@ public interface IBaseMapper <E, D>{
      * */
     List<E> toListEntity(List<D> d);
 
-    MauSac toEntity(MauSacRequest mauSacRequest);
-
-    KieuDeGiay toEntity(KieuDeGiayRequest kieuDeGiayRequest);
-
-    KichCo toEntity(KichCoRequest kichCoRequest);
-
-    ChatLieu toEntity(ChatLieuRequest chatLieuRequest);
-
-    ChatLieuDeGiay toEntity(ChatLieuDeGiayRequest chatLieuDeGiayRequest);
-
-    TrongLuong toEntity(TrongLuongRequest trongLuongRequest);
 }
