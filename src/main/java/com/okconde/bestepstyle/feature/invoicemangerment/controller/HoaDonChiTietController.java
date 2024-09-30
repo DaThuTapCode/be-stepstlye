@@ -34,14 +34,17 @@ public class HoaDonChiTietController {
     @GetMapping("get-page")
     public ResponseEntity<ResponseData<List<HoaDonChiTietResponse>>> getPageHoaDonChiTiet(
             @PageableDefault(size = 10) Pageable pageable
-            ){
-        List<HoaDonChiTietResponse> responses =    hoaDonChiTietService.getPage(pageable);
+    ) {
+        List<HoaDonChiTietResponse> responses = hoaDonChiTietService.getPage(pageable);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", responses));
     }
 
     @GetMapping("get-all")
-    public ResponseEntity<ResponseData<List<HoaDonChiTietResponse>>> getAllHoaDonChiTiet() {
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công HĐCT", hoaDonChiTietService.getAll()));
+    public ResponseEntity<ResponseData<?>> getAllHoaDonChiTiet() {
+        return ResponseEntity.ok(
+                new ResponseData(HttpStatus.OK.value(),
+                        "Lấy thành công HĐCT",
+                        hoaDonChiTietService.getAll()));
     }
 
     @PostMapping("create")
@@ -60,9 +63,11 @@ public class HoaDonChiTietController {
             @PathVariable Long id,
             @RequestBody HoaDonChiTietRequest request
     ) {
-       HoaDonChiTietResponse response = hoaDonChiTietService.update(id, request);
-       return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
-               "Cập nhật thành công", response));
+        HoaDonChiTietResponse response = hoaDonChiTietService.update(id, request);
+        return ResponseEntity.ok(new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Cập nhật thành công",
+                response));
     }
 
 
@@ -81,10 +86,23 @@ public class HoaDonChiTietController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ResponseData<HoaDonChiTietResponse>> getById(
+    public ResponseEntity<ResponseData<?>> getById(
             @PathVariable Long id
-    ){
-        HoaDonChiTietResponse response = hoaDonChiTietService.getById(id);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", response));
+    ) {
+        return ResponseEntity.ok(new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Lấy thành công" + id,
+                hoaDonChiTietService.getById(id)));
     }
+    @GetMapping("by-id-hoa-don/{id}")
+    public ResponseEntity<ResponseData<?>> getHDCTByIdHoaDon(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Lấy thành công" + id,
+                hoaDonChiTietService.getByIdHoaDon(id)));
+    }
+
+
 }

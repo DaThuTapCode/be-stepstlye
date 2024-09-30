@@ -2,17 +2,20 @@ package com.okconde.bestepstyle.feature.invoicemangerment.service;
 
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonRequest;
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.response.LichSuHoaDonResponse;
-import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
 import com.okconde.bestepstyle.core.entity.LichSuHoaDon;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.lichsuhoadon.request.LichSuHoaDonRequestMapper;
 import com.okconde.bestepstyle.core.mapper.lichsuhoadon.response.LichSuHoaDonResponseMapper;
 import com.okconde.bestepstyle.core.repository.LichSuHoaDonRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,20 +28,24 @@ import java.util.Optional;
 @Service(value = "LichSuHoaDonService")
 
 public class LichSuHoaDonService implements IBaseService<LichSuHoaDon, Long, LichSuHoaDonRequest, LichSuHoaDonResponse> {
-
-    private final LichSuHoaDonResponseMapper lichSuHoaDonResponseMapper;
-
+    //Repo
     private final LichSuHoaDonRepository lichSuHoaDonRepository;
 
-    public LichSuHoaDonService(LichSuHoaDonResponseMapper lichSuHoaDonResponseMapper, LichSuHoaDonRepository lichSuHoaDonRepository) {
+    //Mapper
+    private final LichSuHoaDonResponseMapper lichSuHoaDonResponseMapper;
+
+    private final LichSuHoaDonRequestMapper lichSuHoaDonRequestMapper;
+
+    public LichSuHoaDonService(LichSuHoaDonResponseMapper lichSuHoaDonResponseMapper, LichSuHoaDonRepository lichSuHoaDonRepository, LichSuHoaDonRequestMapper lichSuHoaDonRequestMapper) {
         this.lichSuHoaDonResponseMapper = lichSuHoaDonResponseMapper;
         this.lichSuHoaDonRepository = lichSuHoaDonRepository;
+        this.lichSuHoaDonRequestMapper = lichSuHoaDonRequestMapper;
     }
 
     @Override
     public List<LichSuHoaDonResponse> getPage(Pageable pageable) {
         Page<LichSuHoaDon> page = lichSuHoaDonRepository.findAll(pageable);
-        return page.map(lichSuHoaDonResponseMapper:: toDTO).getContent();
+        return page.map(lichSuHoaDonResponseMapper::toDTO).getContent();
     }
 
     @Override
@@ -48,34 +55,38 @@ public class LichSuHoaDonService implements IBaseService<LichSuHoaDon, Long, Lic
     }
 
     @Override
+    @Transactional
     public LichSuHoaDonResponse create(LichSuHoaDonRequest lichSuHoaDonRequest) {
-        LichSuHoaDon lichSuHoaDon = lichSuHoaDonResponseMapper.toEntity(lichSuHoaDonRequest);
-        lichSuHoaDon = lichSuHoaDonRepository.save(lichSuHoaDon);
-        return lichSuHoaDonResponseMapper.toDTO(lichSuHoaDon);
+        LichSuHoaDon lichSuHoaDonNew = lichSuHoaDonRequestMapper.toEntity(lichSuHoaDonRequest);
+        lichSuHoaDonNew.setHanhDong(lichSuHoaDonNew.getHanhDong());
+        lichSuHoaDonNew.setNgayTao(LocalDateTime.now());
+        lichSuHoaDonNew.setNguoiThucHien(lichSuHoaDonNew.getNguoiThucHien());
+        lichSuHoaDonNew.setTrangThai(StatusEnum.ACTIVE);
+
+        LichSuHoaDon lichSuHoaDonSaved = lichSuHoaDonRepository.save(lichSuHoaDonNew);
+        return lichSuHoaDonResponseMapper.toDTO(lichSuHoaDonSaved);
     }
 
     @Override
     @Transactional
     public LichSuHoaDonResponse update(Long id, LichSuHoaDonRequest lichSuHoaDonRequest) {
-        Optional<LichSuHoaDon> optionalLichSuHoaDon = lichSuHoaDonRepository.findById(id);
-        if(optionalLichSuHoaDon.isPresent()) {
-            LichSuHoaDon lichSuHoaDon = optionalLichSuHoaDon.get();
-            // Update các trường từ Resquet
-            lichSuHoaDon = lichSuHoaDonResponseMapper.toEntity(lichSuHoaDonRequest);
-            lichSuHoaDon.setIdLshd(id);
-            lichSuHoaDon = lichSuHoaDonRepository.save(lichSuHoaDon);
-            return lichSuHoaDonResponseMapper.toDTO(lichSuHoaDon);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + id);
-        }
+        LichSuHoaDon lichSuHoaDonExisting = lichSuHoaDonRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
+        LichSuHoaDon lichSuHoaDonToUpdate = lichSuHoaDonRequestMapper.toEntity(lichSuHoaDonRequest);
+        lichSuHoaDonExisting.setHanhDong(lichSuHoaDonToUpdate.getHanhDong());
+        lichSuHoaDonExisting.setNgayTao(LocalDateTime.now());
+        lichSuHoaDonExisting.setNguoiThucHien(lichSuHoaDonToUpdate.getNguoiThucHien());
+
+        LichSuHoaDon lichSuHoaDonUpdated = lichSuHoaDonRepository.save(lichSuHoaDonExisting);
+        return lichSuHoaDonResponseMapper.toDTO(lichSuHoaDonUpdated);
     }
 
     @Override
     public void delete(Long id) {
         Optional<LichSuHoaDon> optionalLichSuHoaDon = lichSuHoaDonRepository.findById(id);
-        if (optionalLichSuHoaDon.isPresent()){
+        if (optionalLichSuHoaDon.isPresent()) {
             LichSuHoaDon lichSuHoaDon = optionalLichSuHoaDon.get();
-            lichSuHoaDon.setDeleted(true);
+            lichSuHoaDon.setTrangThai(StatusEnum.ACTIVE);
             lichSuHoaDonRepository.save(lichSuHoaDon);
         } else {
             throw new EntityNotFoundException("Không tìm thấy id: " + id);
@@ -84,11 +95,8 @@ public class LichSuHoaDonService implements IBaseService<LichSuHoaDon, Long, Lic
 
     @Override
     public LichSuHoaDonResponse getById(Long id) {
-        Optional<LichSuHoaDon> optionalLichSuHoaDon = lichSuHoaDonRepository.findById(id);
-        if (optionalLichSuHoaDon.isPresent() && optionalLichSuHoaDon.get().isDeleted()) {
-            return lichSuHoaDonResponseMapper.toDTO(optionalLichSuHoaDon.get());
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + id);
-        }
+        LichSuHoaDon lichSuHoaDon = lichSuHoaDonRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
+        return lichSuHoaDonResponseMapper.toDTO(lichSuHoaDon);
     }
 }

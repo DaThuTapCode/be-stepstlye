@@ -30,10 +30,7 @@ public interface IBaseMapper <E, D>{
      * Chuyển đổi DTO sang Entity
      * @param d DTO cần chuyển đổi
      * */
-    E toEntity(HoaDonChiTietRequest d);
-    E toEntity(HoaDonRequest d);
-    E toEntity(LichSuHoaDonRequest d);
-    E toEntity(PhieuGiamGiaRequest d);
+    E toEntity(D d);
 
     /**
      * Chuyển đổi danh sách DTO sang danh sách Entity

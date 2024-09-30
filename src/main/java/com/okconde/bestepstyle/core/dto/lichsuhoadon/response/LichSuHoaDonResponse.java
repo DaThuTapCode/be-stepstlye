@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.dto.lichsuhoadon.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import jakarta.persistence.EnumType;
@@ -26,6 +27,7 @@ public class LichSuHoaDonResponse {
 
     private String hanhDong;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayTao;
 
     private String nguoiThucHien;

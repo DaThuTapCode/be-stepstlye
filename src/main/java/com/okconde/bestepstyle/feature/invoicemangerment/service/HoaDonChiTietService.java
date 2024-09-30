@@ -3,14 +3,17 @@ package com.okconde.bestepstyle.feature.invoicemangerment.service;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.hoadonchitiet.request.HoaDonChiTietRequestMapper;
 import com.okconde.bestepstyle.core.mapper.hoadonchitiet.response.HoaDonChiTietResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonChiTietRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,14 +27,17 @@ import java.util.Optional;
 @Service(value = "HoaDonChiTietService")
 
 public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, HoaDonChiTietRequest, HoaDonChiTietResponse> {
-
-    private final HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper;
-
+    //Repo
     private final HoaDonChiTietRepository hoaDonChiTietRepository;
 
-    public HoaDonChiTietService(HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper, HoaDonChiTietRepository hoaDonChiTietRepository) {
+    //Mapper
+    private final HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper;
+    private final HoaDonChiTietRequestMapper hoaDonChiTietRequestMapper;
+
+    public HoaDonChiTietService(HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper, HoaDonChiTietRepository hoaDonChiTietRepository, HoaDonChiTietRequestMapper hoaDonChiTietRequestMapper) {
         this.hoaDonChiTietResponseMapper = hoaDonChiTietResponseMapper;
         this.hoaDonChiTietRepository = hoaDonChiTietRepository;
+        this.hoaDonChiTietRequestMapper = hoaDonChiTietRequestMapper;
     }
 
     @Override
@@ -47,25 +53,30 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
     }
 
     @Override
+    @Transactional
     public HoaDonChiTietResponse create(HoaDonChiTietRequest hoaDonChiTietRequest) {
-        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietResponseMapper.toEntity(hoaDonChiTietRequest);
-        hoaDonChiTiet = hoaDonChiTietRepository.save(hoaDonChiTiet);
-        return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTiet);
+        HoaDonChiTiet hoaDonChiTietNew = hoaDonChiTietRequestMapper.toEntity(hoaDonChiTietRequest);
+        hoaDonChiTietNew.setSoLuong(hoaDonChiTietNew.getSoLuong());
+        hoaDonChiTietNew.setDonGia(hoaDonChiTietNew.getDonGia());
+        hoaDonChiTietNew.setTongTien(hoaDonChiTietNew.getTongTien());
+        hoaDonChiTietNew.setTrangThai(StatusHoaDonChiTiet.ACTIVE);
+        HoaDonChiTiet hoaDonChiTietSaved = hoaDonChiTietRepository.save(hoaDonChiTietNew);
+        return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTietSaved);
     }
 
     @Override
+    @Transactional
     public HoaDonChiTietResponse update(Long id, HoaDonChiTietRequest hoaDonChiTietRequest) {
-        Optional<HoaDonChiTiet> optionalHoaDonChiTiet = hoaDonChiTietRepository.findById(id);
-        if(optionalHoaDonChiTiet.isPresent()) {
-            HoaDonChiTiet hoaDonChiTiet = optionalHoaDonChiTiet.get();
-            // Update các trường từ Resquet
-            hoaDonChiTiet = hoaDonChiTietResponseMapper.toEntity(hoaDonChiTietRequest);
-            hoaDonChiTiet.setIdHoaDonChiTiet(id);
-            hoaDonChiTiet = hoaDonChiTietRepository.save(hoaDonChiTiet);
-            return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTiet);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + id);
-        }
+        HoaDonChiTiet hoaDonChiTietExisting = hoaDonChiTietRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy HDCT với id: " + id));
+
+        HoaDonChiTiet hoaDonChiTietUpdate = hoaDonChiTietRequestMapper.toEntity(hoaDonChiTietRequest);
+        hoaDonChiTietExisting.setSoLuong(hoaDonChiTietUpdate.getSoLuong());
+        hoaDonChiTietExisting.setDonGia(hoaDonChiTietUpdate.getDonGia());
+        hoaDonChiTietExisting.setTongTien(hoaDonChiTietUpdate.getTongTien());
+
+        HoaDonChiTiet hoaDonChiTietUpdated = hoaDonChiTietRepository.save(hoaDonChiTietExisting);
+        return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTietUpdated);
     }
 
     @Override
@@ -73,16 +84,22 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
         Optional<HoaDonChiTiet> optionalHoaDonChiTiet = hoaDonChiTietRepository.findById(id);
         if (optionalHoaDonChiTiet.isPresent()){
             HoaDonChiTiet hoaDonChiTiet = optionalHoaDonChiTiet.get();
-            hoaDonChiTiet.setDeleted(true);
+            hoaDonChiTiet.setTrangThai(StatusHoaDonChiTiet.INACTIVE);
             hoaDonChiTietRepository.save(hoaDonChiTiet);
         } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + id);
+            throw new ResourceNotFoundException("Không tìm thấy id: " + id);
         }
     }
 
     @Override
-    public HoaDonChiTietResponse getById(Long aLong) {
-        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findById(aLong)
-                .orElseThrow(() -> new )
+    public HoaDonChiTietResponse getById(Long id) {
+        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy HDCT với id: " + id));
+        return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTiet);
+    }
+
+    public List<HoaDonChiTietResponse> getByIdHoaDon(Long id) {
+        List<HoaDonChiTiet> hoaDonChiTiet = hoaDonChiTietRepository.findHoaDonChiTietByIdHoaDon(id);
+        return hoaDonChiTietResponseMapper.listToDTO(hoaDonChiTiet);
     }
 }

@@ -2,16 +2,21 @@ package com.okconde.bestepstyle.feature.invoicemangerment.service;
 
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
+import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.entity.HoaDon;
-import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,14 +29,17 @@ import java.util.Optional;
 @Service(value = "HoaDonService")
 
 public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, HoaDonResponse> {
-
-    private final HoaDonResponseMapper hoaDonResponseMapper;
-
+    //Repo
     private final HoaDonRepository hoaDonRepository;
 
-    public HoaDonService(HoaDonResponseMapper hoaDonResponseMapper, HoaDonRepository hoaDonRepository) {
+    //Mapper
+    private final HoaDonResponseMapper hoaDonResponseMapper;
+    private final HoaDonRequestMapper hoaDonRequestMapper;
+
+    public HoaDonService(HoaDonResponseMapper hoaDonResponseMapper, HoaDonRepository hoaDonRepository, HoaDonRequestMapper hoaDonRequestMapper) {
         this.hoaDonResponseMapper = hoaDonResponseMapper;
         this.hoaDonRepository = hoaDonRepository;
+        this.hoaDonRequestMapper = hoaDonRequestMapper;
     }
 
 
@@ -48,25 +56,49 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
     }
 
     @Override
+    @Transactional
     public HoaDonResponse create(HoaDonRequest hoaDonRequest) {
-        HoaDon hoaDon = hoaDonResponseMapper.toEntity(hoaDonRequest);
-        hoaDon = hoaDonRepository.save(hoaDon);
-        return hoaDonResponseMapper.toDTO(hoaDon);
+        HoaDon hoaDonNew = hoaDonRequestMapper.toEntity(hoaDonRequest);
+        hoaDonNew.setNgayTaoDon(LocalDateTime.now());
+        hoaDonNew.setPhiVanChuyen(hoaDonNew.getPhiVanChuyen());
+        hoaDonNew.setTongTien(hoaDonNew.getTongTien());
+        hoaDonNew.setTongTienSauGiam(hoaDonNew.getTongTienSauGiam());
+        hoaDonNew.setNgayChinhSua(LocalDateTime.now());
+        hoaDonNew.setNgayXacNhan(LocalDateTime.now());
+        hoaDonNew.setNgayNhanHang(LocalDateTime.now());
+        hoaDonNew.setLoaiHoaDon(hoaDonNew.getLoaiHoaDon());
+        hoaDonNew.setTenKhachHang(hoaDonNew.getTenKhachHang());
+        hoaDonNew.setDiaChiGiaoHang(hoaDonNew.getDiaChiGiaoHang());
+        hoaDonNew.setSoDienThoaiKhachHang(hoaDonNew.getSoDienThoaiKhachHang());
+        hoaDonNew.setGhiChu(hoaDonNew.getGhiChu());
+        hoaDonNew.setTrangThai(StatusHoaDon.CANCELLED);
+
+        HoaDon hoaDonSaved = hoaDonRepository.save(hoaDonNew);
+        return hoaDonResponseMapper.toDTO(hoaDonSaved);
     }
 
     @Override
+    @Transactional
     public HoaDonResponse update(Long id, HoaDonRequest hoaDonRequest) {
-        Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(id);
-        if (optionalHoaDon.isPresent()) {
-            HoaDon hoaDon = optionalHoaDon.get();
-            // Update các trường từ Resquet
-            hoaDon = hoaDonResponseMapper.toEntity(hoaDonRequest);
-            hoaDon.setIdHoaDon(id);
-            hoaDon = hoaDonRepository.save(hoaDon);
-            return hoaDonResponseMapper.toDTO(hoaDon);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + id);
-        }
+        HoaDon hoaDonExisting = hoaDonRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
+
+        HoaDon hoaDonToUpdate = hoaDonRequestMapper.toEntity(hoaDonRequest);
+        hoaDonExisting.setNgayTaoDon(LocalDateTime.now());
+        hoaDonExisting.setPhiVanChuyen(hoaDonToUpdate.getPhiVanChuyen());
+        hoaDonExisting.setTongTien(hoaDonToUpdate.getTongTien());
+        hoaDonExisting.setTongTienSauGiam(hoaDonToUpdate.getTongTienSauGiam());
+        hoaDonExisting.setNgayChinhSua(LocalDateTime.now());
+        hoaDonExisting.setNgayXacNhan(LocalDateTime.now());
+        hoaDonExisting.setNgayNhanHang(LocalDateTime.now());
+        hoaDonExisting.setLoaiHoaDon(hoaDonToUpdate.getLoaiHoaDon());
+        hoaDonExisting.setTenKhachHang(hoaDonToUpdate.getTenKhachHang());
+        hoaDonExisting.setDiaChiGiaoHang(hoaDonToUpdate.getDiaChiGiaoHang());
+        hoaDonExisting.setSoDienThoaiKhachHang(hoaDonToUpdate.getSoDienThoaiKhachHang());
+        hoaDonExisting.setGhiChu(hoaDonToUpdate.getGhiChu());
+
+        HoaDon hoaDonUpdated = hoaDonRepository.save(hoaDonExisting);
+        return hoaDonResponseMapper.toDTO(hoaDonUpdated);
     }
 
     @Override
@@ -74,7 +106,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(id);
         if (optionalHoaDon.isPresent()) {
             HoaDon hoaDon = optionalHoaDon.get();
-            hoaDon.setDeleted(true);
+            hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
             hoaDonRepository.save(hoaDon);
         } else {
             throw new EntityNotFoundException("Không tìm thấy id: " + id);
@@ -83,11 +115,8 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
     @Override
     public HoaDonResponse getById(Long id) {
-        Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(id);
-        if (optionalHoaDon.isPresent() && optionalHoaDon.get().isDeleted()) {
-            return hoaDonResponseMapper.toDTO(optionalHoaDon.get());
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + id);
-        }
+        HoaDon hoaDon = hoaDonRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy id: " + id));
+        return hoaDonResponseMapper.toDTO(hoaDon);
     }
 }

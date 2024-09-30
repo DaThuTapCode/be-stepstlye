@@ -5,5 +5,6 @@ package com.okconde.bestepstyle.core.mapper.hoadon.response;
  *
  * @author TuanIf
  */
+
 public interface HoaDonShortResponseMapper {
 }

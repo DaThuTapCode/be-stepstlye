@@ -28,15 +28,16 @@ import java.util.List;
 public class HoaDonChiTietResponse {
 
     private Long idHoaDonChiTiet;
+
     private int soLuong;
+
     private BigDecimal donGia;
+
     private BigDecimal tongTien;
 
     @Enumerated(EnumType.STRING)
     private StatusHoaDonChiTiet trangThai;
 
-
-    private HoaDonShortResponse hoaDon;
-
+//    private SPCTShortResponse sanPhamChiTiet;
 
 }

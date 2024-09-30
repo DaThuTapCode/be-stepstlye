@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Created by TuanIf on 9/23/2024 21:30:19
@@ -28,16 +30,27 @@ public class HoaDon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idHoaDon;
     private LocalDateTime ngayTaoDon;
+
     private BigDecimal phiVanChuyen;
+
     private BigDecimal tongTien;
+
     private BigDecimal tongTienSauGiam;
+
     private LocalDateTime ngayChinhSua;
+
     private LocalDateTime ngayXacNhan;
+
     private LocalDateTime ngayNhanHang;
+
     private String loaiHoaDon;
+
     private String tenKhachHang;
+
     private String diaChiGiaoHang;
+
     private String soDienThoaiKhachHang;
+
     private String ghiChu;
 
     @Enumerated(EnumType.STRING)
@@ -58,4 +71,7 @@ public class HoaDon {
     @ManyToOne
     @JoinColumn(name = "id_phieu_giam_gia")
     private PhieuGiamGia phieuGiamGia;
+
+    @OneToMany(mappedBy = "hoaDon")
+    private List<HoaDonChiTiet> hoaDonChiTiet;
 }

@@ -2,16 +2,20 @@ package com.okconde.bestepstyle.feature.invoicemangerment.service;
 
 import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaRequest;
 import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
-import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.phieugiamgia.request.PhieuGiamGiaRequestMapper;
 import com.okconde.bestepstyle.core.mapper.phieugiamgia.response.PhieuGiamGiaResponseMapper;
 import com.okconde.bestepstyle.core.repository.PhieuGiamGiaRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,13 +29,17 @@ import java.util.Optional;
 
 public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, PhieuGiamGiaRequest, PhieuGiamGiaResponse> {
 
-    private final PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper;
-
+    //Repo
     private final PhieuGiamGiaRepository phieuGiamGiaRepository;
 
-    public PhieuGiamGiaService(PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper, PhieuGiamGiaRepository phieuGiamGiaRepository) {
+    //Mapper
+    private final PhieuGiamGiaRequestMapper phieuGiamGiaRequestMapper;
+    private final PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper;
+
+    public PhieuGiamGiaService(PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper, PhieuGiamGiaRepository phieuGiamGiaRepository, PhieuGiamGiaRequestMapper phieuGiamGiaRequestMapper) {
         this.phieuGiamGiaResponseMapper = phieuGiamGiaResponseMapper;
         this.phieuGiamGiaRepository = phieuGiamGiaRepository;
+        this.phieuGiamGiaRequestMapper = phieuGiamGiaRequestMapper;
     }
 
 
@@ -50,32 +58,47 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
 
     @Override
     public PhieuGiamGiaResponse create(PhieuGiamGiaRequest phieuGiamGiaRequest) {
-        PhieuGiamGia phieuGiamGia = phieuGiamGiaResponseMapper.toEntity(phieuGiamGiaRequest);
-        phieuGiamGia = phieuGiamGiaRepository.save(phieuGiamGia);
-        return phieuGiamGiaResponseMapper.toDTO(phieuGiamGia);
+        PhieuGiamGia phieuGiamGiaNew = phieuGiamGiaRequestMapper.toEntity(phieuGiamGiaRequest);
+        phieuGiamGiaNew.setTenPhieuGiamGia(phieuGiamGiaNew.getTenPhieuGiamGia());
+        phieuGiamGiaNew.setMoTa(phieuGiamGiaNew.getMoTa());
+        phieuGiamGiaNew.setLoaiGiam(phieuGiamGiaNew.getLoaiGiam());
+        phieuGiamGiaNew.setNgayBatDau(LocalDateTime.now());
+        phieuGiamGiaNew.setNgayKetThuc(LocalDateTime.now());
+        phieuGiamGiaNew.setGiaTriGiamToiDa(phieuGiamGiaNew.getGiaTriGiamToiThieu());
+        phieuGiamGiaNew.setGiaTriGiam(phieuGiamGiaNew.getGiaTriGiam());
+        phieuGiamGiaNew.setGiaTriGiamToiThieu(phieuGiamGiaNew.getGiaTriGiamToiDa());
+        phieuGiamGiaNew.setTrangThai(StatusPhieuGiamGia.ACTIVE);
+
+        PhieuGiamGia phieuGiamGiaSaved = phieuGiamGiaRepository.save(phieuGiamGiaNew);
+        return phieuGiamGiaResponseMapper.toDTO(phieuGiamGiaSaved);
     }
 
     @Override
+    @Transactional
     public PhieuGiamGiaResponse update(Long id, PhieuGiamGiaRequest phieuGiamGiaRequest) {
-        Optional<PhieuGiamGia> optionalPhieuGiamGia = phieuGiamGiaRepository.findById(id);
-        if(optionalPhieuGiamGia.isPresent()) {
-            PhieuGiamGia phieuGiamGia = optionalPhieuGiamGia.get();
-            // Update các trường từ Resquet
-            phieuGiamGia = phieuGiamGiaResponseMapper.toEntity(phieuGiamGiaRequest);
-            phieuGiamGia.setIdPhieuGiamGia(id);
-            phieuGiamGia = phieuGiamGiaRepository.save(phieuGiamGia);
-            return phieuGiamGiaResponseMapper.toDTO(phieuGiamGia);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id" + id);
-        }
+        PhieuGiamGia phieuGiamGiaExisting = phieuGiamGiaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
+
+        PhieuGiamGia phieuGiamGiaToUpdate = phieuGiamGiaRequestMapper.toEntity(phieuGiamGiaRequest);
+        phieuGiamGiaExisting.setTenPhieuGiamGia(phieuGiamGiaToUpdate.getTenPhieuGiamGia());
+        phieuGiamGiaExisting.setMoTa(phieuGiamGiaToUpdate.getMoTa());
+        phieuGiamGiaExisting.setLoaiGiam(phieuGiamGiaToUpdate.getLoaiGiam());
+        phieuGiamGiaExisting.setNgayBatDau(LocalDateTime.now());
+        phieuGiamGiaExisting.setNgayKetThuc(LocalDateTime.now());
+        phieuGiamGiaExisting.setGiaTriGiamToiDa(phieuGiamGiaToUpdate.getGiaTriGiamToiDa());
+        phieuGiamGiaExisting.setGiaTriGiam(phieuGiamGiaToUpdate.getGiaTriGiam());
+        phieuGiamGiaExisting.setGiaTriGiamToiThieu(phieuGiamGiaToUpdate.getGiaTriGiamToiThieu());
+
+        PhieuGiamGia phieuGiamGiaUpdated = phieuGiamGiaRepository.save(phieuGiamGiaExisting);
+        return phieuGiamGiaResponseMapper.toDTO(phieuGiamGiaUpdated);
     }
 
     @Override
     public void delete(Long id) {
         Optional<PhieuGiamGia> optionalPhieuGiamGia = phieuGiamGiaRepository.findById(id);
-        if (optionalPhieuGiamGia.isPresent()){
+        if (optionalPhieuGiamGia.isPresent()) {
             PhieuGiamGia phieuGiamGia = optionalPhieuGiamGia.get();
-            phieuGiamGia.setDeleted(true);
+            phieuGiamGia.setTrangThai(StatusPhieuGiamGia.ACTIVE);
             phieuGiamGiaRepository.save(phieuGiamGia);
         } else {
             throw new EntityNotFoundException("Không tìm thấy id: " + id);
@@ -84,11 +107,8 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
 
     @Override
     public PhieuGiamGiaResponse getById(Long id) {
-        Optional<PhieuGiamGia> optionalPhieuGiamGia = phieuGiamGiaRepository.findById(id);
-        if (optionalPhieuGiamGia.isPresent() && optionalPhieuGiamGia.get().isDeleted()) {
-            return phieuGiamGiaResponseMapper.toDTO(optionalPhieuGiamGia.get());
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + id);
-        }
+        PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
+        return phieuGiamGiaResponseMapper.toDTO(phieuGiamGia);
     }
 }

@@ -1,5 +1,7 @@
 package com.okconde.bestepstyle.core.dto.hoadon.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangShortResponse;
 import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienShortResponse;
 import com.okconde.bestepstyle.core.dto.thanhtoan.response.ThanhToanResponse;
@@ -15,6 +17,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Created by TuanIf on 9/25/2024 21:13:35
@@ -32,6 +35,7 @@ public class HoaDonResponse {
 
     private Long idHoaDon;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayTaoDon;
 
     private BigDecimal phiVanChuyen;
@@ -40,10 +44,13 @@ public class HoaDonResponse {
 
     private BigDecimal tongTienSauGiam;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayChinhSua;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayXacNhan;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayNhanHang;
 
     private String loaiHoaDon;
@@ -67,4 +74,6 @@ public class HoaDonResponse {
     private ThanhToanResponse thanhToan;
 
     private PhieuGiamGiaResponse phieuGiamGia;
+
+    private List<HoaDonChiTietResponse> hoaDonChiTiet;
 }

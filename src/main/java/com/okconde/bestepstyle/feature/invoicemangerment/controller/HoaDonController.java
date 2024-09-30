@@ -42,7 +42,10 @@ public class HoaDonController {
 
     @GetMapping("get-all")
     public ResponseEntity<ResponseData<List<HoaDonResponse>>> getAllHoaDon() {
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công Hóa Đơn", hoaDonService.getAll()));
+        return ResponseEntity.ok(new ResponseData(
+                HttpStatus.OK.value(),
+                "Lấy thành công Hóa Đơn",
+                hoaDonService.getAll()));
     }
 
     @PostMapping("create")
@@ -51,7 +54,9 @@ public class HoaDonController {
     ) {
         HoaDonResponse response = hoaDonService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseData<>(HttpStatus.CREATED.value(), "Tạo thành công"
+                .body(new ResponseData<>(
+                        HttpStatus.CREATED.value(),
+                        "Tạo thành công"
                         , response));
     }
 
