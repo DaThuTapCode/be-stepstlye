@@ -1,10 +1,5 @@
 package com.okconde.bestepstyle.core.mapper;
 
-import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
-import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
-import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonRequest;
-import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaRequest;
-
 import java.util.List;
 
 /**
@@ -37,4 +32,5 @@ public interface IBaseMapper <E, D>{
      * @param d Danh sách DTO cần chuyển đổi
      * */
     List<E> toListEntity(List<D> d);
+
 }

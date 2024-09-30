@@ -25,6 +25,8 @@ public class DiaChiKhachHangRequest {
 
     private String huyen;
 
+    private String maPhuongXa;
+
     private String xa;
 
     private String duong;

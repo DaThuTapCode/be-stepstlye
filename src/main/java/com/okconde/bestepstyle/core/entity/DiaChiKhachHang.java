@@ -40,6 +40,8 @@ public class DiaChiKhachHang {
 
     private String huyen;
 
+    private String maPhuongXa;
+
     private String xa;
 
     private String duong;

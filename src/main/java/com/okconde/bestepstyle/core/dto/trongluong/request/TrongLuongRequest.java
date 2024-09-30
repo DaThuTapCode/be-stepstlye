@@ -23,4 +23,5 @@ public class TrongLuongRequest {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
 }

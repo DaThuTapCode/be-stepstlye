@@ -29,4 +29,5 @@ public class ChatLieuDeGiay {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
 }

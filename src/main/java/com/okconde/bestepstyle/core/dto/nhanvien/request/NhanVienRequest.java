@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.dto.nhanvien.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -8,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 /**
  * Created by Quang Minh on 9/25/2024 21:14:54
@@ -23,7 +26,8 @@ public class NhanVienRequest {
 
     private String hoTen;
 
-    private String ngaySinh;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate ngaySinh;
 
     private String diaChi;
 
@@ -40,5 +44,5 @@ public class NhanVienRequest {
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
-    private Long chucVu;
+//    private Long chucVu;
 }

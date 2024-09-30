@@ -23,6 +23,8 @@ public class ChucVuShortResponse {
 
     private Long idChucVu;
 
+    private String tenChucVu;
+
     private String moTa;
 
     @Enumerated(EnumType.STRING)

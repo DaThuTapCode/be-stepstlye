@@ -26,4 +26,5 @@ public class KieuDeGiayResponse {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
 }
