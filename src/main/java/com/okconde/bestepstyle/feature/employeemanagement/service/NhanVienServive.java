@@ -4,12 +4,15 @@ import com.okconde.bestepstyle.core.dto.nhanvien.request.NhanVienRequest;
 import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienResponse;
 import com.okconde.bestepstyle.core.entity.ChucVu;
 import com.okconde.bestepstyle.core.entity.NhanVien;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.nhanvien.request.NhanVienRequestMapper;
 import com.okconde.bestepstyle.core.mapper.nhanvien.response.NhanVienResponseMapper;
 import com.okconde.bestepstyle.core.repository.NhanVienRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -51,6 +54,7 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     }
 
     @Override
+    @Transactional
     public NhanVienResponse create(NhanVienRequest nhanVienRequest) {
 
         NhanVien nhanVienMoi = nhanVienRequestMapper.toEntity(nhanVienRequest);
@@ -63,11 +67,12 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     }
 
     @Override
+    @Transactional
     public NhanVienResponse update(Long aLong, NhanVienRequest nhanVienRequest) {
 
         // Tìm kiếm nhân viên dựa trên id, nếu không tồn tại, ném ngoại lệ
         NhanVien existingNhanVien = nhanVienRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Nhân viên không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên không tồn tại"));
 
         // Cập nhật các trường từ request
         if (nhanVienRequest.getHoTen() != null) {
@@ -121,12 +126,13 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     }
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
 
-        if (!nhanVienRepository.existsById(aLong)){
-            throw new IllegalArgumentException("Nhân viên không tồn tại");
-        }
-        nhanVienRepository.deleteById(aLong);
+        NhanVien nv = nhanVienRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên không tồn tại"));
+        nv.setTrangThai(StatusEnum.INACTIVE);
+        nhanVienRepository.save(nv);
 
     }
 
@@ -134,7 +140,8 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     public NhanVienResponse getById(Long aLong) {
 
         NhanVien nv = nhanVienRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Nhân viên không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên không tồn tại"));
         return nhanVienResponseMapper.toDTO(nv);
+
     }
 }

@@ -3,12 +3,15 @@ package com.okconde.bestepstyle.feature.employeemanagement.service;
 import com.okconde.bestepstyle.core.dto.diachikhachhang.request.DiaChiKhachHangRequest;
 import com.okconde.bestepstyle.core.dto.diachikhachhang.response.DiaChiKhachHangResponse;
 import com.okconde.bestepstyle.core.entity.DiaChiKhachHang;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.diachikhachhang.request.DiaChiKhachHangRequestMapper;
 import com.okconde.bestepstyle.core.mapper.diachikhachhang.response.DiaChiKhachHangResponseMapper;
 import com.okconde.bestepstyle.core.repository.DiaChiKhachHangRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -51,6 +54,7 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
     }
 
     @Override
+    @Transactional
     public DiaChiKhachHangResponse create(DiaChiKhachHangRequest diaChiKhachHangRequest) {
 
         DiaChiKhachHang dckhMoi = diaChiKhachHangRequestMapper.toEntity(diaChiKhachHangRequest);
@@ -60,10 +64,11 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
     }
 
     @Override
+    @Transactional
     public DiaChiKhachHangResponse update(Long aLong, DiaChiKhachHangRequest diaChiKhachHangRequest) {
         // Tìm địa chỉ khách hàng theo id, nếu không tồn tại thì ném ngoại lệ
         DiaChiKhachHang existingDCKH = diaChiKhachHangRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Địa chỉ khách hàng không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Địa chỉ khách hàng không tồn tại"));
 
         // Cập nhật các trường từ request vào đối tượng địa chỉ khách hàng đã tìm thấy
         if (diaChiKhachHangRequest.getKhachHang() != null) {
@@ -103,12 +108,13 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
 
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
 
-        if (!diaChiKhachHangRepository.existsById(aLong)){
-            throw new IllegalArgumentException("Địa chỉ khách hàng không tồn tại");
-        }
-        diaChiKhachHangRepository.deleteById(aLong);
+        DiaChiKhachHang dckh = diaChiKhachHangRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Địa chi khách hàng không tồn tại"));
+        dckh.setTrangThai(StatusEnum.INACTIVE);
+        diaChiKhachHangRepository.save(dckh);
 
     }
 
@@ -116,7 +122,7 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
     public DiaChiKhachHangResponse getById(Long aLong) {
 
         DiaChiKhachHang dckh = diaChiKhachHangRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Địa chi khách hàng không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Địa chi khách hàng không tồn tại"));
         return diaChiKhachHangResponseMapper.toDTO(dckh);
 
     }

@@ -3,12 +3,15 @@ package com.okconde.bestepstyle.feature.employeemanagement.service;
 import com.okconde.bestepstyle.core.dto.chucvu.request.ChucVuRequest;
 import com.okconde.bestepstyle.core.dto.chucvu.response.ChucVuResponse;
 import com.okconde.bestepstyle.core.entity.ChucVu;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.chucvu.request.ChucVuRequestMapper;
 import com.okconde.bestepstyle.core.mapper.chucvu.response.ChucVuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChucVuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,6 +55,7 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
     }
 
     @Override
+    @Transactional
     public ChucVuResponse create(ChucVuRequest chucVuRequest) {
 
         ChucVu chucVuMoi = chucVuRequestMapper.toEntity(chucVuRequest);
@@ -61,10 +65,11 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
     }
 
     @Override
+    @Transactional
     public ChucVuResponse update(Long aLong, ChucVuRequest chucVuRequest) {
         // Tìm chức vụ theo id, nếu không tồn tại thì ném ngoại lệ
         ChucVu existingChucVu = chucVuRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Chức vụ không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
 
         // Cập nhật các trường từ request vào đối tượng chức vụ đã tìm thấy
         if (chucVuRequest.getTenChucVu() != null) {
@@ -88,12 +93,13 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
 
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
 
-        if (!chucVuRepository.existsById(aLong)){
-            throw new IllegalArgumentException("Chức vụ không tồn tại");
-        }
-        chucVuRepository.deleteById(aLong);
+        ChucVu cv = chucVuRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
+        cv.setTrangThai(StatusEnum.INACTIVE);
+        chucVuRepository.save(cv);
 
     }
 
@@ -101,7 +107,7 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
     public ChucVuResponse getById(Long aLong) {
 
         ChucVu cv = chucVuRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Chức vụ không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
         return chucVuResponseMapper.toDTO(cv);
 
     }

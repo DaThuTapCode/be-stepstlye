@@ -3,12 +3,15 @@ package com.okconde.bestepstyle.feature.employeemanagement.service;
 import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
 import com.okconde.bestepstyle.core.entity.KhachHang;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.khachhang.request.KhachHangRequestMapper;
 import com.okconde.bestepstyle.core.mapper.khachhang.response.KhachHangResponseMapper;
 import com.okconde.bestepstyle.core.repository.KhachHangRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,6 +56,7 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     }
 
     @Override
+    @Transactional
     public KhachHangResponse create(KhachHangRequest khachHangRequest) {
 
         KhachHang khachHangMoi = khachHangRequestMapper.toEntity(khachHangRequest);
@@ -63,10 +67,11 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     }
 
     @Override
+    @Transactional
     public KhachHangResponse update(Long aLong, KhachHangRequest khachHangRequest) {
         // Tìm khách hàng theo ID, nếu không tồn tại thì ném ra ngoại lệ
         KhachHang existingKH = khachHangRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Khách hàng không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Khách hàng không tồn tại"));
 
         // Cập nhật các trường từ request vào đối tượng khách hàng đã tìm thấy
         if (khachHangRequest.getTenKhachHang() != null) {
@@ -105,19 +110,21 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
 
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
 
-        if (!khachHangRepository.existsById(aLong)){
-            throw new IllegalArgumentException("Khách hàng không tồn tại");
-        }
-        khachHangRepository.deleteById(aLong);
+        KhachHang kh = khachHangRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Khách hàng không tồn tại"));
+        kh.setTrangThai(StatusEnum.INACTIVE);
+        khachHangRepository.save(kh);
+        
     }
 
     @Override
     public KhachHangResponse getById(Long aLong) {
 
         KhachHang kh = khachHangRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Khách hàng không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Khách hàng không tồn tại"));
         return khachHangResponseMapper.toDTO(kh);
 
     }
