@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.dto.danhmuc.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamShortResponse;
 import jakarta.persistence.*;
@@ -26,12 +27,13 @@ public class DanhMucResponse {
 
     private String moTa;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayTao;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayChinhSua;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
-    private List<SanPhamShortResponse> sanPhams;
 }

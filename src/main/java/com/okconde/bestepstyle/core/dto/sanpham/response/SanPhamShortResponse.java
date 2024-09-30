@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.dto.sanpham.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSP;
@@ -26,8 +27,10 @@ public class SanPhamShortResponse {
 
     private String moTa;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayTao;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayChinhSua;
 
     private String nguoiTao;

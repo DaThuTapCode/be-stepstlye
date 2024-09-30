@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.entity;
 
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class HoaDon {
     private String diaChiGiaoHang;
     private String soDienThoaiKhachHang;
     private String ghiChu;
+
+    @Enumerated(EnumType.STRING)
+    private StatusHoaDon trangThai;
 
 
     @ManyToOne

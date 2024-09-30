@@ -18,7 +18,7 @@ import lombok.*;
 public class AnhShortResponse {
     private Long idAnh;
 
-    private String moTa;
+    private String tenAnh;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;

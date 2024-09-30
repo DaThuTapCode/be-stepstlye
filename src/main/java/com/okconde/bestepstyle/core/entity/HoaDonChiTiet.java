@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.entity;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,13 +31,13 @@ public class HoaDonChiTiet {
     private BigDecimal tongTien;
 
     @Enumerated(EnumType.STRING)
-    private StatusEnum trangThai;
+    private StatusHoaDonChiTiet trangThai;
 
     @ManyToOne
     @JoinColumn(name = "id_hoa_don")
     private HoaDon hoaDon;
 
-    @ManyToOne
-    @JoinColumn(name = "id_spct")
-    private SanPhamChiTiet sanPhamChiTiet;
+//    @ManyToOne
+//    @JoinColumn(name = "id_spct")
+//    private SanPhamChiTiet sanPhamChiTiet;
 }

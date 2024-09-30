@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.entity;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,5 +37,5 @@ public class PhieuGiamGia {
     private BigDecimal giaTriGiam;
 
     @Enumerated(EnumType.STRING)
-    private StatusEnum trangThai;
+    private StatusPhieuGiamGia trangThai;
 }
