@@ -1,6 +1,8 @@
 package com.okconde.bestepstyle.core.dto.sanphamchitiet.response;
 
+
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietShortResponse;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
 import com.okconde.bestepstyle.core.dto.anh.response.AnhShortResponse;
@@ -29,33 +31,27 @@ public class SPCTResponse {
 
     private int soLuong;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayTao;
 
+    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayChinhSua;
 
     private StatusSPCT trangThai;
 
-
     private SanPhamShortResponse sanPham;
-
 
     private ChatLieu chatLieu;
 
-
     private KieuDeGiay kieuDeGiay;
-
 
     private ChatLieuDeGiay chatLieuDeGiay;
 
-
     private TrongLuong trongLuong;
-
 
     private MauSac mauSac;
 
-
     private KichCo kichCo;
-
 
     private List<AnhShortResponse> anhs;
 

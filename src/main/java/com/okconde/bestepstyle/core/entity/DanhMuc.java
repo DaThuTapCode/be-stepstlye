@@ -35,8 +35,4 @@ public class DanhMuc {
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
-    @OneToMany(mappedBy = "danhMuc")
-
-    private List<SanPham> sanPhams;
-
 }

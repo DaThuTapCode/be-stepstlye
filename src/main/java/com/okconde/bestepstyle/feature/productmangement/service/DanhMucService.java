@@ -3,12 +3,17 @@ package com.okconde.bestepstyle.feature.productmangement.service;
 import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucRequest;
 import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
+import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.danhmuc.request.DanhMucRequestMapper;
 import com.okconde.bestepstyle.core.mapper.danhmuc.response.DanhMucResponseMapper;
 import com.okconde.bestepstyle.core.repository.DanhMucRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -22,15 +27,17 @@ public class DanhMucService implements IBaseService <DanhMuc, Long, DanhMucReque
     private final DanhMucRepository danhMucRepository;
 
     private final DanhMucResponseMapper danhMucResponseMapper;
+    private final DanhMucRequestMapper danhMucRequestMapper;
 
     public DanhMucService(
             DanhMucRepository danhMucRepository,
-            DanhMucResponseMapper danhMucResponseMapper
+            DanhMucResponseMapper danhMucResponseMapper,
+            DanhMucRequestMapper danhMucRequestMapper
     ) {
         this.danhMucRepository = danhMucRepository;
         this.danhMucResponseMapper = danhMucResponseMapper;
+        this.danhMucRequestMapper = danhMucRequestMapper;
     }
-
 
     @Override
     public List<DanhMucResponse> getPage(Pageable pageable) {
@@ -44,13 +51,29 @@ public class DanhMucService implements IBaseService <DanhMuc, Long, DanhMucReque
     }
 
     @Override
+    @Transactional
     public DanhMucResponse create(DanhMucRequest danhMucRequest) {
-        return null;
+        DanhMuc danhMucNew = danhMucRequestMapper.toEntity(danhMucRequest);
+        danhMucNew.setNgayTao(LocalDateTime.now());
+        danhMucNew.setNgayChinhSua(LocalDateTime.now());
+        danhMucNew.setTrangThai(StatusEnum.ACTIVE);
+        DanhMuc danhMucSaved = danhMucRepository.save(danhMucNew);
+        return danhMucResponseMapper.toDTO(danhMucSaved);
     }
 
     @Override
-    public DanhMucResponse update(Long aLong, DanhMucRequest danhMucRequest) {
-        return null;
+    @Transactional
+    public DanhMucResponse update(Long id, DanhMucRequest danhMucRequest) {
+        DanhMuc danhMucExisting = danhMucRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục với id: " + id));
+
+        DanhMuc danhMucToUpdate = danhMucRequestMapper.toEntity(danhMucRequest);
+        danhMucExisting.setTenDanhMuc(danhMucToUpdate.getTenDanhMuc());
+        danhMucExisting.setNgayChinhSua(LocalDateTime.now());
+        danhMucExisting.setMoTa(danhMucToUpdate.getMoTa());
+
+        DanhMuc danhMucUpdated = danhMucRepository.save(danhMucExisting);
+        return danhMucResponseMapper.toDTO(danhMucUpdated);
     }
 
     @Override
@@ -60,6 +83,8 @@ public class DanhMucService implements IBaseService <DanhMuc, Long, DanhMucReque
 
     @Override
     public DanhMucResponse getById(Long aLong) {
-        return null;
+        DanhMuc danhMuc = danhMucRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục với id: " +aLong));
+        return danhMucResponseMapper.toDTO(danhMuc);
     }
 }

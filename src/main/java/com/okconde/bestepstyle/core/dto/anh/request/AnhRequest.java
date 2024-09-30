@@ -18,7 +18,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class AnhRequest {
-    private String moTa;
+    private String tenAnh;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
