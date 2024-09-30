@@ -83,6 +83,6 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
     @Override
     public HoaDonChiTietResponse getById(Long aLong) {
         HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findById(aLong)
-                .orElseThrow(() ->)
+                .orElseThrow(() -> new )
     }
 }
