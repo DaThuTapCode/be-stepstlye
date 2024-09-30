@@ -25,4 +25,6 @@ public class KieuDeGiayRequest {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
+    private boolean deleted = false;
 }

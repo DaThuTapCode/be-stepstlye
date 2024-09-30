@@ -2,15 +2,18 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayRequest;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
+import com.okconde.bestepstyle.core.entity.ChatLieu;
 import com.okconde.bestepstyle.core.entity.ChatLieuDeGiay;
 import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.chatlieudegiay.response.ChatLieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created at 25/09/2024 by Ngo Tu
@@ -46,30 +49,37 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
 
     @Override
     public ChatLieuDeGiayResponse create(ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
-        ChatLieuDeGiay cldg = new ChatLieuDeGiay();
-        cldg.setTenChatLieuDeGiay(chatLieuDeGiayRequest.getTenChatLieuDeGiay());
-        cldg.setGiaTri(chatLieuDeGiayRequest.getGiaTri());
-        cldg.setMoTa(chatLieuDeGiayRequest.getMoTa());
-        cldg.setTrangThai(chatLieuDeGiayRequest.getTrangThai());
-        ChatLieuDeGiay savecldg = chatLieuDeGiayRepository.save(cldg);
-        return chatLieuDeGiayResponseMapper.toDTO(savecldg);
+        ChatLieuDeGiay entity = chatLieuDeGiayResponseMapper.toEntity(chatLieuDeGiayRequest);
+        ChatLieuDeGiay chatLieuDeGiay = chatLieuDeGiayRepository.save(entity);
+        return chatLieuDeGiayResponseMapper.toDTO(chatLieuDeGiay);
     }
 
     @Override
     public ChatLieuDeGiayResponse update(Long aLong, ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
-        ChatLieuDeGiay cldg = chatLieuDeGiayRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Chất liệu để giày không tồn tại"));
-        cldg.setTenChatLieuDeGiay(chatLieuDeGiayRequest.getTenChatLieuDeGiay());
-        cldg.setGiaTri(chatLieuDeGiayRequest.getGiaTri());
-        cldg.setMoTa(chatLieuDeGiayRequest.getMoTa());
-        cldg.setTrangThai(chatLieuDeGiayRequest.getTrangThai());
-        ChatLieuDeGiay updatecldg = chatLieuDeGiayRepository.save(cldg);
-        return chatLieuDeGiayResponseMapper.toDTO(updatecldg);
+        Optional<ChatLieuDeGiay> optionalChatLieuDeGiay = chatLieuDeGiayRepository.findById(aLong);
+        if(optionalChatLieuDeGiay.isPresent() && !optionalChatLieuDeGiay.get().isDeleted()) {
+            ChatLieuDeGiay chatLieuDeGiay = optionalChatLieuDeGiay.get();
+            // Update các trường từ Resquet
+            chatLieuDeGiay = chatLieuDeGiayResponseMapper.toEntity(chatLieuDeGiayRequest);
+            chatLieuDeGiay.setIdChatLieuDeGiay(aLong);
+            chatLieuDeGiay = chatLieuDeGiayRepository.save(chatLieuDeGiay);
+            return chatLieuDeGiayResponseMapper.toDTO(chatLieuDeGiay);
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+        }
     }
 
     @Override
     public void delete(Long aLong) {
-
+        Optional<ChatLieuDeGiay> optionalChatLieuDeGiay = chatLieuDeGiayRepository.findById(aLong);
+        if (optionalChatLieuDeGiay.isPresent()){
+            ChatLieuDeGiay chatLieuDeGiay = optionalChatLieuDeGiay.get();
+            chatLieuDeGiay.setDeleted(true);
+            chatLieuDeGiayRepository.save(chatLieuDeGiay);
+        }
+        else {
+            throw new EntityNotFoundException("Không tìm thấy id: " + aLong);
+        }
     }
 
     @Override

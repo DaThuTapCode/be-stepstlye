@@ -7,10 +7,12 @@ import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.kieudegiay.response.KieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.KieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created at 25/09/2024 by Ngo Tu
@@ -45,30 +47,37 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
 
     @Override
     public KieuDeGiayResponse create(KieuDeGiayRequest kieuDeGiayRequest) {
-        KieuDeGiay kdg = new KieuDeGiay();
-        kdg.setTenKieuDeGiay(kieuDeGiayRequest.getTenKieuDeGiay());
-        kdg.setGiaTri(kieuDeGiayRequest.getGiaTri());
-        kdg.setMoTa(kieuDeGiayRequest.getMoTa());
-        kdg.setTrangThai(kieuDeGiayRequest.getTrangThai());
-        KieuDeGiay savekdg = kieuDeGiayRepository.save(kdg);
-        return kieuDeGiayResponseMapper.toDTO(savekdg);
+        KieuDeGiay entity = kieuDeGiayResponseMapper.toEntity(kieuDeGiayRequest);
+        KieuDeGiay kieuDeGiay = kieuDeGiayRepository.save(entity);
+        return kieuDeGiayResponseMapper.toDTO(kieuDeGiay);
     }
 
     @Override
     public KieuDeGiayResponse update(Long aLong, KieuDeGiayRequest kieuDeGiayRequest) {
-        KieuDeGiay kdg = kieuDeGiayRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Kiểu đế giày không tồn tại"));
-        kdg.setTenKieuDeGiay(kieuDeGiayRequest.getTenKieuDeGiay());
-        kdg.setGiaTri(kieuDeGiayRequest.getGiaTri());
-        kdg.setMoTa(kieuDeGiayRequest.getMoTa());
-        kdg.setTrangThai(kieuDeGiayRequest.getTrangThai());
-        KieuDeGiay updatekdg = kieuDeGiayRepository.save(kdg);
-        return kieuDeGiayResponseMapper.toDTO(updatekdg);
+        Optional<KieuDeGiay> optionalKieuDeGiay = kieuDeGiayRepository.findById(aLong);
+        if(optionalKieuDeGiay.isPresent() && !optionalKieuDeGiay.get().isDeleted()) {
+            KieuDeGiay kieuDeGiay = optionalKieuDeGiay.get();
+            // Update các trường từ Resquet
+            kieuDeGiay = kieuDeGiayResponseMapper.toEntity(kieuDeGiayRequest);
+            kieuDeGiay.setIdKieuDeGiay(aLong);
+            kieuDeGiay = kieuDeGiayRepository.save(kieuDeGiay);
+            return kieuDeGiayResponseMapper.toDTO(kieuDeGiay);
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+        }
     }
 
     @Override
     public void delete(Long aLong) {
-
+        Optional<KieuDeGiay> optionalKieuDeGiay = kieuDeGiayRepository.findById(aLong);
+        if (optionalKieuDeGiay.isPresent()){
+            KieuDeGiay kieuDeGiay = optionalKieuDeGiay.get();
+            kieuDeGiay.setDeleted(true);
+            kieuDeGiayRepository.save(kieuDeGiay);
+        }
+        else {
+            throw new EntityNotFoundException("Không tìm thấy id: " + aLong);
+        }
     }
 
     @Override

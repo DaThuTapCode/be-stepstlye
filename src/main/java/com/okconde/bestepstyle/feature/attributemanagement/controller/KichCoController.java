@@ -6,6 +6,7 @@ import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.KichCoService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -68,5 +69,16 @@ public class KichCoController {
     public ResponseEntity<ResponseData<KichCoResponse>> getKichCoById(@RequestParam Long id) {
         KichCoResponse kichCoResponse = kichCoService.getById(id);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy kích cỡ thành công", kichCoResponse));
+    }
+
+    // delete kich co
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<ResponseData<String>> deleteKichCo(@PathVariable Long id){
+        try {
+            kichCoService.delete(id);
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
+        }
     }
 }

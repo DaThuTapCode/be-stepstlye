@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.entity.KieuDeGiay;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.KieuDeGiayService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -69,5 +70,16 @@ public class KieuDeGiayController {
     public ResponseEntity<ResponseData<KieuDeGiayResponse>> getKieuDeGiayById(@RequestParam Long id) {
         KieuDeGiayResponse kieuDeGiayResponse = kieuDeGiayService.getById(id);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy kiểu đế giày thành công", kieuDeGiayResponse));
+    }
+
+    // delete kiểu đế giày
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<ResponseData<String>> deleteKieuDeGiay(@PathVariable Long id){
+        try {
+            kieuDeGiayService.delete(id);
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
+        }
     }
 }

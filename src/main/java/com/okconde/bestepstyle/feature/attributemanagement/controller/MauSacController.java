@@ -6,6 +6,7 @@ import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.feature.attributemanagement.service.MauSacService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -65,10 +66,14 @@ public class MauSacController {
     }
 
     // xóa màu sắc
-    @DeleteMapping("delete-mau-sac")
-    public ResponseEntity<ResponseData<MauSacResponse>> deleteMauSac(@RequestParam Long id){
-        mauSacService.delete(id);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Xóa thành công màu sắc"));
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<ResponseData<String>> deleteMauSac(@PathVariable Long id){
+        try {
+            mauSacService.delete(id);
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
+        }
     }
 
     // get by id màu sắc

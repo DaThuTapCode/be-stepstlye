@@ -3,14 +3,17 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.entity.KichCo;
+import com.okconde.bestepstyle.core.entity.KieuDeGiay;
 import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.mapper.kichco.response.KichCoResponseMapper;
 import com.okconde.bestepstyle.core.repository.KichCoRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created at 25/09/2024 by Ngo Tu
@@ -43,28 +46,37 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
 
     @Override
     public KichCoResponse create(KichCoRequest kichCoRequest) {
-        KichCo kc = new KichCo();
-        kc.setGiaTri(kichCoRequest.getGiaTri());
-        kc.setMoTa(kichCoRequest.getMoTa());
-        kc.setTrangThai(kichCoRequest.getTrangThai());
-        KichCo savekc = kichCoRepository.save(kc);
-        return kichCoResponseMapper.toDTO(savekc);
+        KichCo entity = kichCoResponseMapper.toEntity(kichCoRequest);
+        KichCo kichCo = kichCoRepository.save(entity);
+        return kichCoResponseMapper.toDTO(kichCo);
     }
 
     @Override
     public KichCoResponse update(Long aLong, KichCoRequest kichCoRequest) {
-        KichCo kc = kichCoRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Kích cỡ không tồn tại"));
-        kc.setGiaTri(kichCoRequest.getGiaTri());
-        kc.setMoTa(kichCoRequest.getMoTa());
-        kc.setTrangThai(kichCoRequest.getTrangThai());
-        KichCo updatekc = kichCoRepository.save(kc);
-        return kichCoResponseMapper.toDTO(updatekc);
+        Optional<KichCo> optionalKichCo = kichCoRepository.findById(aLong);
+        if(optionalKichCo.isPresent() && !optionalKichCo.get().isDeleted()) {
+            KichCo kichCo = optionalKichCo.get();
+            // Update các trường từ Resquet
+            kichCo = kichCoResponseMapper.toEntity(kichCoRequest);
+            kichCo.setIdKichCo(aLong);
+            kichCo = kichCoRepository.save(kichCo);
+            return kichCoResponseMapper.toDTO(kichCo);
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+        }
     }
 
     @Override
     public void delete(Long aLong) {
-
+        Optional<KichCo> optionalKichCo = kichCoRepository.findById(aLong);
+        if (optionalKichCo.isPresent()){
+            KichCo kichCo = optionalKichCo.get();
+            kichCo.setDeleted(true);
+            kichCoRepository.save(kichCo);
+        }
+        else {
+            throw new EntityNotFoundException("Không tìm thấy id: " + aLong);
+        }
     }
 
     @Override

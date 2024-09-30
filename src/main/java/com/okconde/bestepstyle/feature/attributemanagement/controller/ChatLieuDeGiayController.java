@@ -6,6 +6,7 @@ import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayReq
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.ChatLieuDeGiayService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -68,5 +69,16 @@ public class ChatLieuDeGiayController {
     public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> getChatLieuDeGiayById(@RequestParam Long id) {
         ChatLieuDeGiayResponse chatLieuDeGiayResponse = chatLieuDeGiayService.getById(id);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy chất liệu đế giày thành công", chatLieuDeGiayResponse));
+    }
+
+    // delete kich co
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<ResponseData<String>> deleteChatLieuDeGiay(@PathVariable Long id){
+        try {
+            chatLieuDeGiayService.delete(id);
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
+        }
     }
 }

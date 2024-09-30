@@ -6,6 +6,7 @@ import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.ChatLieuService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -63,16 +64,14 @@ public class ChatLieuController {
                 "Cập nhật chất liệu thành công", updateCL));
     }
 
-    // xóa chất liệu
-    @DeleteMapping("delete")
-    public ResponseEntity<ResponseData<ChatLieuResponse>> deleteChatLieu(@RequestParam Long id) {
-        ChatLieuResponse chatLieu = chatLieuService.getById(id);
-        if (chatLieu != null) {
-            chatLieu.setDeleted(true);  // Đánh dấu là đã xóa mềm
-            chatLieuService.create(ChatLieuRequest.builder().build());  // Lưu bản ghi đã cập nhật
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Xóa thành công chất liệu"));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), "Chất liệu không tồn tại"));
+    // delete chất liệu
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<ResponseData<String>> deleteChatLieu (@PathVariable Long id){
+        try {
+            chatLieuService.delete(id);
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Xoa thanh cong", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }
     }
 

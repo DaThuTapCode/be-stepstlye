@@ -7,10 +7,12 @@ import com.okconde.bestepstyle.core.entity.TrongLuong;
 import com.okconde.bestepstyle.core.mapper.trongluong.response.TrongLuongResponseMapper;
 import com.okconde.bestepstyle.core.repository.TrongLuongRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created at 25/09/2024 by Ngo Tu
@@ -47,28 +49,38 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
 
     @Override
     public TrongLuongResponse create(TrongLuongRequest trongLuongRequest) {
-        TrongLuong tl = new TrongLuong();
-        tl.setGiaTri(trongLuongRequest.getGiaTri());
-        tl.setMoTa(trongLuongRequest.getMoTa());
-        tl.setTrangThai(trongLuongRequest.getTrangThai());
-        TrongLuong savetl = trongLuongRepository.save(tl);
-        return trongLuongResponseMapper.toDTO(savetl);
+        TrongLuong entity = trongLuongResponseMapper.toEntity(trongLuongRequest);
+        TrongLuong trongLuong = trongLuongRepository.save(entity);
+        return trongLuongResponseMapper.toDTO(trongLuong);
     }
 
     @Override
     public TrongLuongResponse update(Long aLong, TrongLuongRequest trongLuongRequest) {
-        TrongLuong tl = trongLuongRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Trọng lượng không tồn tại"));
-        tl.setGiaTri(trongLuongRequest.getGiaTri());
-        tl.setMoTa(trongLuongRequest.getMoTa());
-        tl.setTrangThai(trongLuongRequest.getTrangThai());
-        TrongLuong updatetl = trongLuongRepository.save(tl);
-        return trongLuongResponseMapper.toDTO(updatetl);
+        Optional<TrongLuong> optionalTrongLuong = trongLuongRepository.findById(aLong);
+        if(optionalTrongLuong.isPresent() && !optionalTrongLuong.get().isDeleted()) {
+            TrongLuong trongLuong = optionalTrongLuong.get();
+            // Update các trường từ Resquet
+            trongLuong = trongLuongResponseMapper.toEntity(trongLuongRequest);
+            trongLuong.setIdTrongLuong(aLong);
+            trongLuong = trongLuongRepository.save(trongLuong);
+            return trongLuongResponseMapper.toDTO(trongLuong);
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+        }
     }
 
-    @Override
-    public void delete(Long aLong) {
 
+    @Override
+    public void delete(Long id) {
+        Optional<TrongLuong> optionalTrongLuong = trongLuongRepository.findById(id);
+        if (optionalTrongLuong.isPresent()){
+            TrongLuong trongLuong = optionalTrongLuong.get();
+            trongLuong.setDeleted(true);
+            trongLuongRepository.save(trongLuong);
+        }
+        else {
+            throw new EntityNotFoundException("Không tìm thấy id: " + id);
+        }
     }
 
     @Override

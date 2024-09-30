@@ -26,4 +26,6 @@ public class MauSacResponse {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
+    private boolean Deleted = false;
 }

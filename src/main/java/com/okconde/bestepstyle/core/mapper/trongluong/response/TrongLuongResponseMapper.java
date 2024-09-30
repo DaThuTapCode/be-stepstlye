@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.mapper.trongluong.response;
 
 import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
+import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
 import com.okconde.bestepstyle.core.entity.TrongLuong;
 import com.okconde.bestepstyle.core.mapper.IBaseMapper;
 import org.mapstruct.Mapper;

@@ -3,14 +3,17 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.entity.MauSac;
+import com.okconde.bestepstyle.core.entity.TrongLuong;
 import com.okconde.bestepstyle.core.mapper.mausac.request.MauSacRequestMapper;
 import com.okconde.bestepstyle.core.mapper.mausac.response.MauSacResponseMapper;
 import com.okconde.bestepstyle.core.repository.MauSacRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created at 25/09/2024 by Ngo Tu
@@ -46,35 +49,37 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
 
     @Override
     public MauSacResponse create(MauSacRequest mauSacRequest) {
-
-        MauSac ms = new MauSac();
-        ms.setTenMau(mauSacRequest.getTenMau());
-        ms.setGiaTri(mauSacRequest.getGiaTri());
-        ms.setMoTa(mauSacRequest.getMoTa());
-        ms.setTrangThai(mauSacRequest.getTrangThai());
-        MauSac savems = mauSacRepository.save(ms);
-        return mauSacResponseMapper.toDTO(savems);
+        MauSac entity = mauSacResponseMapper.toEntity(mauSacRequest);
+        MauSac mauSac = mauSacRepository.save(entity);
+        return mauSacResponseMapper.toDTO(mauSac);
     }
 
     @Override
     public MauSacResponse update(Long aLong, MauSacRequest mauSacRequest) {
-        MauSac ms = mauSacRepository.findById(aLong)
-                .orElseThrow(() -> new IllegalArgumentException("Màu sắc không tồn tại"));
-        ms.setTenMau(mauSacRequest.getTenMau());
-        ms.setGiaTri(mauSacRequest.getGiaTri());
-        ms.setMoTa(mauSacRequest.getMoTa());
-        ms.setTrangThai(mauSacRequest.getTrangThai());
-        MauSac updatems = mauSacRepository.save(ms);
-        return mauSacResponseMapper.toDTO(updatems);
+        Optional<MauSac> optionalMauSac = mauSacRepository.findById(aLong);
+        if(optionalMauSac.isPresent() && !optionalMauSac.get().isDeleted()) {
+            MauSac mauSac = optionalMauSac.get();
+            // Update các trường từ Resquet
+            mauSac = mauSacResponseMapper.toEntity(mauSacRequest);
+            mauSac.setIdMauSac(aLong);
+            mauSac = mauSacRepository.save(mauSac);
+            return mauSacResponseMapper.toDTO(mauSac);
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id" + aLong);
+        }
     }
 
     @Override
     public void delete(Long aLong) {
-        if (!mauSacRepository.existsById(aLong)){
-            throw new IllegalArgumentException("Màu sắc không tồn tại");
+        Optional<MauSac> optionalMauSac = mauSacRepository.findById(aLong);
+        if (optionalMauSac.isPresent()){
+            MauSac mauSac = optionalMauSac.get();
+            mauSac.setDeleted(true);
+            mauSacRepository.save(mauSac);
         }
-        mauSacRepository.deleteById(aLong);
-        System.out.println("Đã xóa thành công màu sắc với ID: " + aLong);
+        else {
+            throw new EntityNotFoundException("Không tìm thấy id: " + aLong);
+        }
     }
 
     @Override
