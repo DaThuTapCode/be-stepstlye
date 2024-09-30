@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -58,6 +59,7 @@ public class NhanVien {
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_chuc_vu")
     private ChucVu chucVu;

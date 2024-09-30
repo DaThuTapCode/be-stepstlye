@@ -1,5 +1,7 @@
 package com.okconde.bestepstyle.core.dto.khachhang.response;
 
+import com.okconde.bestepstyle.core.dto.diachikhachhang.response.DiaChiKhachHangShortResponse;
+import com.okconde.bestepstyle.core.entity.DiaChiKhachHang;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -8,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * Created by Quang Minh on 9/25/2024 21:33:47
@@ -22,6 +26,8 @@ import lombok.Setter;
 public class KhachHangShortResponse {
 
     private Long idKhachHang;
+
+    private String tenKhachHang;
 
     private String soDienThoai;
 

@@ -24,4 +24,5 @@ public class HoaDonChiTietRequest {
 
     private BigDecimal tongTien;
 
+
 }

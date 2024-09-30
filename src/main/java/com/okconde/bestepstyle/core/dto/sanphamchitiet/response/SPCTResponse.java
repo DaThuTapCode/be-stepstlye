@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.dto.sanphamchitiet.response;
 
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietShortResponse;
 import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
 import com.okconde.bestepstyle.core.dto.anh.response.AnhShortResponse;
@@ -57,4 +58,6 @@ public class SPCTResponse {
 
 
     private List<AnhShortResponse> anhs;
+
+    private List<HoaDonChiTietShortResponse> hoaDonChiTiets;
 }

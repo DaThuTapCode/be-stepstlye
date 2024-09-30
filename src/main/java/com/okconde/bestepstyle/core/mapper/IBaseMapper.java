@@ -1,5 +1,10 @@
 package com.okconde.bestepstyle.core.mapper;
 
+import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
+import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonRequest;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaRequest;
+
 import java.util.List;
 
 /**
@@ -25,7 +30,10 @@ public interface IBaseMapper <E, D>{
      * Chuyển đổi DTO sang Entity
      * @param d DTO cần chuyển đổi
      * */
-    E toEntity(D d);
+    E toEntity(HoaDonChiTietRequest d);
+    E toEntity(HoaDonRequest d);
+    E toEntity(LichSuHoaDonRequest d);
+    E toEntity(PhieuGiamGiaRequest d);
 
     /**
      * Chuyển đổi danh sách DTO sang danh sách Entity

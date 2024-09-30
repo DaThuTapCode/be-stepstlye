@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -39,6 +40,7 @@ public class KhachHang {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idKhachHang;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "khachHang",
             fetch = FetchType.LAZY

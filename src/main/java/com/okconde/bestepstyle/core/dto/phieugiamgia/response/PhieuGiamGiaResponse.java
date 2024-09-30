@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.dto.phieugiamgia.response;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
@@ -23,16 +24,24 @@ import java.time.LocalDateTime;
 public class PhieuGiamGiaResponse {
 
     private Long idPhieuGiamGia;
+
     private String tenPhieuGiamGia;
+
     private String moTa;
+
     private String loaiGiam;
+
     private LocalDateTime ngayBatDau;
+
     private LocalDateTime ngayKetThuc;
+
     private BigDecimal giaTriGiamToiDa;
+
     private BigDecimal giaTriGiamToiThieu;
+
     private BigDecimal giaTriGiam;
 
     @Enumerated(EnumType.STRING)
-    private StatusEnum trangThai;
+    private StatusPhieuGiamGia trangThai;
 
 }

@@ -1,5 +1,7 @@
 package com.okconde.bestepstyle.core.dto.hoadonchitiet.response;
 
+import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamShortResponse;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTShortResponse;
 import com.okconde.bestepstyle.core.entity.SanPhamChiTiet;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
@@ -9,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by TuanIf on 9/25/2024 21:14:00
@@ -35,7 +38,5 @@ public class HoaDonChiTietResponse {
 
     private HoaDonShortResponse hoaDon;
 
-
-    private SanPhamChiTiet sanPhamChiTiet;
 
 }

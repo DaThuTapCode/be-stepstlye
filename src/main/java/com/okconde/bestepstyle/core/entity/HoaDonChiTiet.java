@@ -30,6 +30,7 @@ public class HoaDonChiTiet {
     private BigDecimal donGia;
     private BigDecimal tongTien;
 
+
     @Enumerated(EnumType.STRING)
     private StatusHoaDonChiTiet trangThai;
 
@@ -37,7 +38,7 @@ public class HoaDonChiTiet {
     @JoinColumn(name = "id_hoa_don")
     private HoaDon hoaDon;
 
-//    @ManyToOne
-//    @JoinColumn(name = "id_spct")
-//    private SanPhamChiTiet sanPhamChiTiet;
+    @ManyToOne
+    @JoinColumn(name = "id_spct")
+    private SanPhamChiTiet sanPhamChiTiet;
 }

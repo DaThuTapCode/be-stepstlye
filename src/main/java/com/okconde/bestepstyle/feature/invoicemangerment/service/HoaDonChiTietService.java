@@ -7,10 +7,13 @@ import com.okconde.bestepstyle.core.mapper.hoadonchitiet.request.HoaDonChiTietRe
 import com.okconde.bestepstyle.core.mapper.hoadonchitiet.response.HoaDonChiTietResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonChiTietRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by TuanIf on 9/25/2024 20:28:02
@@ -33,8 +36,8 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
 
     @Override
     public List<HoaDonChiTietResponse> getPage(Pageable pageable) {
-
-        return null;
+        Page<HoaDonChiTiet> page = hoaDonChiTietRepository.findAll(pageable);
+        return page.map(hoaDonChiTietResponseMapper:: toDTO).getContent();
     }
 
     @Override
@@ -45,21 +48,41 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
 
     @Override
     public HoaDonChiTietResponse create(HoaDonChiTietRequest hoaDonChiTietRequest) {
-        return null;
+        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietResponseMapper.toEntity(hoaDonChiTietRequest);
+        hoaDonChiTiet = hoaDonChiTietRepository.save(hoaDonChiTiet);
+        return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTiet);
     }
 
     @Override
-    public HoaDonChiTietResponse update(Long aLong, HoaDonChiTietRequest hoaDonChiTietRequest) {
-        return null;
+    public HoaDonChiTietResponse update(Long id, HoaDonChiTietRequest hoaDonChiTietRequest) {
+        Optional<HoaDonChiTiet> optionalHoaDonChiTiet = hoaDonChiTietRepository.findById(id);
+        if(optionalHoaDonChiTiet.isPresent()) {
+            HoaDonChiTiet hoaDonChiTiet = optionalHoaDonChiTiet.get();
+            // Update các trường từ Resquet
+            hoaDonChiTiet = hoaDonChiTietResponseMapper.toEntity(hoaDonChiTietRequest);
+            hoaDonChiTiet.setIdHoaDonChiTiet(id);
+            hoaDonChiTiet = hoaDonChiTietRepository.save(hoaDonChiTiet);
+            return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTiet);
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id" + id);
+        }
     }
 
     @Override
-    public void delete(Long aLong) {
-
+    public void delete(Long id) {
+        Optional<HoaDonChiTiet> optionalHoaDonChiTiet = hoaDonChiTietRepository.findById(id);
+        if (optionalHoaDonChiTiet.isPresent()){
+            HoaDonChiTiet hoaDonChiTiet = optionalHoaDonChiTiet.get();
+            hoaDonChiTiet.setDeleted(true);
+            hoaDonChiTietRepository.save(hoaDonChiTiet);
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id: " + id);
+        }
     }
 
     @Override
     public HoaDonChiTietResponse getById(Long aLong) {
-        return null;
+        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findById(aLong)
+                .orElseThrow(() ->)
     }
 }

@@ -25,8 +25,11 @@ public class LichSuHoaDon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idLshd;
+
     private String hanhDong;
+
     private LocalDateTime ngayTao;
+
     private String nguoiThucHien;
 
     @Enumerated(EnumType.STRING)

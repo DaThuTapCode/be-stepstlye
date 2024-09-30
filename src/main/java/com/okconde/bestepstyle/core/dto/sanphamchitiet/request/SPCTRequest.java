@@ -40,4 +40,6 @@ public class SPCTRequest {
     private KichCo kichCo;
 
     private List<Anh> anhs;
+
+    private HoaDonChiTiet hoaDonChiTiet;
 }

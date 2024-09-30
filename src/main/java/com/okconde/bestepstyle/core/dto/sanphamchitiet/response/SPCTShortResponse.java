@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.dto.sanphamchitiet.response;
 
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietShortResponse;
 import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
 import com.okconde.bestepstyle.core.dto.anh.response.AnhShortResponse;
@@ -20,9 +21,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
 public class SPCTShortResponse {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long idSpct;
 
     private BigDecimal gia;
@@ -48,4 +49,6 @@ public class SPCTShortResponse {
     private KichCo kichCo;
 
     private List<AnhShortResponse> anhs;
+
+    private List<HoaDonChiTietShortResponse> hoaDonChiTiets;
 }

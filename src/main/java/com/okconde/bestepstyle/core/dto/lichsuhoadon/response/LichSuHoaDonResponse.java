@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,11 +13,21 @@ import java.time.LocalDateTime;
  *
  * @author TuanIf
  */
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+
 public class LichSuHoaDonResponse {
 
     private Long idLshd;
+
     private String hanhDong;
+
     private LocalDateTime ngayTao;
+
     private String nguoiThucHien;
 
     @Enumerated(EnumType.STRING)

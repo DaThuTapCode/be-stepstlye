@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -41,7 +42,6 @@ public class HoaDon {
 
     @Enumerated(EnumType.STRING)
     private StatusHoaDon trangThai;
-
 
     @ManyToOne
     @JoinColumn(name = "id_khach_hang")

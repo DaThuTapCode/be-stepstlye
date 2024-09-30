@@ -32,5 +32,6 @@ public class HoaDonRequest {
 
     private String soDienThoaiKhachHang;
 
-    private String ghiChu;;
+    private String ghiChu;
+
 }

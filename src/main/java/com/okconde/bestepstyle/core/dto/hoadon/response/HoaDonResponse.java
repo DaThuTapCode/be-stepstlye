@@ -1,5 +1,8 @@
 package com.okconde.bestepstyle.core.dto.hoadon.response;
 
+import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangShortResponse;
+import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienShortResponse;
+import com.okconde.bestepstyle.core.dto.thanhtoan.response.ThanhToanResponse;
 import com.okconde.bestepstyle.core.entity.KhachHang;
 import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.entity.ThanhToan;
@@ -57,11 +60,11 @@ public class HoaDonResponse {
     @Enumerated(EnumType.STRING)
     private StatusHoaDon trangThai;
 
-    private KhachHang khachHang;
+    private KhachHangShortResponse khachHang;
 
-    private NhanVien nhanVien;
+    private NhanVienShortResponse nhanVien;
 
-    private ThanhToan thanhToan;
+    private ThanhToanResponse thanhToan;
 
     private PhieuGiamGiaResponse phieuGiamGia;
 }

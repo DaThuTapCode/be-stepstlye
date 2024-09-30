@@ -27,14 +27,23 @@ public class PhieuGiamGia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPhieuGiamGia;
+
     private String tenPhieuGiamGia;
+
     private String moTa;
+
     private String loaiGiam;
+
     private LocalDateTime ngayBatDau;
+
     private LocalDateTime ngayKetThuc;
+
     private BigDecimal giaTriGiamToiDa;
+
     private BigDecimal giaTriGiamToiThieu;
+
     private BigDecimal giaTriGiam;
+
 
     @Enumerated(EnumType.STRING)
     private StatusPhieuGiamGia trangThai;
