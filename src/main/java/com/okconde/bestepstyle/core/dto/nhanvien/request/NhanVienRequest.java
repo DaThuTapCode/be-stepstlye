@@ -40,5 +40,5 @@ public class NhanVienRequest {
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
-    private Long chucVu;
+//    private Long chucVu;
 }
