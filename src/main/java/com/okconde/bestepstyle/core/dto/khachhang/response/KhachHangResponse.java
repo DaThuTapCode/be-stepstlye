@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * Created by Quang Minh on 9/25/2024 21:14:42
  *
@@ -23,8 +25,6 @@ import lombok.Setter;
 public class KhachHangResponse {
 
     private Long idKhachHang;
-
-    private DiaChiKhachHangShortResponse diaChiKhachHangs;
 
     private String tenKhachHang;
 
@@ -40,5 +40,7 @@ public class KhachHangResponse {
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
+
+    private List<DiaChiKhachHangShortResponse> diaChiKhachHangs;
 
 }
