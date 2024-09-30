@@ -29,6 +29,8 @@ public class DiaChiKhachHangShortResponse {
 
     private String huyen;
 
+    private String maPhuongXa;
+
     private String xa;
 
     private String duong;

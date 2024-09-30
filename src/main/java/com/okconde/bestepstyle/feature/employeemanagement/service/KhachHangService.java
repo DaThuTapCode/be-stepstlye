@@ -60,6 +60,7 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     public KhachHangResponse create(KhachHangRequest khachHangRequest) {
 
         KhachHang khachHangMoi = khachHangRequestMapper.toEntity(khachHangRequest);
+        khachHangMoi.setNgayTao(LocalDateTime.now());
         khachHangMoi.setNgayChinhSua(LocalDateTime.now());
         KhachHang addKH = khachHangRepository.save(khachHangMoi);
         return khachHangResponseMapper.toDTO(addKH);

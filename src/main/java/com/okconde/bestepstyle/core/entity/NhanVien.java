@@ -19,6 +19,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -41,7 +43,7 @@ public class NhanVien {
 
     private String hoTen;
 
-    private String ngaySinh;
+    private LocalDate ngaySinh;
 
     private String diaChi;
 
@@ -54,6 +56,10 @@ public class NhanVien {
     private String ghiChu;
 
     private String anh;
+
+    private LocalDateTime ngayTao;
+
+    private LocalDateTime ngayChinhSua;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;

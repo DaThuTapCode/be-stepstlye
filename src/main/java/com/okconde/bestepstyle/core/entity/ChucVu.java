@@ -36,12 +36,6 @@ public class ChucVu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idChucVu;
 
-    @OneToMany(
-            mappedBy = "chucVu",
-            fetch = FetchType.LAZY
-    )
-    private List<NhanVien> nhanViens;
-
     private String tenChucVu;
 
     private String moTa;

@@ -26,7 +26,7 @@ public class ChucVuResponse {
 
     private Long idChucVu;
 
-    private List<NhanVienShortResponse> nhanViens;
+    private String tenChucVu;
 
     private String moTa;
 

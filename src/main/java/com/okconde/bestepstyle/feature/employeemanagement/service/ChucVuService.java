@@ -41,9 +41,7 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
 
     @Override
     public List<ChucVuResponse> getPage(Pageable pageable) {
-
-        return chucVuRepository.findAll(pageable).map(chucVuResponseMapper :: toDTO).getContent();
-
+        return null;
     }
 
     @Override
@@ -57,49 +55,19 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
     @Override
     @Transactional
     public ChucVuResponse create(ChucVuRequest chucVuRequest) {
-
-        ChucVu chucVuMoi = chucVuRequestMapper.toEntity(chucVuRequest);
-        ChucVu addCV = chucVuRepository.save(chucVuMoi);
-        return chucVuResponseMapper.toDTO(addCV);
-
+        return null;
     }
 
     @Override
     @Transactional
     public ChucVuResponse update(Long aLong, ChucVuRequest chucVuRequest) {
-        // Tìm chức vụ theo id, nếu không tồn tại thì ném ngoại lệ
-        ChucVu existingChucVu = chucVuRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
-
-        // Cập nhật các trường từ request vào đối tượng chức vụ đã tìm thấy
-        if (chucVuRequest.getTenChucVu() != null) {
-            existingChucVu.setTenChucVu(chucVuRequest.getTenChucVu());
-        }
-
-        if (chucVuRequest.getMoTa() != null) {
-            existingChucVu.setMoTa(chucVuRequest.getMoTa());
-        }
-
-        if (chucVuRequest.getTrangThai() != null) {
-            existingChucVu.setTrangThai(chucVuRequest.getTrangThai());
-        }
-
-        // Lưu lại đối tượng chức vụ đã cập nhật vào cơ sở dữ liệu
-        ChucVu updatedChucVu = chucVuRepository.save(existingChucVu);
-
-        // Chuyển đổi từ Entity sang DTO để trả về
-        return chucVuResponseMapper.toDTO(updatedChucVu);
+        return null;
     }
 
 
     @Override
     @Transactional
     public void delete(Long aLong) {
-
-        ChucVu cv = chucVuRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
-        cv.setTrangThai(StatusEnum.INACTIVE);
-        chucVuRepository.save(cv);
 
     }
 

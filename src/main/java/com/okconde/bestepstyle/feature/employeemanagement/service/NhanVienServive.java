@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -58,6 +59,8 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     public NhanVienResponse create(NhanVienRequest nhanVienRequest) {
 
         NhanVien nhanVienMoi = nhanVienRequestMapper.toEntity(nhanVienRequest);
+        nhanVienMoi.setNgayTao(LocalDateTime.now());
+        nhanVienMoi.setNgayChinhSua(LocalDateTime.now());
         ChucVu cv = new ChucVu();
         cv.setIdChucVu(2L);
         nhanVienMoi.setChucVu(cv);
@@ -111,11 +114,8 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
             existingNhanVien.setTrangThai(nhanVienRequest.getTrangThai());
         }
 
-        // Cập nhật ChucVu nếu có trong request
-        NhanVien nhanVienMoi = nhanVienRequestMapper.toEntity(nhanVienRequest);
-        ChucVu cv = new ChucVu();
-        cv.setIdChucVu(2L);
-        nhanVienMoi.setChucVu(cv);
+        // Cập nhật NhanVien nếu có trong request
+        existingNhanVien.setNgayChinhSua(LocalDateTime.now());
 
         // Lưu nhân viên đã cập nhật vào database
         NhanVien updatedNhanVien = nhanVienRepository.save(existingNhanVien);

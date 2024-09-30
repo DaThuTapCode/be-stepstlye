@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,11 +46,13 @@ public class KhachHang {
 
     private String email;
 
-    private String ngaySinh;
+    private LocalDate ngaySinh;
 
     private Boolean gioiTinh;
 
     private String ghiChu;
+
+    private LocalDateTime ngayTao;
 
     private LocalDateTime ngayChinhSua;
 
