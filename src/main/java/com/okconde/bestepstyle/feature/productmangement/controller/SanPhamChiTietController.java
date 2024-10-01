@@ -1,6 +1,6 @@
 package com.okconde.bestepstyle.feature.productmangement.controller;
 
-import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.productmangement.service.SanPhamChiTietService;
 import org.springframework.http.HttpStatus;
@@ -28,20 +28,20 @@ public class SanPhamChiTietController {
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity<ResponseData<ThuongHieuResponse>> getSanPhamChiTietById(
+    public ResponseEntity<ResponseData<SPCTResponse>> getSanPhamChiTietById(
             @PathVariable Long id
     ){
         return ResponseEntity.ok(
-                new ResponseData(HttpStatus.OK.value(),
+                new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy thành công sản phẩm chi tiết với id: " + id,
                         sanPhamChiTietService.getById(id))
         );
     }
 
     @GetMapping(value = "get-all")
-    public ResponseEntity<ResponseData<List<ThuongHieuResponse>>> getAllSanPhamChiTiet(){
+    public ResponseEntity<ResponseData<List<SPCTResponse>>> getAllSanPhamChiTiet(){
         return ResponseEntity.ok(
-                new ResponseData(HttpStatus.OK.value(),
+                new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy thành công danh sách sản phẩm chi tiết",
                         sanPhamChiTietService.getAll())
         );

@@ -30,7 +30,11 @@ public class ThuongHieuService implements IBaseService<ThuongHieu, Long, ThuongH
     private final ThuongHieuRequestMapper thuongHieuRequestMapper;
 
     //Constructor
-    public ThuongHieuService(ThuongHieuRepository thuongHieuRepository, ThuongHieuResponseMapper thuongHieuResponseMapper, ThuongHieuRequestMapper thuongHieuRequestMapper) {
+    public ThuongHieuService(
+            ThuongHieuRepository thuongHieuRepository,
+            ThuongHieuResponseMapper thuongHieuResponseMapper,
+            ThuongHieuRequestMapper thuongHieuRequestMapper
+    ) {
         this.thuongHieuRepository = thuongHieuRepository;
         this.thuongHieuResponseMapper = thuongHieuResponseMapper;
         this.thuongHieuRequestMapper = thuongHieuRequestMapper;
