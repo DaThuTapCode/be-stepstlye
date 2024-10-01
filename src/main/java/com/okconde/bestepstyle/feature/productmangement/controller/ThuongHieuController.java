@@ -1,8 +1,5 @@
 package com.okconde.bestepstyle.feature.productmangement.controller;
 
-import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucRequest;
-import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
-
 import com.okconde.bestepstyle.core.dto.thuonghieu.request.ThuongHieuRequest;
 import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
@@ -11,6 +8,8 @@ import com.okconde.bestepstyle.feature.productmangement.service.ThuongHieuServic
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by Trong Phu on 25/09/2024 20:20
@@ -32,7 +31,7 @@ public class ThuongHieuController {
      * @return data {@link ThuongHieuResponse}
      * */
     @GetMapping(value = "{id}")
-    public ResponseEntity<ResponseData> getThuongHieuById(
+    public ResponseEntity<ResponseData<ThuongHieuResponse>> getThuongHieuById(
             @PathVariable Long id
     ){
         return ResponseEntity.ok(
@@ -46,7 +45,7 @@ public class ThuongHieuController {
      * @apiNote API lấy toàn bộ {@link ThuongHieu} GET http://localhost:8080/api/thuong-hieu/get-all
      * */
     @GetMapping(value = "get-all")
-    public ResponseEntity<ResponseData> getAllThuongHieu(){
+    public ResponseEntity<ResponseData<List<ThuongHieuResponse>>> getAllThuongHieu(){
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy thành công danh sách thương hiệu",

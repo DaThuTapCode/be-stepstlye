@@ -27,11 +27,11 @@ public class SanPhamController {
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity<ResponseData> getSanPhamById(
+    public ResponseEntity<ResponseData<SanPhamResponse>> getSanPhamById(
             @PathVariable Long id
     ){
         return ResponseEntity.ok
-                (new ResponseData(
+                (new ResponseData<>(
                         HttpStatus.OK.value(),
                         "Lấy thành công sản phẩm với id: " + id,
                         sanPhamService.getById(id)
@@ -41,7 +41,7 @@ public class SanPhamController {
     @GetMapping(value = "get-all")
     public ResponseEntity<ResponseData<List<SanPhamResponse>>> getAllSanPham(){
         return ResponseEntity.ok
-                (new ResponseData(
+                (new ResponseData<>(
                         HttpStatus.OK.value(),
                         "Lấy thành công danh sách sản phẩm",
                         sanPhamService.getAll()
