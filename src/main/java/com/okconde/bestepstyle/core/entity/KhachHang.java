@@ -41,13 +41,6 @@ public class KhachHang {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idKhachHang;
 
-    @JsonIgnore
-    @OneToMany(
-            mappedBy = "khachHang",
-            fetch = FetchType.LAZY
-    )
-    private List<DiaChiKhachHang> diaChiKhachHangs;
-
     private String tenKhachHang;
 
     private String soDienThoai;

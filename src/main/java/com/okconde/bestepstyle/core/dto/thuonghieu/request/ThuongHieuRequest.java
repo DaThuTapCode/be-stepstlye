@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.dto.thuonghieu.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 /**
@@ -14,6 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ThuongHieuRequest {
 
+    @NotBlank(message = "Tên thương hiệu không được để trống")
     private String tenThuongHieu;
 
     private String xuatXu;

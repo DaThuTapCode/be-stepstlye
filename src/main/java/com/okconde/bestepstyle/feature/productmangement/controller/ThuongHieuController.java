@@ -5,6 +5,7 @@ import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.productmangement.service.ThuongHieuService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +62,7 @@ public class ThuongHieuController {
      * */
     @PostMapping("create")
     public ResponseEntity<ResponseData<ThuongHieuResponse>> createNewThuongHieu(
-            @RequestBody ThuongHieuRequest thuongHieuRequest
+            @RequestBody @Valid ThuongHieuRequest thuongHieuRequest
     ) {
         ThuongHieuResponse thuongHieuResponse = thuongHieuService.create(thuongHieuRequest);
         return ResponseEntity.ok(
