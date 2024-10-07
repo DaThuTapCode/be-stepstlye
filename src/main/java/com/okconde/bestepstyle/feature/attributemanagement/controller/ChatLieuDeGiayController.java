@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayRe
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.ChatLieuDeGiayService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class ChatLieuDeGiayController {
 
     // thêm chất liệu đế giày
     @PostMapping("create-chat-lieu-de-giay")
-    public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> createChatLieuDeGiay(@RequestBody ChatLieuDeGiayRequest chatLieuDeGiayRequest){
+    public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> createChatLieuDeGiay(@RequestBody @Valid ChatLieuDeGiayRequest chatLieuDeGiayRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm chất liệu đế giày thành công", chatLieuDeGiayService.create(chatLieuDeGiayRequest)));
     }

@@ -2,6 +2,7 @@ package com.okconde.bestepstyle.core.dto.chatlieu.request;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 /**
@@ -16,6 +17,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ChatLieuRequest {
 
+    @NotBlank(message = "Tên chất liệu không được để trống!")
     private String tenChatLieu;
 
     private String doBen;

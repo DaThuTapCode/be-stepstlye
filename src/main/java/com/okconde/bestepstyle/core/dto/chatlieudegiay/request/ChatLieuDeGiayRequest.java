@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.core.dto.chatlieudegiay.request;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 /**
@@ -17,6 +18,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ChatLieuDeGiayRequest {
 
+    @NotBlank(message = "Tên chất liệu đế giày không được để trống!")
     private String tenChatLieuDeGiay;
 
     private String giaTri;

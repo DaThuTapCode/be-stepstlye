@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.core.dto.trongluong.request;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 /**
@@ -17,6 +18,7 @@ import lombok.*;
 @AllArgsConstructor
 public class TrongLuongRequest {
 
+    @NotBlank(message = "Giá trị trọng lượng không được để trống!")
     private String giaTri;
 
     private String moTa;

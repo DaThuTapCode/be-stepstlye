@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.KichCoService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class KichCoController {
 
     // thêm kích cỡ
     @PostMapping("create-kich-co")
-    public ResponseEntity<ResponseData<KichCoResponse>> createKichCo(@RequestBody KichCoRequest kichCoRequest){
+    public ResponseEntity<ResponseData<KichCoResponse>> createKichCo(@RequestBody @Valid KichCoRequest kichCoRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm kích cỡ thành công", kichCoService.create(kichCoRequest)));
     }
