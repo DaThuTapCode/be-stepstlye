@@ -1,11 +1,10 @@
 package com.okconde.bestepstyle.feature.employeemanagement.controller;
 
-import com.okconde.bestepstyle.core.dto.diachikhachhang.request.DiaChiKhachHangRequest;
-import com.okconde.bestepstyle.core.dto.diachikhachhang.response.DiaChiKhachHangResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.employeemanagement.service.KhachHangService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -73,7 +72,7 @@ public class KhachHangController {
     // Hàm thêm 1 dữ liệu mới
     @PostMapping("create")
     public ResponseEntity<ResponseData<KhachHangResponse>> createKH(
-            @RequestBody KhachHangRequest request
+            @RequestBody @Valid KhachHangRequest request
     ){
 
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
@@ -84,7 +83,7 @@ public class KhachHangController {
     // Hàm update KH
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<KhachHangResponse>> updateKH(
-            @RequestBody KhachHangRequest request, @PathVariable Long id
+            @RequestBody @Valid KhachHangRequest request, @PathVariable Long id
     ){
 
         KhachHangResponse updateKH = khachHangService.update(id, request);

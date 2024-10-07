@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.diachikhachhang.request.DiaChiKhachHangR
 import com.okconde.bestepstyle.core.dto.diachikhachhang.response.DiaChiKhachHangResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.employeemanagement.service.DiaChiKhachHangService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -71,7 +72,7 @@ public class DiaChiKhachHangController {
     // Hàm thêm 1 dữ liệu mới
     @PostMapping("create")
     public ResponseEntity<ResponseData<DiaChiKhachHangResponse>> createDiaChiKH(
-            @RequestBody DiaChiKhachHangRequest request
+            @RequestBody @Valid DiaChiKhachHangRequest request
     ){
 
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
@@ -82,7 +83,7 @@ public class DiaChiKhachHangController {
     // Hàm update địa chỉ KH
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<DiaChiKhachHangResponse>> updateDiaChiKH(
-            @RequestBody DiaChiKhachHangRequest request, @PathVariable Long id
+            @RequestBody @Valid DiaChiKhachHangRequest request, @PathVariable Long id
     ){
 
         DiaChiKhachHangResponse updateDCKH = diaChiKhachHangService.update(id, request);
