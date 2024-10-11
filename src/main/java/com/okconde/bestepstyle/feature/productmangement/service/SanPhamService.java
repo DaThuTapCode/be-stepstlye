@@ -1,12 +1,15 @@
 package com.okconde.bestepstyle.feature.productmangement.service;
 
 import com.okconde.bestepstyle.core.dto.sanpham.request.SanPhamRequest;
+import com.okconde.bestepstyle.core.dto.sanpham.request.SanPhamSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamResponse;
 import com.okconde.bestepstyle.core.entity.SanPham;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamResponseMapper;
 import com.okconde.bestepstyle.core.repository.SanPhamRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.formater.DateFormater;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -63,4 +66,21 @@ public class SanPhamService implements IBaseService<SanPham, Long, SanPhamReques
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với id: " + aLong));
         return sanPhamResponseMapper.toDTO(sanPham);
     }
+
+    /**
+     * Hàm tìm kiếm kết hợp phân trang sản phẩm
+     * */
+    public Page<SanPhamResponse> searchPageProduct(
+            Pageable pageable,
+            SanPhamSearchRequest sanPhamSearchRequest
+    ){
+        Page<SanPham> sanPhamPage = sanPhamRepository.searchPage(pageable,
+                sanPhamSearchRequest.getTenSanPham(),
+                sanPhamSearchRequest.getNgayTaoStart(),
+                DateFormater.setEndDate(sanPhamSearchRequest.getNgayTaoEnd()),
+                sanPhamSearchRequest.getIdDanhMuc(),
+                sanPhamSearchRequest.getIdThuongHieu());
+        return sanPhamPage.map(sanPhamResponseMapper::toDTO);
+    }
 }
+

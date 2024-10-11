@@ -1,14 +1,15 @@
 package com.okconde.bestepstyle.feature.productmangement.controller;
 
+import com.okconde.bestepstyle.core.dto.sanpham.request.SanPhamSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.productmangement.service.SanPhamService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +27,10 @@ public class SanPhamController {
         this.sanPhamService = sanPhamService;
     }
 
+    /**
+     * @apiNote API lấy sản phẩm theo id GET http://localhost:8080/api/san-pham/{{id}}
+     * @param id Khóa chính của Sản Phẩm
+     * */
     @GetMapping(value = "{id}")
     public ResponseEntity<ResponseData<SanPhamResponse>> getSanPhamById(
             @PathVariable Long id
@@ -38,6 +43,9 @@ public class SanPhamController {
                 ));
     }
 
+    /**
+     * @apiNote API lấy tẩt cả sản phẩm GET http://localhost:8080/api/san-pham/get-all
+     * */
     @GetMapping(value = "get-all")
     public ResponseEntity<ResponseData<List<SanPhamResponse>>> getAllSanPham(){
         return ResponseEntity.ok
@@ -45,6 +53,21 @@ public class SanPhamController {
                         HttpStatus.OK.value(),
                         "Lấy thành công danh sách sản phẩm",
                         sanPhamService.getAll()
+                ));
+    }
+
+    /**
+     * @apiNote API tìm kiếm sản phẩm theo nhiều tham số POST http://localhost:8080/api/san-pham/search*/
+    @PostMapping(value = "search")
+    public ResponseEntity<ResponseData<Page<SanPhamResponse>>> searchProduct(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) SanPhamSearchRequest sanPhamSearchRequest
+            ){
+        return ResponseEntity.ok
+                (new ResponseData<>(
+                        HttpStatus.OK.value(),
+                        "Tìm kiếm thành công danh sách sản phẩm",
+                        sanPhamService.searchPageProduct(pageable, sanPhamSearchRequest)
                 ));
     }
 }
