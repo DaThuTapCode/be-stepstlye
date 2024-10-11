@@ -2,6 +2,7 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
 import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
+import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.entity.TrongLuong;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.trongluong.request.TrongLuongRequestMapper;
@@ -67,11 +68,11 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
         TrongLuong trongLuong = trongLuongRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy trọng lượng với id" + id));
 
-        TrongLuong trongLuongUpdate = trongLuongRequestMapper.toEntity(trongLuongRequest);
-        trongLuong.setGiaTri(trongLuongUpdate.getGiaTri());
-        trongLuong.setMoTa(trongLuongUpdate.getMoTa());
-        TrongLuong trongLuongUpdated1 = trongLuongRepository.save(trongLuongUpdate);
-        return trongLuongResponseMapper.toDTO(trongLuongUpdated1);
+        trongLuong.setGiaTri(trongLuongRequest.getGiaTri());
+        trongLuong.setMoTa(trongLuongRequest.getMoTa());
+        trongLuong.setTrangThai(StatusEnum.ACTIVE);
+        TrongLuong trongLuongUpdated = trongLuongRepository.save(trongLuong);
+        return trongLuongResponseMapper.toDTO(trongLuongUpdated);
     }
 
 

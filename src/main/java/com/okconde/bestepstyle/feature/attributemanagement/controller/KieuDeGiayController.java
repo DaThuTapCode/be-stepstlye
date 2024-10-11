@@ -8,6 +8,7 @@ import com.okconde.bestepstyle.core.entity.KieuDeGiay;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.KieuDeGiayService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class KieuDeGiayController {
 
     // thêm kiểu để giầy
     @PostMapping("create-kieu-de-giay")
-    public ResponseEntity<ResponseData<KieuDeGiayResponse>> createKieuDeGiay(@RequestBody KieuDeGiayRequest kieuDeGiayRequest){
+    public ResponseEntity<ResponseData<KieuDeGiayResponse>> createKieuDeGiay(@RequestBody @Valid KieuDeGiayRequest kieuDeGiayRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm kiểu đế giày thành công", kieuDeGiayService.create(kieuDeGiayRequest)));
     }
