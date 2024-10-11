@@ -4,7 +4,6 @@ import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -20,7 +19,6 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 public class KichCoRequest {
 
-    @NotBlank(message = "Giá trị kích cỡ không được để trống!")
     private Double giaTri;
 
     private String moTa;

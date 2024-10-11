@@ -57,7 +57,7 @@ public class TrongLuongController {
     }
 
     // update trọng lượng
-    @PutMapping("update-trong-luong")
+    @PutMapping("update-trong-luong/{id}")
     public ResponseEntity<ResponseData<TrongLuongResponse>> updateTrongLuong(
             @RequestBody TrongLuongRequest trongLuongRequest,
             @RequestParam Long id

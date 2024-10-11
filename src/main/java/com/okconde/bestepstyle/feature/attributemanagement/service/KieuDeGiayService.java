@@ -66,12 +66,12 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
         KieuDeGiay kieuDeGiay = kieuDeGiayRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy kiểu đế giầy với id" + id));
 
-        KieuDeGiay kieuDeGiayUpdate = kieuDeGiayRequestMapper.toEntity(kieuDeGiayRequest);
-        kieuDeGiay.setTenKieuDeGiay(kieuDeGiayUpdate.getTenKieuDeGiay());
-        kieuDeGiay.setGiaTri(kieuDeGiayUpdate.getGiaTri());
-        kieuDeGiay.setMoTa(kieuDeGiayUpdate.getMoTa());
-        KieuDeGiay kieuDeGiayUpdated1 = kieuDeGiayRepository.save(kieuDeGiayUpdate);
-        return kieuDeGiayResponseMapper.toDTO(kieuDeGiayUpdated1);
+        kieuDeGiay.setTenKieuDeGiay(kieuDeGiayRequest.getTenKieuDeGiay());
+        kieuDeGiay.setGiaTri(kieuDeGiayRequest.getGiaTri());
+        kieuDeGiay.setMoTa(kieuDeGiayRequest.getMoTa());
+        kieuDeGiay.setTrangThai(StatusEnum.ACTIVE);
+        KieuDeGiay kieuDeGiayUpdated = kieuDeGiayRepository.save(kieuDeGiay);
+        return kieuDeGiayResponseMapper.toDTO(kieuDeGiayUpdated);
     }
 
     @Override

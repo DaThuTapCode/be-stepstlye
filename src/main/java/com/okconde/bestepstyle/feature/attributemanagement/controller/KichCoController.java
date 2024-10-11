@@ -49,7 +49,7 @@ public class KichCoController {
 
     // thêm kích cỡ
     @PostMapping("create-kich-co")
-    public ResponseEntity<ResponseData<KichCoResponse>> createKichCo(@RequestBody @Valid KichCoRequest kichCoRequest){
+    public ResponseEntity<ResponseData<KichCoResponse>> createKichCo(@RequestBody KichCoRequest kichCoRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm kích cỡ thành công", kichCoService.create(kichCoRequest)));
     }

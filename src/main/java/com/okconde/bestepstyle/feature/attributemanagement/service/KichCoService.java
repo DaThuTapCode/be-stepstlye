@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.entity.KichCo;
+import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.kichco.request.KichCoRequestMapper;
 import com.okconde.bestepstyle.core.mapper.kichco.response.KichCoResponseMapper;
@@ -67,10 +68,10 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
         KichCo kichCo = kichCoRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy kích cỡ với id" + id));
 
-        KichCo kichCoUpdate = kichCoRequestMapper.toEntity(kichCoRequest);
-        kichCo.setGiaTri(kichCoUpdate.getGiaTri());
-        kichCo.setMoTa(kichCoUpdate.getMoTa());
-        KichCo kichCoUpdated = kichCoRepository.save(kichCoUpdate);
+        kichCo.setGiaTri(kichCoRequest.getGiaTri());
+        kichCo.setMoTa(kichCoRequest.getMoTa());
+        kichCo.setTrangThai(StatusEnum.ACTIVE);
+        KichCo kichCoUpdated = kichCoRepository.save(kichCo);
         return kichCoResponseMapper.toDTO(kichCoUpdated);
     }
 
