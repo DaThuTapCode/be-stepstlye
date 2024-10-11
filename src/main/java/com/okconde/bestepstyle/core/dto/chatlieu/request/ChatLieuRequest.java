@@ -16,6 +16,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatLieuRequest {
+    private Long idChatLieu;
+
+    private String maChatLieu;
 
     @NotBlank(message = "Tên chất liệu không được để trống!")
     private String tenChatLieu;

@@ -18,6 +18,9 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MauSacRequest {
+    private Long idMauSac;
+
+    private String maMauSac;
 
     @NotBlank(message = "Tên màu sắc không được để trống!")
     @Length(max = 255, message = "Tên màu sắc không được vượt quá 255 ký tự!")

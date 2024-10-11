@@ -17,6 +17,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrongLuongRequest {
+    private Long idTrongLuong;
+
+    private String maTrongLuong;
 
     @NotBlank(message = "Giá trị trọng lượng không được để trống!")
     private String giaTri;

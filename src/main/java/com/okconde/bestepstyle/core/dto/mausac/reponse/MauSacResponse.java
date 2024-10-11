@@ -18,6 +18,8 @@ import lombok.*;
 public class MauSacResponse {
     private Long idMauSac;
 
+    private String maMauSac;
+
     private String tenMau;
 
     private String giaTri;
