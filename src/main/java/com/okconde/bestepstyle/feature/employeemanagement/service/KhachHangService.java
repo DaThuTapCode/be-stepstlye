@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.employeemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangRequest;
+import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
 import com.okconde.bestepstyle.core.entity.KhachHang;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -9,6 +10,7 @@ import com.okconde.bestepstyle.core.mapper.khachhang.response.KhachHangResponseM
 import com.okconde.bestepstyle.core.repository.KhachHangRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +76,13 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
         KhachHang existingKH = khachHangRepository.findById(aLong)
                 .orElseThrow(() -> new ResourceNotFoundException("Khách hàng không tồn tại"));
 
+//        existingKH.setTrangThai(StatusEnum.ACTIVE);
+
         // Cập nhật các trường từ request vào đối tượng khách hàng đã tìm thấy
+        if (khachHangRequest.getMaKhachHang() != null) {
+            existingKH.setMaKhachHang(khachHangRequest.getMaKhachHang());
+        }
+
         if (khachHangRequest.getTenKhachHang() != null) {
             existingKH.setTenKhachHang(khachHangRequest.getTenKhachHang());
         }
@@ -98,6 +106,8 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
         if (khachHangRequest.getGhiChu() != null) {
             existingKH.setGhiChu(khachHangRequest.getGhiChu());
         }
+
+        existingKH.setTrangThai(khachHangRequest.getTrangThai());
 
         // Cập nhật thời gian chỉnh sửa cuối cùng
         existingKH.setNgayChinhSua(LocalDateTime.now());
@@ -128,5 +138,12 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
                 .orElseThrow(() -> new ResourceNotFoundException("Khách hàng không tồn tại"));
         return khachHangResponseMapper.toDTO(kh);
 
+    }
+
+    public Page<KhachHangResponse> searchPageKH(Pageable pageable, KhachHangSearchRequest khachHangSearchRequest){
+
+        Page<KhachHang> khachHangPage = khachHangRepository.searchPageKHByTenAndSDT
+                (pageable, khachHangSearchRequest.getMaKhachHang(), khachHangSearchRequest.getTenKhachHang(), khachHangSearchRequest.getSoDienThoai());
+        return khachHangPage.map(khachHangResponseMapper::toDTO);
     }
 }

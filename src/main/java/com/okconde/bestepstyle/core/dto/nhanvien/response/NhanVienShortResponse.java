@@ -27,6 +27,8 @@ public class NhanVienShortResponse {
 
     private Long idNhanVien;
 
+    private String maNhanVien;
+
     private String hoTen;
 
     @JsonFormat(pattern = "dd-MM-yyyy")

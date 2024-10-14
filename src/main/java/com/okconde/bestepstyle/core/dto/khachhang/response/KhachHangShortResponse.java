@@ -28,6 +28,8 @@ public class KhachHangShortResponse {
 
     private Long idKhachHang;
 
+    private String maKhachHang;
+
     private String tenKhachHang;
 
     private String soDienThoai;
