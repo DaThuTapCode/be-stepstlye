@@ -13,6 +13,7 @@ import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -35,6 +36,8 @@ public class HoaDonResponse {
 
     private Long idHoaDon;
 
+    private String maHoaDon;
+
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayTaoDon;
 
@@ -53,13 +56,16 @@ public class HoaDonResponse {
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayNhanHang;
 
+
     private String loaiHoaDon;
+
 
     private String tenKhachHang;
 
     private String diaChiGiaoHang;
 
     private String soDienThoaiKhachHang;
+
 
     private String ghiChu;
 

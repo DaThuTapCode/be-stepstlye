@@ -72,10 +72,10 @@ public class LichSuHoaDonService implements IBaseService<LichSuHoaDon, Long, Lic
     public LichSuHoaDonResponse update(Long id, LichSuHoaDonRequest lichSuHoaDonRequest) {
         LichSuHoaDon lichSuHoaDonExisting = lichSuHoaDonRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
-        LichSuHoaDon lichSuHoaDonToUpdate = lichSuHoaDonRequestMapper.toEntity(lichSuHoaDonRequest);
-        lichSuHoaDonExisting.setHanhDong(lichSuHoaDonToUpdate.getHanhDong());
+
+        lichSuHoaDonExisting.setHanhDong(lichSuHoaDonRequest.getHanhDong());
         lichSuHoaDonExisting.setNgayTao(LocalDateTime.now());
-        lichSuHoaDonExisting.setNguoiThucHien(lichSuHoaDonToUpdate.getNguoiThucHien());
+        lichSuHoaDonExisting.setNguoiThucHien(lichSuHoaDonRequest.getNguoiThucHien());
 
         LichSuHoaDon lichSuHoaDonUpdated = lichSuHoaDonRepository.save(lichSuHoaDonExisting);
         return lichSuHoaDonResponseMapper.toDTO(lichSuHoaDonUpdated);

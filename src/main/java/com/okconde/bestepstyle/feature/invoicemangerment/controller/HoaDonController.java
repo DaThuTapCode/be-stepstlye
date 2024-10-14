@@ -6,6 +6,7 @@ import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResp
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.HoaDonService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class HoaDonController {
             @PageableDefault(size = 10) Pageable pageable
     ){
         List<HoaDonResponse> responses =    hoaDonService.getPage(pageable);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", responses));
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công Hóa Đơn", responses));
     }
 
     @GetMapping("get-all")
@@ -50,13 +51,14 @@ public class HoaDonController {
 
     @PostMapping("create")
     public ResponseEntity<ResponseData<HoaDonResponse>> createHoaDon(
+            @Valid
             @RequestBody HoaDonRequest request
     ) {
         HoaDonResponse response = hoaDonService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseData<>(
                         HttpStatus.CREATED.value(),
-                        "Tạo thành công"
+                        "Tạo thành công Hóa Đơn"
                         , response));
     }
 
@@ -67,7 +69,7 @@ public class HoaDonController {
     ) {
         HoaDonResponse response = hoaDonService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
-                , "Cập nhật thành công", response));
+                , "Cập nhật thành công Hóa Đơn", response));
     }
 
     @DeleteMapping("delete/{id}")
@@ -77,7 +79,7 @@ public class HoaDonController {
         try {
             hoaDonService.delete(id);
             return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
-                    "Xóa thành công", null));
+                    "Xóa thành công Hóa Đơn", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
@@ -89,6 +91,6 @@ public class HoaDonController {
             @PathVariable Long id
     ){
         HoaDonResponse response = hoaDonService.getById(id);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", response));
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công Hóa Đơn", response));
     }
 }

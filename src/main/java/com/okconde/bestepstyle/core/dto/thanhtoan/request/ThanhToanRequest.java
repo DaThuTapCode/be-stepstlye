@@ -19,6 +19,9 @@ import lombok.*;
 
 public class ThanhToanRequest {
 
+    private Long idThanhToan;
+
+    private String maThanhToan;
 
     private String phuongThucThanhToan;
 

@@ -16,6 +16,10 @@ import lombok.*;
 
 public class LichSuHoaDonRequest {
 
+    private Long idLshd;
+
+    private String maLichSuHoaDon;
+
     private String hanhDong;
 
     private String nguoiThucHien;

@@ -79,15 +79,14 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
         PhieuGiamGia phieuGiamGiaExisting = phieuGiamGiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
 
-        PhieuGiamGia phieuGiamGiaToUpdate = phieuGiamGiaRequestMapper.toEntity(phieuGiamGiaRequest);
-        phieuGiamGiaExisting.setTenPhieuGiamGia(phieuGiamGiaToUpdate.getTenPhieuGiamGia());
-        phieuGiamGiaExisting.setMoTa(phieuGiamGiaToUpdate.getMoTa());
-        phieuGiamGiaExisting.setLoaiGiam(phieuGiamGiaToUpdate.getLoaiGiam());
+        phieuGiamGiaExisting.setTenPhieuGiamGia(phieuGiamGiaRequest.getTenPhieuGiamGia());
+        phieuGiamGiaExisting.setMoTa(phieuGiamGiaRequest.getMoTa());
+        phieuGiamGiaExisting.setLoaiGiam(phieuGiamGiaRequest.getLoaiGiam());
         phieuGiamGiaExisting.setNgayBatDau(LocalDateTime.now());
         phieuGiamGiaExisting.setNgayKetThuc(LocalDateTime.now());
-        phieuGiamGiaExisting.setGiaTriGiamToiDa(phieuGiamGiaToUpdate.getGiaTriGiamToiDa());
-        phieuGiamGiaExisting.setGiaTriGiam(phieuGiamGiaToUpdate.getGiaTriGiam());
-        phieuGiamGiaExisting.setGiaTriGiamToiThieu(phieuGiamGiaToUpdate.getGiaTriGiamToiThieu());
+        phieuGiamGiaExisting.setGiaTriGiamToiDa(phieuGiamGiaRequest.getGiaTriGiamToiDa());
+        phieuGiamGiaExisting.setGiaTriGiam(phieuGiamGiaRequest.getGiaTriGiam());
+        phieuGiamGiaExisting.setGiaTriGiamToiThieu(phieuGiamGiaRequest.getGiaTriGiamToiThieu());
 
         PhieuGiamGia phieuGiamGiaUpdated = phieuGiamGiaRepository.save(phieuGiamGiaExisting);
         return phieuGiamGiaResponseMapper.toDTO(phieuGiamGiaUpdated);

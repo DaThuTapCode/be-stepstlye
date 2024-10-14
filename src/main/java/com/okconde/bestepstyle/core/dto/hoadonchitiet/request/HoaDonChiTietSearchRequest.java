@@ -5,7 +5,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 /**
- * Created by TuanIf on 9/25/2024 21:13:49
+ * Created by TuanIf on 10/11/2024 19:38:40
  *
  * @author TuanIf
  */
@@ -16,15 +16,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 
-public class HoaDonChiTietRequest {
+public class HoaDonChiTietSearchRequest {
 
     private int soLuong;
 
     private String maHoaDonChiTiet;
 
-    private BigDecimal donGia;
-
     private BigDecimal tongTien;
-
-
 }

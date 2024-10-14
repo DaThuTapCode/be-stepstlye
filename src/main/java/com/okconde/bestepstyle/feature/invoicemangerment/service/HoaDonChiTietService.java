@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.service;
 
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -40,10 +41,16 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
         this.hoaDonChiTietRequestMapper = hoaDonChiTietRequestMapper;
     }
 
+
+    public Page<HoaDonChiTietResponse> searchPageHoaDonChiTiet(Pageable pageable, HoaDonChiTietSearchRequest hoaDonChiTietSearchRequest){
+        Page<HoaDonChiTiet> hoaDonChiTietPage = hoaDonChiTietRepository.searchPageHoaDonChiTiet(pageable, hoaDonChiTietSearchRequest.getSoLuong(), hoaDonChiTietSearchRequest.getTongTien());
+        return hoaDonChiTietPage.map(hoaDonChiTietResponseMapper::toDTO);
+    }
+
+
     @Override
     public List<HoaDonChiTietResponse> getPage(Pageable pageable) {
-        Page<HoaDonChiTiet> page = hoaDonChiTietRepository.findAll(pageable);
-        return page.map(hoaDonChiTietResponseMapper:: toDTO).getContent();
+        return null;
     }
 
     @Override
@@ -70,10 +77,9 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
         HoaDonChiTiet hoaDonChiTietExisting = hoaDonChiTietRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy HDCT với id: " + id));
 
-        HoaDonChiTiet hoaDonChiTietUpdate = hoaDonChiTietRequestMapper.toEntity(hoaDonChiTietRequest);
-        hoaDonChiTietExisting.setSoLuong(hoaDonChiTietUpdate.getSoLuong());
-        hoaDonChiTietExisting.setDonGia(hoaDonChiTietUpdate.getDonGia());
-        hoaDonChiTietExisting.setTongTien(hoaDonChiTietUpdate.getTongTien());
+        hoaDonChiTietExisting.setSoLuong(hoaDonChiTietRequest.getSoLuong());
+        hoaDonChiTietExisting.setDonGia(hoaDonChiTietRequest.getDonGia());
+        hoaDonChiTietExisting.setTongTien(hoaDonChiTietRequest.getTongTien());
 
         HoaDonChiTiet hoaDonChiTietUpdated = hoaDonChiTietRepository.save(hoaDonChiTietExisting);
         return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTietUpdated);
@@ -97,6 +103,7 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy HDCT với id: " + id));
         return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTiet);
     }
+
 
     public List<HoaDonChiTietResponse> getByIdHoaDon(Long id) {
         List<HoaDonChiTiet> hoaDonChiTiet = hoaDonChiTietRepository.findHoaDonChiTietByIdHoaDon(id);

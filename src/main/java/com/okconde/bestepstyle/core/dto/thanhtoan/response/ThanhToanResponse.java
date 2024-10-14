@@ -21,6 +21,8 @@ public class ThanhToanResponse {
 
     private Long idThanhToan;
 
+    private String maThanhToan;
+
     private String phuongThucThanhToan;
 
     @Enumerated(EnumType.STRING)

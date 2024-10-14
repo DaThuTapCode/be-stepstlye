@@ -26,6 +26,8 @@ public class LichSuHoaDon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idLshd;
 
+    private String maLichSuHoaDon;
+
     private String hanhDong;
 
     private LocalDateTime ngayTao;

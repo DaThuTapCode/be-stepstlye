@@ -29,6 +29,9 @@ public class HoaDon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idHoaDon;
+
+    private String maHoaDon;
+
     private LocalDateTime ngayTaoDon;
 
     private BigDecimal phiVanChuyen;

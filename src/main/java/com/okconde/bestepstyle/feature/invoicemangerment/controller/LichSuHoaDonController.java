@@ -38,7 +38,7 @@ public class LichSuHoaDonController {
             @PageableDefault(size = 10) Pageable pageable
     ){
         List<LichSuHoaDonResponse> responses =    lichSuHoaDonService.getPage(pageable);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", responses));
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công LSHĐ", responses));
     }
 
     @GetMapping("get-all")
@@ -52,7 +52,7 @@ public class LichSuHoaDonController {
     ) {
         LichSuHoaDonResponse response = lichSuHoaDonService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseData<>(HttpStatus.CREATED.value(), "Tạo thành công"
+                .body(new ResponseData<>(HttpStatus.CREATED.value(), "Tạo thành công LSHĐ"
                         , response));
     }
 
@@ -63,7 +63,7 @@ public class LichSuHoaDonController {
     ) {
         LichSuHoaDonResponse response = lichSuHoaDonService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
-                , "Cập nhật thành công", response));
+                , "Cập nhật thành công LSHĐ", response));
     }
 
     @DeleteMapping("delete/{id}")
@@ -73,7 +73,7 @@ public class LichSuHoaDonController {
         try {
             lichSuHoaDonService.delete(id);
             return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
-            , "Xóa thành công", null));
+            , "Xóa thành công LSHĐ", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseData<>(HttpStatus.NO_CONTENT.value(), e.getMessage(), null));
@@ -85,6 +85,6 @@ public class LichSuHoaDonController {
             @PathVariable Long id
     ) {
         LichSuHoaDonResponse response = lichSuHoaDonService.getById(id);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", response));
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công LSHĐ", response));
     }
 }
