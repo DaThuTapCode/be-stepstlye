@@ -14,6 +14,8 @@ import lombok.*;
 @AllArgsConstructor
 public class MauSacSearchRequest {
 
+    private String maMauSac;
+
     private String tenMau;
 
     private String giaTri;

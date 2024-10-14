@@ -21,6 +21,8 @@ public class MauSac {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idMauSac;
 
+    private String maMauSac;
+
     private String tenMau;
 
     private String giaTri;

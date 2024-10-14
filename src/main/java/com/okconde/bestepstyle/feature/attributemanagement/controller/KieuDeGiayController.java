@@ -1,5 +1,7 @@
 package com.okconde.bestepstyle.feature.attributemanagement.controller;
 
+import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
+import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiayRequest;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
@@ -50,20 +52,23 @@ public class KieuDeGiayController {
 
     // thêm kiểu để giầy
     @PostMapping("create-kieu-de-giay")
-    public ResponseEntity<ResponseData<KieuDeGiayResponse>> createKieuDeGiay(@RequestBody @Valid KieuDeGiayRequest kieuDeGiayRequest){
+    public ResponseEntity<ResponseData<KieuDeGiayResponse>> createKieuDeGiay(@RequestBody KieuDeGiayRequest kieuDeGiayRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm kiểu đế giày thành công", kieuDeGiayService.create(kieuDeGiayRequest)));
     }
 
     // update kiểu đế giầy
-    @PutMapping("update-kieu-de-giay")
+    @PutMapping("update-kieu-de-giay/{id}")
     public ResponseEntity<ResponseData<KieuDeGiayResponse>> updateKieuDeGiay(
-            @RequestBody KieuDeGiayRequest kieuDeGiayRequest,
-            @RequestParam Long id
-    ){
-        KieuDeGiayResponse updateKDG = kieuDeGiayService.update(id, kieuDeGiayRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật kiểu đế giày thành công", updateKDG));
+            @PathVariable Long id,
+            @RequestBody KieuDeGiayRequest kieuDeGiayRequest
+    ) {
+        KieuDeGiayResponse kieuDeGiayResponse = kieuDeGiayService.update(id, kieuDeGiayRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update kiểu đế giày thành công",
+                        kieuDeGiayResponse)
+        );
     }
 
     // get by id kiểu đế giày

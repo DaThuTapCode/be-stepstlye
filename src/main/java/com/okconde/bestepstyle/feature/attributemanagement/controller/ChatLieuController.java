@@ -55,14 +55,17 @@ public class ChatLieuController {
     }
 
     // update chất liệu
-    @PutMapping("update-chat-lieu")
+    @PutMapping("update-chat-lieu/{id}")
     public ResponseEntity<ResponseData<ChatLieuResponse>> updateChatLieu(
-            @RequestBody ChatLieuRequest chatLieuRequest,
-            @RequestParam Long id
-    ){
-        ChatLieuResponse updateCL = chatLieuService.update(id, chatLieuRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật chất liệu thành công", updateCL));
+            @PathVariable Long id,
+            @RequestBody ChatLieuRequest chatLieuRequest
+    ) {
+        ChatLieuResponse chatLieuResponse = chatLieuService.update(id, chatLieuRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update chất liệu thành công",
+                        chatLieuResponse)
+        );
     }
 
     // delete chất liệu

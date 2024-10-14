@@ -71,6 +71,10 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
         trongLuong.setGiaTri(trongLuongRequest.getGiaTri());
         trongLuong.setMoTa(trongLuongRequest.getMoTa());
         trongLuong.setTrangThai(StatusEnum.ACTIVE);
+        trongLuong.setMaTrongLuong(trongLuongRequest.getMaTrongLuong());
+        trongLuong.setGiaTri(trongLuongRequest.getGiaTri());
+        trongLuong.setMoTa(trongLuongRequest.getMoTa());
+        trongLuong.setTrangThai(trongLuongRequest.getTrangThai());
         TrongLuong trongLuongUpdated = trongLuongRepository.save(trongLuong);
         return trongLuongResponseMapper.toDTO(trongLuongUpdated);
     }

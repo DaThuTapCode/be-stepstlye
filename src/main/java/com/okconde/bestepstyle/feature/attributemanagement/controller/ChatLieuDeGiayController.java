@@ -55,14 +55,17 @@ public class ChatLieuDeGiayController {
     }
 
     // update chất liệu đế giày
-    @PutMapping("update-chat-lieu-de-giay")
+    @PutMapping("update-chat-lieu-de-giay/{id}")
     public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> updateChatLieuDeGiay(
-            @RequestBody ChatLieuDeGiayRequest chatLieuDeGiayRequest,
-            @RequestParam Long id
-    ){
-        ChatLieuDeGiayResponse updateCLDG = chatLieuDeGiayService.update(id, chatLieuDeGiayRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật chất liệu đế giày thành công", updateCLDG));
+            @PathVariable Long id,
+            @RequestBody ChatLieuDeGiayRequest chatLieuDeGiayRequest
+    ) {
+        ChatLieuDeGiayResponse chatLieuDeGiayResponse = chatLieuDeGiayService.update(id, chatLieuDeGiayRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update chất liệu đế giày thành công",
+                        chatLieuDeGiayResponse)
+        );
     }
 
     // get by id chất liệu đế giày

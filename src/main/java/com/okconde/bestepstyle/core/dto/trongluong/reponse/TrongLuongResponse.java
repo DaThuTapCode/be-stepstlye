@@ -18,6 +18,8 @@ import lombok.*;
 public class TrongLuongResponse {
     private Long idTrongLuong;
 
+    private String maTrongLuong;
+
     private String giaTri;
 
     private String moTa;

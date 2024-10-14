@@ -18,6 +18,8 @@ public class ChatLieuResponse {
 
     private Long idChatLieu;
 
+    private String maChatLieu;
+
     private String tenChatLieu;
 
     private String doBen;

@@ -70,6 +70,11 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
         kieuDeGiay.setGiaTri(kieuDeGiayRequest.getGiaTri());
         kieuDeGiay.setMoTa(kieuDeGiayRequest.getMoTa());
         kieuDeGiay.setTrangThai(StatusEnum.ACTIVE);
+        kieuDeGiay.setMaKieuDeGiay(kieuDeGiayRequest.getMaKieuDeGiay());
+        kieuDeGiay.setTenKieuDeGiay(kieuDeGiayRequest.getTenKieuDeGiay());
+        kieuDeGiay.setGiaTri(kieuDeGiayRequest.getGiaTri());
+        kieuDeGiay.setMoTa(kieuDeGiayRequest.getMoTa());
+        kieuDeGiay.setTrangThai(kieuDeGiayRequest.getTrangThai());
         KieuDeGiay kieuDeGiayUpdated = kieuDeGiayRepository.save(kieuDeGiay);
         return kieuDeGiayResponseMapper.toDTO(kieuDeGiayUpdated);
     }

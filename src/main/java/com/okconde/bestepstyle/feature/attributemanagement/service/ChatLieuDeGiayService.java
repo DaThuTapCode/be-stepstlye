@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayReq
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.entity.ChatLieuDeGiay;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
+import com.okconde.bestepstyle.core.entity.KichCo;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.chatlieudegiay.request.ChatLieuDeGiayRequestMapper;
 import com.okconde.bestepstyle.core.mapper.chatlieudegiay.response.ChatLieuDeGiayResponseMapper;
@@ -69,10 +70,12 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
         ChatLieuDeGiay chatLieuDeGiay = chatLieuDeGiayRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy chất liệu sản phẩm với id" + id));
 
-        ChatLieuDeGiay chatLieuDeGiayUpdate = chatLieuDeGiayRequestMapper.toEntity(chatLieuDeGiayRequest);
-        chatLieuDeGiay.setTenChatLieuDeGiay(chatLieuDeGiayUpdate.getTenChatLieuDeGiay());
-        chatLieuDeGiay.setGiaTri(chatLieuDeGiayUpdate.getGiaTri());
-        chatLieuDeGiay.setMoTa(chatLieuDeGiayUpdate.getMoTa());
+
+        chatLieuDeGiay.setMaChatLieuDeGiay(chatLieuDeGiayRequest.getMaChatLieuDeGiay());
+        chatLieuDeGiay.setTenChatLieuDeGiay(chatLieuDeGiayRequest.getTenChatLieuDeGiay());
+        chatLieuDeGiay.setGiaTri(chatLieuDeGiayRequest.getGiaTri());
+        chatLieuDeGiay.setMoTa(chatLieuDeGiayRequest.getMoTa());
+        chatLieuDeGiay.setTrangThai(chatLieuDeGiayRequest.getTrangThai());
         ChatLieuDeGiay chatLieuDeGiayUpdated = chatLieuDeGiayRepository.save(chatLieuDeGiay);
         return chatLieuDeGiayResponseMapper.toDTO(chatLieuDeGiayUpdated);
     }

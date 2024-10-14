@@ -17,8 +17,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KieuDeGiayRequest {
+    private Long idKieuDeGiay;
 
-    @NotBlank(message = "Tên kiểu đế giày không được để trống!")
+    private String maKieuDeGiay;
+
+    //@NotBlank(message = "Tên kiểu đế giày không được để trống!")
     private String tenKieuDeGiay;
 
     private String giaTri;
