@@ -21,6 +21,13 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 public class DiaChiKhachHangRequest {
 
+    private Long idDiaChiKhachHang;
+
+    @NotBlank(message = "Mã địa chỉ khách hàng không được để trống!")
+    @Length(min = 7, message = "Mã địa chỉ khách hàng không được nhỏ hơn 7 ký tự!")
+    @Length(max = 10, message = "Mã địa chỉ khách hàng không được lớn hơn 10 ký tự!")
+    private String maDiaChiKhachHang;
+
     @NotBlank(message = "Quốc gia không được để trống!")
     @Length(min = 5, message = "Quốc gia không được nhỏ hơn 5 ký tự!")
     @Length(max = 255, message = "Quốc gia không được lớn hơn 255 ký tự!")

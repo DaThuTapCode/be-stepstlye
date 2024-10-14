@@ -23,6 +23,8 @@ public class DiaChiKhachHangShortResponse {
 
     private Long idDiaChiKhachHang;
 
+    private String maDiaChiKhachHang;
+
     private String quocGia;
 
     private String thanhPho;

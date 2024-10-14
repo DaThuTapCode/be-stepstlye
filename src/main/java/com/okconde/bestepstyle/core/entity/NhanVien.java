@@ -43,6 +43,8 @@ public class NhanVien {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idNhanVien;
 
+    private String maNhanVien;
+
     private String hoTen;
 
     private LocalDate ngaySinh;

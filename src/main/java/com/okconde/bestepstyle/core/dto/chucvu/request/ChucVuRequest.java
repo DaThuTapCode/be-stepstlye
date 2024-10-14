@@ -32,6 +32,8 @@ public class ChucVuRequest {
 
     private Long idChucVu;
 
+    private String maChucVu;
+
     private List<NhanVienShortResponse> nhanViens;
 
     private String tenChucVu;

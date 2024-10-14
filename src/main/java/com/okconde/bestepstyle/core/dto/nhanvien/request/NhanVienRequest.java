@@ -26,6 +26,13 @@ import java.time.LocalDate;
 @Builder
 public class NhanVienRequest {
 
+    private Long idNhanVien;
+
+    @NotBlank(message = "Mã nhân viên không được để trống!")
+    @Length(min = 5, message = "Mã nhân viên phải lớn hơn 5 ký tự!")
+    @Length(max = 10, message = "Mã nhân viên không được vượt quá 10 ký tự!")
+    private String maNhanVien;
+
     @NotBlank(message = "Tên nhân viên không được để trống!")
     @Length(min = 6, message = "Tên nhân viên phải lớn hơn 6 ký tự!")
     @Length(max = 255, message = "Tên nhân viên không được vượt quá 255 ký tự!")

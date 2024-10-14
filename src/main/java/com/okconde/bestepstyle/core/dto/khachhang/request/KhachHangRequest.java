@@ -2,6 +2,9 @@ package com.okconde.bestepstyle.core.dto.khachhang.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.dto.diachikhachhang.response.DiaChiKhachHangShortResponse;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +30,13 @@ public class KhachHangRequest {
 
     private List<DiaChiKhachHangShortResponse> diaChiKhachHangs;
 
+    private Long idKhachHang;
+
+    @NotBlank(message = "Mã khách hàng không được để trống!")
+    @Length(min = 5, message = "Mã khách hàng phải lớn hơn 5 ký tự!")
+    @Length(max = 10, message = "Mã khách hàng không được vượt quá 10 ký tự!")
+    private String maKhachHang;
+
     @NotBlank(message = "Tên khách hàng không được để trống!")
     @Length(min = 6, message = "Tên khách hàng phải lớn hơn 6 ký tự!")
     @Length(max = 255, message = "Tên khách hàng không được vượt quá 255 ký tự!")
@@ -47,5 +57,8 @@ public class KhachHangRequest {
     private Boolean gioiTinh;
 
     private String ghiChu;
+
+    @Enumerated(EnumType.STRING)
+    private StatusEnum trangThai;
 
 }

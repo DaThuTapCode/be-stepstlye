@@ -37,6 +37,8 @@ public class ChucVu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idChucVu;
 
+    private String maChucVu;
+
     private String tenChucVu;
 
     private String moTa;

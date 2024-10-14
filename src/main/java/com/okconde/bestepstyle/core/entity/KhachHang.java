@@ -41,6 +41,8 @@ public class KhachHang {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idKhachHang;
 
+    private String maKhachHang;
+
     private String tenKhachHang;
 
     private String soDienThoai;
