@@ -1,5 +1,7 @@
 package com.okconde.bestepstyle.feature.attributemanagement.controller;
 
+import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
+import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiayRequest;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
@@ -8,6 +10,7 @@ import com.okconde.bestepstyle.core.entity.KieuDeGiay;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.KieuDeGiayService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -55,14 +58,17 @@ public class KieuDeGiayController {
     }
 
     // update kiểu đế giầy
-    @PutMapping("update-kieu-de-giay")
+    @PutMapping("update-kieu-de-giay/{id}")
     public ResponseEntity<ResponseData<KieuDeGiayResponse>> updateKieuDeGiay(
-            @RequestBody KieuDeGiayRequest kieuDeGiayRequest,
-            @RequestParam Long id
-    ){
-        KieuDeGiayResponse updateKDG = kieuDeGiayService.update(id, kieuDeGiayRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật kiểu đế giày thành công", updateKDG));
+            @PathVariable Long id,
+            @RequestBody KieuDeGiayRequest kieuDeGiayRequest
+    ) {
+        KieuDeGiayResponse kieuDeGiayResponse = kieuDeGiayService.update(id, kieuDeGiayRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update kiểu đế giày thành công",
+                        kieuDeGiayResponse)
+        );
     }
 
     // get by id kiểu đế giày

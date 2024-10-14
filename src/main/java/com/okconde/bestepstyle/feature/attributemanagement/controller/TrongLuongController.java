@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.TrongLuongService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -50,20 +51,23 @@ public class TrongLuongController {
 
     // thêm trong lượng
     @PostMapping("create-trong-luong")
-    public ResponseEntity<ResponseData<TrongLuongResponse>> createTrongLuong(@RequestBody TrongLuongRequest trongLuongRequest){
+    public ResponseEntity<ResponseData<TrongLuongResponse>> createTrongLuong(@RequestBody @Valid TrongLuongRequest trongLuongRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm trọng lượng thành công", trongLuongService.create(trongLuongRequest)));
     }
 
     // update trọng lượng
-    @PutMapping("update-trong-luong")
+    @PutMapping("update-trong-luong/{id}")
     public ResponseEntity<ResponseData<TrongLuongResponse>> updateTrongLuong(
-            @RequestBody TrongLuongRequest trongLuongRequest,
-            @RequestParam Long id
-    ){
-        TrongLuongResponse updateTL = trongLuongService.update(id, trongLuongRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật trọng lượng thành công", updateTL));
+            @PathVariable Long id,
+            @RequestBody TrongLuongRequest trongLuongRequest
+    ) {
+        TrongLuongResponse trongLuongResponse = trongLuongService.update(id, trongLuongRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update trọng lượng thành công",
+                        trongLuongResponse)
+        );
     }
 
     // get by id trọng lượng

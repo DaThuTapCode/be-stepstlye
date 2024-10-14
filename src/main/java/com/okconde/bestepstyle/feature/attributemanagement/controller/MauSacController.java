@@ -1,14 +1,20 @@
 package com.okconde.bestepstyle.feature.attributemanagement.controller;
 
+import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucRequest;
+import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.feature.attributemanagement.service.MauSacService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,33 +42,35 @@ public class MauSacController {
     }
 
     // phân trang màu sắc
-    @GetMapping("get-page")
-    public ResponseEntity<ResponseData<List<MauSacResponse>>> getPageMauSac(
-            @RequestParam(value = "currentPage", defaultValue = "0") Integer current
-    ){
-        int size = 5;
-        Pageable pageable = PageRequest.of(current, size);
-        List<MauSacResponse> list = mauSacService.getPage(pageable);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),"Lấy trang thành công", list));
-
-    }
+//    @PostMapping("get-page")
+//    public ResponseEntity<ResponseData<List<MauSacResponse>>> getPageMS(
+//            @PageableDefault Pageable pageable
+//    ){
+//        Page<MauSacResponse> page = mauSacService.searchPageMS(pageable);
+//        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+//                "Lấy trang khách hàng thành công", page));
+//
+//    }
 
     // thêm màu sắc
     @PostMapping("create-mau-sac")
-    public ResponseEntity<ResponseData<MauSacResponse>> createMauSac(@RequestBody MauSacRequest mauSacRequest){
+    public ResponseEntity<ResponseData<MauSacResponse>> createMauSac(@RequestBody @Valid MauSacRequest mauSacRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm màu sắc thành công", mauSacService.create(mauSacRequest)));
     }
 
     // update màu sắc
-    @PutMapping("update-mau-sac")
+    @PutMapping("update-mau-sac/{id}")
     public ResponseEntity<ResponseData<MauSacResponse>> updateMauSac(
-            @RequestBody MauSacRequest mauSacRequest,
-            @RequestParam Long id
-    ){
-        MauSacResponse updateMS = mauSacService.update(id, mauSacRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật màu sắc thành công", updateMS));
+            @PathVariable Long id,
+            @RequestBody MauSacRequest mauSacRequest
+    ) {
+        MauSacResponse mauSacResponse = mauSacService.update(id, mauSacRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update màu sắc thành công",
+                        mauSacResponse)
+        );
     }
 
     // xóa màu sắc
@@ -78,7 +86,7 @@ public class MauSacController {
 
     // get by id màu sắc
     @GetMapping("get-by-id")
-    public ResponseEntity<ResponseData<MauSacResponse>> getMauSacById(@RequestParam Long id) {
+    public ResponseEntity<ResponseData<List<MauSacResponse>>> getMauSacById(@PathVariable Long id) {
         MauSacResponse mauSac = mauSacService.getById(id);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy màu sắc thành công", mauSac));
     }

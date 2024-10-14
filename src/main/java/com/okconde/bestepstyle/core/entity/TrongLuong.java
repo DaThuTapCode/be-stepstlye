@@ -21,6 +21,8 @@ public class TrongLuong {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTrongLuong;
 
+    private String maTrongLuong;
+
     private String giaTri;
 
     private String moTa;

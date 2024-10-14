@@ -21,6 +21,8 @@ public class ChatLieu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idChatLieu;
 
+    private String maChatLieu;
+
     private String tenChatLieu;
 
     private String doBen;
