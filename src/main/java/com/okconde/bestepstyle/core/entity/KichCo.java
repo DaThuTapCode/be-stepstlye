@@ -21,6 +21,8 @@ public class KichCo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idKichCo;
 
+    private String maKichCo;
+
     private Double giaTri;
 
     private String moTa;

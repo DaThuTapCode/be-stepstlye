@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.core.dto.kieudegiay.request;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 /**
@@ -16,7 +17,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KieuDeGiayRequest {
+    private Long idKieuDeGiay;
 
+    private String maKieuDeGiay;
+
+    //@NotBlank(message = "Tên kiểu đế giày không được để trống!")
     private String tenKieuDeGiay;
 
     private String giaTri;

@@ -26,6 +26,8 @@ public class ChucVuResponse {
 
     private Long idChucVu;
 
+    private String maChucVu;
+
     private String tenChucVu;
 
     private String moTa;

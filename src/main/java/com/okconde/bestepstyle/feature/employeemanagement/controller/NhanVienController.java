@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.nhanvien.request.NhanVienRequest;
 import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.employeemanagement.service.NhanVienServive;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -70,7 +71,7 @@ public class NhanVienController {
 
     // Hàm thêm 1 dữ liệu mới
     @PostMapping("create")
-    public ResponseEntity<ResponseData<NhanVienResponse>> createNhanVien(@RequestBody NhanVienRequest request){
+    public ResponseEntity<ResponseData<NhanVienResponse>> createNhanVien(@RequestBody @Valid NhanVienRequest request){
 
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm nhân viên thành công", nhanVienServive.create(request)));
@@ -80,7 +81,7 @@ public class NhanVienController {
     // Hàm update nhân viên
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<NhanVienResponse>> updateNhanVien(
-            @RequestBody NhanVienRequest request, @PathVariable Long id
+            @RequestBody @Valid NhanVienRequest request, @PathVariable Long id
     ){
 
         NhanVienResponse updateNV = nhanVienServive.update(id, request);

@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayRe
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.ChatLieuDeGiayService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -48,20 +49,23 @@ public class ChatLieuDeGiayController {
 
     // thêm chất liệu đế giày
     @PostMapping("create-chat-lieu-de-giay")
-    public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> createChatLieuDeGiay(@RequestBody ChatLieuDeGiayRequest chatLieuDeGiayRequest){
+    public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> createChatLieuDeGiay(@RequestBody @Valid ChatLieuDeGiayRequest chatLieuDeGiayRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm chất liệu đế giày thành công", chatLieuDeGiayService.create(chatLieuDeGiayRequest)));
     }
 
     // update chất liệu đế giày
-    @PutMapping("update-chat-lieu-de-giay")
+    @PutMapping("update-chat-lieu-de-giay/{id}")
     public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> updateChatLieuDeGiay(
-            @RequestBody ChatLieuDeGiayRequest chatLieuDeGiayRequest,
-            @RequestParam Long id
-    ){
-        ChatLieuDeGiayResponse updateCLDG = chatLieuDeGiayService.update(id, chatLieuDeGiayRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật chất liệu đế giày thành công", updateCLDG));
+            @PathVariable Long id,
+            @RequestBody ChatLieuDeGiayRequest chatLieuDeGiayRequest
+    ) {
+        ChatLieuDeGiayResponse chatLieuDeGiayResponse = chatLieuDeGiayService.update(id, chatLieuDeGiayRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update chất liệu đế giày thành công",
+                        chatLieuDeGiayResponse)
+        );
     }
 
     // get by id chất liệu đế giày

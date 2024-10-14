@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.ChatLieuService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -48,20 +49,23 @@ public class ChatLieuController {
 
     // thêm chất liệu
     @PostMapping("create-chat-lieu")
-    public ResponseEntity<ResponseData<ChatLieuResponse>> createChatLieu(@RequestBody ChatLieuRequest chatLieuRequest){
+    public ResponseEntity<ResponseData<ChatLieuResponse>> createChatLieu(@RequestBody @Valid ChatLieuRequest chatLieuRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm chất liệu thành công", chatLieuService.create(chatLieuRequest)));
     }
 
     // update chất liệu
-    @PutMapping("update-chat-lieu")
+    @PutMapping("update-chat-lieu/{id}")
     public ResponseEntity<ResponseData<ChatLieuResponse>> updateChatLieu(
-            @RequestBody ChatLieuRequest chatLieuRequest,
-            @RequestParam Long id
-    ){
-        ChatLieuResponse updateCL = chatLieuService.update(id, chatLieuRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật chất liệu thành công", updateCL));
+            @PathVariable Long id,
+            @RequestBody ChatLieuRequest chatLieuRequest
+    ) {
+        ChatLieuResponse chatLieuResponse = chatLieuService.update(id, chatLieuRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update chất liệu thành công",
+                        chatLieuResponse)
+        );
     }
 
     // delete chất liệu

@@ -70,10 +70,11 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
         ChatLieu chatLieu = chatLieuRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy chất liệu với id" + id));
 
-        ChatLieu chatLieuUpdate = chatLieuRequestMapper.toEntity(chatLieuRequest);
-        chatLieu.setTenChatLieu(chatLieuUpdate.getTenChatLieu());
-        chatLieu.setDoBen(chatLieuUpdate.getDoBen());
-        chatLieu.setMoTa(chatLieuUpdate.getMoTa());
+        chatLieu.setMaChatLieu(chatLieuRequest.getTenChatLieu());
+        chatLieu.setTenChatLieu(chatLieuRequest.getTenChatLieu());
+        chatLieu.setDoBen(chatLieuRequest.getDoBen());
+        chatLieu.setMoTa(chatLieuRequest.getMoTa());
+        chatLieu.setTrangThai(chatLieuRequest.getTrangThai());
         ChatLieu chatLieuUpdated = chatLieuRepository.save(chatLieu);
         return chatLieuResponseMapper.toDTO(chatLieuUpdated);
     }

@@ -2,6 +2,7 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.entity.KichCo;
 import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -11,6 +12,7 @@ import com.okconde.bestepstyle.core.repository.MauSacRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +43,8 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
 
     @Override
     public List<MauSacResponse> getPage(Pageable pageable) {
-        List<MauSac> mauSacList = mauSacRepository.findAll(pageable).getContent();
-        return mauSacResponseMapper.listToDTO(mauSacList);
+        return mauSacRepository.findAll(pageable).map(mauSacResponseMapper ::toDTO).getContent();
     }
-
 
     @Override
     public List<MauSacResponse> getAll() {
@@ -67,12 +67,17 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
         MauSac mauSac = mauSacRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy màu sắc với id" + id));
 
-        MauSac mauSacUpdate = mauSacRequestMapper.toEntity(mauSacRequest);
-        mauSac.setTenMau(mauSacUpdate.getTenMau());
-        mauSac.setGiaTri(mauSacUpdate.getGiaTri());
-        mauSac.setMoTa(mauSacUpdate.getMoTa());
-        MauSac mauSacUpdated1 = mauSacRepository.save(mauSacUpdate);
-        return mauSacResponseMapper.toDTO(mauSacUpdated1);
+        mauSac.setTenMau(mauSacRequest.getTenMau());
+        mauSac.setGiaTri(mauSacRequest.getGiaTri());
+        mauSac.setMoTa(mauSacRequest.getMoTa());
+        mauSac.setTrangThai(StatusEnum.ACTIVE);
+        mauSac.setMaMauSac(mauSacRequest.getMaMauSac());
+        mauSac.setTenMau(mauSacRequest.getTenMau());
+        mauSac.setGiaTri(mauSacRequest.getGiaTri());
+        mauSac.setMoTa(mauSacRequest.getMoTa());
+        mauSac.setTrangThai(mauSacRequest.getTrangThai());
+        MauSac mauSacUpdated = mauSacRepository.save(mauSac);
+        return mauSacResponseMapper.toDTO(mauSacUpdated);
     }
 
     @Override
@@ -95,4 +100,12 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
             new ResourceNotFoundException("Màu sắc không tồn tại id"));
         return mauSacResponseMapper.toDTO(ms);
     }
+
+//    public Page<MauSacResponse> searchPageMS(Pageable pageable){
+//
+//        Page<MauSac> mauSacPage = mauSacRepository.searchPageMSByTenAndGT(pageable);
+//        return mauSacPage.map(mauSacResponseMapper::toDTO);
+//    }
+
+
 }

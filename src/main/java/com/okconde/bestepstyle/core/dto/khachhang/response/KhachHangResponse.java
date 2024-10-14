@@ -29,6 +29,8 @@ public class KhachHangResponse {
 
     private Long idKhachHang;
 
+    private String maKhachHang;
+
     private String tenKhachHang;
 
     private String soDienThoai;

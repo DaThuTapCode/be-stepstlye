@@ -18,6 +18,8 @@ import lombok.*;
 public class ChatLieuDeGiayResponse {
     private Long idChatLieuDeGiay;
 
+    private String maChatLieuDeGiay;
+
     private String tenChatLieuDeGiay;
 
     private String giaTri;
