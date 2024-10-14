@@ -21,6 +21,8 @@ public class ThuongHieu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idThuongHieu;
 
+    private String maThuongHieu;
+
     private String tenThuongHieu;
 
     private String xuatXu;

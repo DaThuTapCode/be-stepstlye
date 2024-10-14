@@ -25,6 +25,8 @@ public class SanPhamChiTiet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idSpct;
 
+    private String maSpct;
+
     private BigDecimal gia;
 
     private int soLuong;

@@ -15,6 +15,10 @@ import lombok.*;
 @Builder
 public class DanhMucRequest {
 
+    private Long idDanhMuc;
+
+    private String maDanhMuc;
+
     private String tenDanhMuc;
 
     private String moTa;

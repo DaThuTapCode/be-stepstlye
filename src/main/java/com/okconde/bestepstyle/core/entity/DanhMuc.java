@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 /**
  * Created by Trong Phu on 23/09/2024 21:29
@@ -23,6 +23,8 @@ public class DanhMuc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idDanhMuc;
+
+    private String maDanhMuc;
 
     private String tenDanhMuc;
 

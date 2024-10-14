@@ -1,5 +1,11 @@
 package com.okconde.bestepstyle.core.dto.sanphamchitiet.request;
 
+import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
+import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
+import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
+import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
+import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
+import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
 import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
 import lombok.*;
@@ -18,6 +24,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class SPCTRequest {
+    private Long idSpct;
+
+    private String maSpct;
 
     private BigDecimal gia;
 
@@ -25,21 +34,17 @@ public class SPCTRequest {
 
     private StatusSPCT trangThai;
 
-    private SanPham sanPham;
+    private ChatLieuResponse chatLieu;
 
-    private ChatLieu chatLieu;
+    private KieuDeGiayResponse kieuDeGiay;
 
-    private KieuDeGiay kieuDeGiay;
+    private ChatLieuDeGiayResponse chatLieuDeGiay;
 
-    private ChatLieuDeGiay chatLieuDeGiay;
+    private TrongLuongResponse trongLuong;
 
-    private TrongLuong trongLuong;
+    private MauSacResponse mauSac;
 
-    private MauSac mauSac;
-
-    private KichCo kichCo;
+    private KichCoResponse kichCo;
 
     private List<Anh> anhs;
-
-    private HoaDonChiTiet hoaDonChiTiet;
 }

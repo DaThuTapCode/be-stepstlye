@@ -28,6 +28,8 @@ public class SanPhamResponse {
 
     private Long idSanPham;
 
+    private String maSanPham;
+
     private String tenSanPham;
 
     private String moTa;

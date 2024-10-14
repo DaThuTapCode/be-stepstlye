@@ -24,6 +24,8 @@ public class SanPham {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idSanPham;
 
+    private String maSanPham;
+
     private String tenSanPham;
 
     private String moTa;

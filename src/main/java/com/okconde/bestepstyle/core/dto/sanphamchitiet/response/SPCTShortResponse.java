@@ -27,6 +27,8 @@ public class SPCTShortResponse {
 
     private Long idSpct;
 
+    private String maSpct;
+
     private BigDecimal gia;
 
     private int soLuong;

@@ -18,6 +18,8 @@ public class ThuongHieuResponse {
 
     private Long idThuongHieu;
 
+    private String maThuongHieu;
+
     private String tenThuongHieu;
 
     private String xuatXu;

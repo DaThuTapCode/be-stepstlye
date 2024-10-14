@@ -1,8 +1,8 @@
 package com.okconde.bestepstyle.core.dto.sanpham.request;
 
-import com.okconde.bestepstyle.core.entity.DanhMuc;
-import com.okconde.bestepstyle.core.entity.SanPhamChiTiet;
-import com.okconde.bestepstyle.core.entity.ThuongHieu;
+import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTRequest;
+import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSP;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +21,10 @@ import java.util.List;
 @Builder
 public class SanPhamRequest {
 
+    private Long idSanPham;
+
+    private String maSanPham;
+
     private String tenSanPham;
 
     private String moTa;
@@ -30,10 +34,10 @@ public class SanPhamRequest {
     @Enumerated(EnumType.STRING)
     private StatusSP trangThai;
 
-    private DanhMuc danhMuc;
+    private DanhMucResponse danhMuc;
 
-    private ThuongHieu thuongHieu;
+    private ThuongHieuResponse thuongHieu;
 
-    private List<SanPhamChiTiet> sanPhamChiTiets;
+    private List<SPCTRequest> sanPhamChiTiets;
 
 }

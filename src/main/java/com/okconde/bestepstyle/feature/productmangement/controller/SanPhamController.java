@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.feature.productmangement.controller;
 
+import com.okconde.bestepstyle.core.dto.sanpham.request.SanPhamRequest;
 import com.okconde.bestepstyle.core.dto.sanpham.request.SanPhamSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
@@ -28,7 +29,7 @@ public class SanPhamController {
     }
 
     /**
-     * @apiNote API lấy sản phẩm theo id GET http://localhost:8080/api/san-pham/{{id}}
+     * @apiNote API lấy sản phẩm theo id GET <a href="http://localhost:8080/api/san-pham/">...</a>{{id}}
      * @param id Khóa chính của Sản Phẩm
      * */
     @GetMapping(value = "{id}")
@@ -44,7 +45,7 @@ public class SanPhamController {
     }
 
     /**
-     * @apiNote API lấy tẩt cả sản phẩm GET http://localhost:8080/api/san-pham/get-all
+     * @apiNote API lấy tẩt cả sản phẩm GET <a href="http://localhost:8080/api/san-pham/get-all">...</a>
      * */
     @GetMapping(value = "get-all")
     public ResponseEntity<ResponseData<List<SanPhamResponse>>> getAllSanPham(){
@@ -57,7 +58,7 @@ public class SanPhamController {
     }
 
     /**
-     * @apiNote API tìm kiếm sản phẩm theo nhiều tham số POST http://localhost:8080/api/san-pham/search*/
+     * @apiNote API tìm kiếm sản phẩm theo nhiều tham số POST <a href="http://localhost:8080/api/san-pham/search">...</a>*/
     @PostMapping(value = "search")
     public ResponseEntity<ResponseData<Page<SanPhamResponse>>> searchProduct(
             @PageableDefault Pageable pageable,
@@ -69,5 +70,18 @@ public class SanPhamController {
                         "Tìm kiếm thành công danh sách sản phẩm",
                         sanPhamService.searchPageProduct(pageable, sanPhamSearchRequest)
                 ));
+    }
+
+    @PostMapping(value = "create")
+    public ResponseEntity<ResponseData<SanPhamResponse>> createNewProduct(
+            @RequestBody SanPhamRequest sanPhamRequest
+            ){
+        return ResponseEntity.ok(
+                new ResponseData<>(
+                        HttpStatus.OK.value(),
+                        "Thêm sản phẩm mới thành công",
+                        sanPhamService.create(sanPhamRequest)
+                )
+        );
     }
 }

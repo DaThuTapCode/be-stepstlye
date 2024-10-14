@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 public class DanhMucShortResponse {
     private Long idDanhMuc;
 
+    private String maDanhMuc;
+
     private String tenDanhMuc;
 
     private String moTa;

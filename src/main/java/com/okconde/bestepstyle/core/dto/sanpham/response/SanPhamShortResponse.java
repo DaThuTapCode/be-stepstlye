@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 public class SanPhamShortResponse {
     private Long idSanPham;
 
+    private String maSanPham;
+
     private String tenSanPham;
 
     private String moTa;

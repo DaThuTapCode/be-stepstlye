@@ -23,6 +23,8 @@ public class DanhMucResponse {
 
     private Long idDanhMuc;
 
+    private String maDanhMuc;
+
     private String tenDanhMuc;
 
     private String moTa;

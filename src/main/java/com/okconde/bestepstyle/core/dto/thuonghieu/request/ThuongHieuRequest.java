@@ -14,7 +14,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ThuongHieuRequest {
+    private Long idThuongHieu;
 
+    private String maThuongHieu;
     @NotBlank(message = "Tên thương hiệu không được để trống")
     private String tenThuongHieu;
 
