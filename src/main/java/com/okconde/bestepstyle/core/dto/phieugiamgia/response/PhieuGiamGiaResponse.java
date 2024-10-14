@@ -26,6 +26,8 @@ public class PhieuGiamGiaResponse {
 
     private Long idPhieuGiamGia;
 
+    private String maPhieuGiamGia;
+
     private String tenPhieuGiamGia;
 
     private String moTa;

@@ -29,6 +29,8 @@ public class HoaDonChiTietResponse {
 
     private Long idHoaDonChiTiet;
 
+    private String maHoaDonChiTiet;
+
     private int soLuong;
 
     private BigDecimal donGia;

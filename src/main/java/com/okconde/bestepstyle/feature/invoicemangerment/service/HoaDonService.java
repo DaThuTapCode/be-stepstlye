@@ -83,19 +83,18 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         HoaDon hoaDonExisting = hoaDonRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
 
-        HoaDon hoaDonToUpdate = hoaDonRequestMapper.toEntity(hoaDonRequest);
         hoaDonExisting.setNgayTaoDon(LocalDateTime.now());
-        hoaDonExisting.setPhiVanChuyen(hoaDonToUpdate.getPhiVanChuyen());
-        hoaDonExisting.setTongTien(hoaDonToUpdate.getTongTien());
-        hoaDonExisting.setTongTienSauGiam(hoaDonToUpdate.getTongTienSauGiam());
+        hoaDonExisting.setPhiVanChuyen(hoaDonRequest.getPhiVanChuyen());
+        hoaDonExisting.setTongTien(hoaDonRequest.getTongTien());
+        hoaDonExisting.setTongTienSauGiam(hoaDonRequest.getTongTienSauGiam());
         hoaDonExisting.setNgayChinhSua(LocalDateTime.now());
         hoaDonExisting.setNgayXacNhan(LocalDateTime.now());
         hoaDonExisting.setNgayNhanHang(LocalDateTime.now());
-        hoaDonExisting.setLoaiHoaDon(hoaDonToUpdate.getLoaiHoaDon());
-        hoaDonExisting.setTenKhachHang(hoaDonToUpdate.getTenKhachHang());
-        hoaDonExisting.setDiaChiGiaoHang(hoaDonToUpdate.getDiaChiGiaoHang());
-        hoaDonExisting.setSoDienThoaiKhachHang(hoaDonToUpdate.getSoDienThoaiKhachHang());
-        hoaDonExisting.setGhiChu(hoaDonToUpdate.getGhiChu());
+        hoaDonExisting.setLoaiHoaDon(hoaDonRequest.getLoaiHoaDon());
+        hoaDonExisting.setTenKhachHang(hoaDonRequest.getTenKhachHang());
+        hoaDonExisting.setDiaChiGiaoHang(hoaDonRequest.getDiaChiGiaoHang());
+        hoaDonExisting.setSoDienThoaiKhachHang(hoaDonRequest.getSoDienThoaiKhachHang());
+        hoaDonExisting.setGhiChu(hoaDonRequest.getGhiChu());
 
         HoaDon hoaDonUpdated = hoaDonRepository.save(hoaDonExisting);
         return hoaDonResponseMapper.toDTO(hoaDonUpdated);

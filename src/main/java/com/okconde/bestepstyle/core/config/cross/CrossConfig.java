@@ -25,3 +25,4 @@ public class CrossConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 }
+

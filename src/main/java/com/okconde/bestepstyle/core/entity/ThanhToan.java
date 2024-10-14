@@ -23,6 +23,7 @@ public class ThanhToan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idThanhToan;
+    private String maThanhToan;
     private String phuongThucThanhToan;
 
     @Enumerated(EnumType.STRING)

@@ -1,5 +1,7 @@
 package com.okconde.bestepstyle.core.dto.hoadon.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,6 +20,10 @@ import java.math.BigDecimal;
 
 public class HoaDonRequest {
 
+    private Long idHoaDon;
+
+    private String maHoaDon;
+
     private BigDecimal phiVanChuyen;
 
     private BigDecimal tongTien;
@@ -26,6 +32,7 @@ public class HoaDonRequest {
 
     private String loaiHoaDon;
 
+    @NotBlank(message = "Tên Khách Hàng không được để trống")
     private String tenKhachHang;
 
     private String diaChiGiaoHang;

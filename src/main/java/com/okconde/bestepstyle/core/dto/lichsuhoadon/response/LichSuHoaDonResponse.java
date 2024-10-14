@@ -25,6 +25,8 @@ public class LichSuHoaDonResponse {
 
     private Long idLshd;
 
+    private String maLichSuHoaDon;
+
     private String hanhDong;
 
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")

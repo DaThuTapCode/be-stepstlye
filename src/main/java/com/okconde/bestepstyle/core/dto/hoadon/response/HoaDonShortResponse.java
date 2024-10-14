@@ -33,6 +33,8 @@ public class HoaDonShortResponse {
 
     private Long idHoaDon;
 
+    private String maHoaDon;
+
     private LocalDateTime ngayTaoDon;
 
     private BigDecimal phiVanChuyen;

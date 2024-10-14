@@ -37,12 +37,12 @@ public class PhieuGiamGiaController {
             @PageableDefault(size = 10) Pageable pageable
     ) {
         List<PhieuGiamGiaResponse> responses = phieuGiamGiaService.getPage(pageable);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", responses));
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công Phiếu Giảm Giá", responses));
     }
 
     @GetMapping("get-all")
     public ResponseEntity<ResponseData<List<PhieuGiamGia>>> getAllPhieuGiamGia() {
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công PGG", phieuGiamGiaService.getAll()));
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công Phiếu Giảm Giá", phieuGiamGiaService.getAll()));
     }
 
     @PostMapping("create")
@@ -51,7 +51,7 @@ public class PhieuGiamGiaController {
     ) {
         PhieuGiamGiaResponse response = phieuGiamGiaService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseData<>(HttpStatus.CREATED.value(), "Tạo thành công"
+                .body(new ResponseData<>(HttpStatus.CREATED.value(), "Tạo thành công Phiếu Giảm Giá"
                         , response));
     }
 
@@ -62,7 +62,7 @@ public class PhieuGiamGiaController {
     ) {
         PhieuGiamGiaResponse response = phieuGiamGiaService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
-                , " Cập nhật thành công", response));
+                , " Cập nhật thành công Phiếu Giảm Giá", response));
     }
 
     @DeleteMapping("delete/{id}")
@@ -71,7 +71,7 @@ public class PhieuGiamGiaController {
     ) {
         try {
             phieuGiamGiaService.delete(id); //Xóa mềm
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Xóa thành công", null));
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Xóa thành công Phiếu Giảm Giá", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
@@ -83,6 +83,6 @@ public class PhieuGiamGiaController {
             @PathVariable Long id
     ) {
         PhieuGiamGiaResponse response = phieuGiamGiaService.getById(id);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", response));
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công Phiếu Giảm Giá", response));
     }
 }

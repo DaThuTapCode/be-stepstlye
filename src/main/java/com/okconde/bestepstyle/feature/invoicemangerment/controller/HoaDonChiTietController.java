@@ -1,10 +1,12 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.controller;
 
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.HoaDonChiTietService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -31,19 +33,25 @@ public class HoaDonChiTietController {
         this.hoaDonChiTietService = hoaDonChiTietService;
     }
 
-    @GetMapping("get-page")
+    // Hàm phân trang
+    @PostMapping("get-page")
     public ResponseEntity<ResponseData<List<HoaDonChiTietResponse>>> getPageHoaDonChiTiet(
-            @PageableDefault(size = 10) Pageable pageable
-    ) {
-        List<HoaDonChiTietResponse> responses = hoaDonChiTietService.getPage(pageable);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công", responses));
+            @PageableDefault Pageable pageable,
+            @RequestBody HoaDonChiTietSearchRequest hoaDonChiTietSearchRequest
+
+    ){
+
+        Page<HoaDonChiTietResponse> page = hoaDonChiTietService.searchPageHoaDonChiTiet(pageable, hoaDonChiTietSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang hóa đơn thành công", page));
+
     }
 
     @GetMapping("get-all")
     public ResponseEntity<ResponseData<?>> getAllHoaDonChiTiet() {
         return ResponseEntity.ok(
                 new ResponseData(HttpStatus.OK.value(),
-                        "Lấy thành công HĐCT",
+                        "Lấy thành công Hóa Đơn Chi Tiết",
                         hoaDonChiTietService.getAll()));
     }
 
@@ -53,7 +61,7 @@ public class HoaDonChiTietController {
     ) {
         HoaDonChiTietResponse response = hoaDonChiTietService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseData<>(HttpStatus.CREATED.value(), "Tạo thành công"
+                .body(new ResponseData<>(HttpStatus.CREATED.value(), "Tạo thành công Hóa Đơn Chi Tiết"
                         , response));
 
     }
@@ -66,7 +74,7 @@ public class HoaDonChiTietController {
         HoaDonChiTietResponse response = hoaDonChiTietService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(
                 HttpStatus.OK.value(),
-                "Cập nhật thành công",
+                "Cập nhật thành công Hóa Đơn Chi Tiết",
                 response));
     }
 
@@ -78,7 +86,7 @@ public class HoaDonChiTietController {
         try {
             hoaDonChiTietService.delete(id);
             return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
-                    "Xóa thành công", null));
+                    "Xóa thành công Hóa Đơn Chi  Tiết", null));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
@@ -91,7 +99,7 @@ public class HoaDonChiTietController {
     ) {
         return ResponseEntity.ok(new ResponseData<>(
                 HttpStatus.OK.value(),
-                "Lấy thành công" + id,
+                "Lấy thành công Hóa Đơn Chi Tiết" + id,
                 hoaDonChiTietService.getById(id)));
     }
     @GetMapping("by-id-hoa-don/{id}")
@@ -100,7 +108,7 @@ public class HoaDonChiTietController {
     ) {
         return ResponseEntity.ok(new ResponseData<>(
                 HttpStatus.OK.value(),
-                "Lấy thành công" + id,
+                "Lấy thành công Hóa Đơn" + id,
                 hoaDonChiTietService.getByIdHoaDon(id)));
     }
 
