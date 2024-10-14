@@ -59,12 +59,15 @@ public class TrongLuongController {
     // update trọng lượng
     @PutMapping("update-trong-luong/{id}")
     public ResponseEntity<ResponseData<TrongLuongResponse>> updateTrongLuong(
-            @RequestBody TrongLuongRequest trongLuongRequest,
-            @RequestParam Long id
-    ){
-        TrongLuongResponse updateTL = trongLuongService.update(id, trongLuongRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật trọng lượng thành công", updateTL));
+            @PathVariable Long id,
+            @RequestBody TrongLuongRequest trongLuongRequest
+    ) {
+        TrongLuongResponse trongLuongResponse = trongLuongService.update(id, trongLuongRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update trọng lượng thành công",
+                        trongLuongResponse)
+        );
     }
 
     // get by id trọng lượng

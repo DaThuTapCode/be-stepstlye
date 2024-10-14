@@ -18,6 +18,9 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KichCoRequest {
+    private Long idKichCo;
+
+    private String maKichCo;
 
     private Double giaTri;
 

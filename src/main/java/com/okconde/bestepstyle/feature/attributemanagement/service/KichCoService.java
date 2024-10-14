@@ -68,9 +68,14 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
         KichCo kichCo = kichCoRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy kích cỡ với id" + id));
 
+
         kichCo.setGiaTri(kichCoRequest.getGiaTri());
         kichCo.setMoTa(kichCoRequest.getMoTa());
         kichCo.setTrangThai(StatusEnum.ACTIVE);
+        kichCo.setMaKichCo(kichCoRequest.getMaKichCo());
+        kichCo.setGiaTri(kichCoRequest.getGiaTri());
+        kichCo.setMoTa(kichCoRequest.getMoTa());
+        kichCo.setTrangThai(kichCoRequest.getTrangThai());
         KichCo kichCoUpdated = kichCoRepository.save(kichCo);
         return kichCoResponseMapper.toDTO(kichCoUpdated);
     }

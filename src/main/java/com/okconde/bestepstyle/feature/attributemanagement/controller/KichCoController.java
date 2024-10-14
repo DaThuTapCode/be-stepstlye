@@ -1,5 +1,7 @@
 package com.okconde.bestepstyle.feature.attributemanagement.controller;
 
+import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
+import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
 import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
@@ -55,14 +57,17 @@ public class KichCoController {
     }
 
     // update kích cỡ
-    @PutMapping("update-kich-co")
+    @PutMapping("update-kich-co/{id}")
     public ResponseEntity<ResponseData<KichCoResponse>> updateKichCo(
-            @RequestBody KichCoRequest kichCoRequest,
-            @RequestParam Long id
-    ){
-        KichCoResponse updateKC = kichCoService.update(id, kichCoRequest);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Cập nhật kích cỡ thành công", updateKC));
+            @PathVariable Long id,
+            @RequestBody KichCoRequest kichCoRequest
+    ) {
+        KichCoResponse kichCoResponse = kichCoService.update(id, kichCoRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Update kích cỡ thành công",
+                        kichCoResponse)
+        );
     }
 
     // get by id kích cỡ

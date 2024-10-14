@@ -17,6 +17,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatLieuDeGiayRequest {
+    private Long idChatLieuDeGiay;
+
+    private String maChatLieuDeGiay;
 
     @NotBlank(message = "Tên chất liệu đế giày không được để trống!")
     private String tenChatLieuDeGiay;

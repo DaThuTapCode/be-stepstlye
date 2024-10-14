@@ -71,6 +71,11 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
         mauSac.setGiaTri(mauSacRequest.getGiaTri());
         mauSac.setMoTa(mauSacRequest.getMoTa());
         mauSac.setTrangThai(StatusEnum.ACTIVE);
+        mauSac.setMaMauSac(mauSacRequest.getMaMauSac());
+        mauSac.setTenMau(mauSacRequest.getTenMau());
+        mauSac.setGiaTri(mauSacRequest.getGiaTri());
+        mauSac.setMoTa(mauSacRequest.getMoTa());
+        mauSac.setTrangThai(mauSacRequest.getTrangThai());
         MauSac mauSacUpdated = mauSacRepository.save(mauSac);
         return mauSacResponseMapper.toDTO(mauSacUpdated);
     }

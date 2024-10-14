@@ -18,6 +18,8 @@ import lombok.*;
 public class KichCoResponse {
     private Long idKichCo;
 
+    private String maKichCo;
+
     private Double giaTri;
 
     private String moTa;
