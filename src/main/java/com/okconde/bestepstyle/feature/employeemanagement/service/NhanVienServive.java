@@ -1,15 +1,18 @@
 package com.okconde.bestepstyle.feature.employeemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.nhanvien.request.NhanVienRequest;
+import com.okconde.bestepstyle.core.dto.nhanvien.request.NhanVienSearchRequest;
 import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienResponse;
 import com.okconde.bestepstyle.core.entity.ChucVu;
 import com.okconde.bestepstyle.core.entity.NhanVien;
+import com.okconde.bestepstyle.core.exception.CustomerCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.nhanvien.request.NhanVienRequestMapper;
 import com.okconde.bestepstyle.core.mapper.nhanvien.response.NhanVienResponseMapper;
 import com.okconde.bestepstyle.core.repository.NhanVienRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +61,9 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     @Transactional
     public NhanVienResponse create(NhanVienRequest nhanVienRequest) {
 
+        if (nhanVienRepository.timNVTheoMaNV(nhanVienRequest.getMaNhanVien()).isPresent()){
+            throw new CustomerCodeDuplicateException("Mã nhân viên " + nhanVienRequest.getMaNhanVien() + " đã tồn tại!");
+        }
         NhanVien nhanVienMoi = nhanVienRequestMapper.toEntity(nhanVienRequest);
         nhanVienMoi.setNgayTao(LocalDateTime.now());
         nhanVienMoi.setNgayChinhSua(LocalDateTime.now());
@@ -143,5 +149,14 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
                 .orElseThrow(() -> new ResourceNotFoundException("Nhân viên không tồn tại"));
         return nhanVienResponseMapper.toDTO(nv);
 
+    }
+
+    public Page<NhanVienResponse> searchPageNV(Pageable pageable, NhanVienSearchRequest nhanVienSearchRequest){
+
+        Page<NhanVien> nhanVienPage = nhanVienRepository.searchPageNVByMaAndTenAndSDT
+                (pageable, nhanVienSearchRequest.getMaNhanVien(),
+                        nhanVienSearchRequest.getHoTen(),
+                        nhanVienSearchRequest.getSoDienThoai());
+        return nhanVienPage.map(nhanVienResponseMapper::toDTO);
     }
 }
