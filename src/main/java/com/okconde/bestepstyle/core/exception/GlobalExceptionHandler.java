@@ -44,4 +44,11 @@ public class GlobalExceptionHandler {
         System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION MethodArgumentNotValidException]");
         return ResponseEntity.badRequest().body(setData(e, request));
     }
+
+    @ExceptionHandler({AttributeCodeDuplicateException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ResponseError> handlerAttributeCodeDuplicateException(Exception e, WebRequest request) {
+        System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION AttributeCodeDuplicateException]");
+        return ResponseEntity.badRequest().body(setData(e, request));
+    }
 }

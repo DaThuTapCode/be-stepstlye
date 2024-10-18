@@ -3,8 +3,8 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
-import com.okconde.bestepstyle.core.entity.KichCo;
 import com.okconde.bestepstyle.core.entity.MauSac;
+import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.mausac.request.MauSacRequestMapper;
 import com.okconde.bestepstyle.core.mapper.mausac.response.MauSacResponseMapper;
@@ -55,6 +55,9 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
     @Override
     @Transactional
     public MauSacResponse create(MauSacRequest mauSacRequest) {
+        if (mauSacRepository.getMauSacByMaMau(mauSacRequest.getMaMauSac()).isPresent()){
+            throw new AttributeCodeDuplicateException("Mã màu sắc " + mauSacRequest.getMaMauSac() + " đã tồn tại");
+        }
         MauSac entity = mauSacRequestMapper.toEntity(mauSacRequest);
         entity.setTrangThai(StatusEnum.ACTIVE);
         MauSac mauSac = mauSacRepository.save(entity);
@@ -67,10 +70,6 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
         MauSac mauSac = mauSacRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy màu sắc với id" + id));
 
-        mauSac.setTenMau(mauSacRequest.getTenMau());
-        mauSac.setGiaTri(mauSacRequest.getGiaTri());
-        mauSac.setMoTa(mauSacRequest.getMoTa());
-        mauSac.setTrangThai(StatusEnum.ACTIVE);
         mauSac.setMaMauSac(mauSacRequest.getMaMauSac());
         mauSac.setTenMau(mauSacRequest.getTenMau());
         mauSac.setGiaTri(mauSacRequest.getGiaTri());
@@ -96,16 +95,17 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
 
     @Override
     public MauSacResponse getById(Long aLong) {
-        MauSac ms = mauSacRepository.findById(aLong).orElseThrow(() ->
-            new ResourceNotFoundException("Màu sắc không tồn tại id"));
-        return mauSacResponseMapper.toDTO(ms);
+        MauSac mauSac = mauSacRepository.findById(aLong)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy màu sắc với id: " +aLong));
+        return mauSacResponseMapper.toDTO(mauSac);
     }
 
-//    public Page<MauSacResponse> searchPageMS(Pageable pageable){
-//
-//        Page<MauSac> mauSacPage = mauSacRepository.searchPageMSByTenAndGT(pageable);
-//        return mauSacPage.map(mauSacResponseMapper::toDTO);
-//    }
-
+    public Page<MauSacResponse> searchPageMauSac(Pageable pageable, MauSacSearchRequest mauSacSearchRequest){
+        Page<MauSac> mauSacPage = mauSacRepository.searchPageMauSac(pageable,
+                mauSacSearchRequest.getMaMauSac(),
+                mauSacSearchRequest.getTenMau()
+        );
+        return mauSacPage.map(mauSacResponseMapper::toDTO);
+    }
 
 }

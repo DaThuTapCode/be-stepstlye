@@ -3,13 +3,16 @@ package com.okconde.bestepstyle.feature.attributemanagement.controller;
 import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
 import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayRequest;
+import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiaySearchRequest;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.ChatLieuDeGiayService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,10 +72,14 @@ public class ChatLieuDeGiayController {
     }
 
     // get by id chất liệu đế giày
-    @GetMapping("get-by-id")
-    public ResponseEntity<ResponseData<ChatLieuDeGiayResponse>> getChatLieuDeGiayById(@RequestParam Long id) {
-        ChatLieuDeGiayResponse chatLieuDeGiayResponse = chatLieuDeGiayService.getById(id);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy chất liệu đế giày thành công", chatLieuDeGiayResponse));
+    @GetMapping("{id}")
+    public ResponseEntity<ResponseData<?>> getChatLieuDeGiayById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Lấy thành chất liệu đế giày với id: " + id,
+                chatLieuDeGiayService.getById(id)));
     }
 
     // delete chất liệu đế giày
@@ -84,5 +91,19 @@ public class ChatLieuDeGiayController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }
+    }
+
+    // Hàm phân trang
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<ChatLieuDeGiayResponse>>> getPageChatLieuDeGiay(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) ChatLieuDeGiaySearchRequest chatLieuDeGiaySearchRequest
+
+    ){
+
+        Page<ChatLieuDeGiayResponse> page = chatLieuDeGiayService.searchPageChatLieuDeGiay(pageable, chatLieuDeGiaySearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang chất liệu đế giày thành công", page));
+
     }
 }

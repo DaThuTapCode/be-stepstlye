@@ -84,11 +84,28 @@ public class MauSacController {
         }
     }
 
-    // get by id màu sắc
-    @GetMapping("get-by-id")
-    public ResponseEntity<ResponseData<List<MauSacResponse>>> getMauSacById(@PathVariable Long id) {
-        MauSacResponse mauSac = mauSacService.getById(id);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy màu sắc thành công", mauSac));
+    @GetMapping("{id}")
+    public ResponseEntity<ResponseData<?>> getMauSacById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Lấy thành màu sắc với id: " + id,
+                mauSacService.getById(id)));
+    }
+
+    // Hàm phân trang
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<MauSacResponse>>> getPageMauSac(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) MauSacSearchRequest mauSacSearchRequest
+
+    ){
+
+        Page<MauSacResponse> page = mauSacService.searchPageMauSac(pageable, mauSacSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang màu sắc thành công", page));
+
     }
 
 }

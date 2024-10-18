@@ -18,5 +18,4 @@ public class MauSacSearchRequest {
 
     private String tenMau;
 
-    private String giaTri;
 }

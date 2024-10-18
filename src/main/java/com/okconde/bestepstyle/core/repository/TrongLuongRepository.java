@@ -1,7 +1,11 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.TrongLuong;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Created at 23/09/2024 by Ngo Tu
@@ -9,4 +13,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author: Ngo Tu
  */
 public interface TrongLuongRepository extends JpaRepository<TrongLuong, Long> {
+    @Query("""
+            select distinct tl from TrongLuong tl 
+            where (:maTrongLuong is null or tl.maTrongLuong like %:maTrongLuong%)
+            and (:giaTri is null or tl.giaTri like %:giaTri%)
+            """)
+    Page<TrongLuong> searchPageTrongLuong(Pageable pageable,
+                                  @Param("maTrongLuong") String maTrongLuong,
+                                  @Param("giaTri") String giaTri
+    );
 }
