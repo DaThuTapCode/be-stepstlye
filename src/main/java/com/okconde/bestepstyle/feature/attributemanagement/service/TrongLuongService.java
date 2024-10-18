@@ -1,7 +1,10 @@
 package com.okconde.bestepstyle.feature.attributemanagement.service;
 
+import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
 import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
+import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongSearchRequest;
 import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.entity.TrongLuong;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -11,6 +14,7 @@ import com.okconde.bestepstyle.core.repository.TrongLuongRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +47,7 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
 
     @Override
     public List<TrongLuongResponse> getPage(Pageable pageable) {
-        List<TrongLuong> trongLuongList = trongLuongRepository.findAll(pageable).getContent();
-        return trongLuongResponseMapper.listToDTO(trongLuongList);
+        return trongLuongRepository.findAll(pageable).map(trongLuongResponseMapper ::toDTO).getContent();
     }
 
     @Override
@@ -68,9 +71,6 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
         TrongLuong trongLuong = trongLuongRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy trọng lượng với id" + id));
 
-        trongLuong.setGiaTri(trongLuongRequest.getGiaTri());
-        trongLuong.setMoTa(trongLuongRequest.getMoTa());
-        trongLuong.setTrangThai(StatusEnum.ACTIVE);
         trongLuong.setMaTrongLuong(trongLuongRequest.getMaTrongLuong());
         trongLuong.setGiaTri(trongLuongRequest.getGiaTri());
         trongLuong.setMoTa(trongLuongRequest.getMoTa());
@@ -99,5 +99,13 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
         TrongLuong tl = trongLuongRepository.findById(aLong).orElseThrow(() ->
                 new ResourceNotFoundException("Trọng lượng không tồn tại id"));
         return trongLuongResponseMapper.toDTO(tl);
+    }
+
+    public Page<TrongLuongResponse> searchPageTrongLuong(Pageable pageable, TrongLuongSearchRequest trongLuongSearchRequest){
+        Page<TrongLuong> trongLuongPage = trongLuongRepository.searchPageTrongLuong(pageable,
+                trongLuongSearchRequest.getMaTrongLuong(),
+                trongLuongSearchRequest.getGiaTri()
+        );
+        return trongLuongPage.map(trongLuongResponseMapper::toDTO);
     }
 }

@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiayRequest;
+import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiaySearchRequest;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.entity.ChatLieuDeGiay;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
@@ -12,6 +13,7 @@ import com.okconde.bestepstyle.core.repository.ChatLieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +47,8 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
 
     @Override
     public List<ChatLieuDeGiayResponse> getPage(Pageable pageable) {
-        List<ChatLieuDeGiay> chatLieuDeGiayList = chatLieuDeGiayRepository.findAll(pageable).getContent();
-        return chatLieuDeGiayResponseMapper.listToDTO(chatLieuDeGiayList);
+        return chatLieuDeGiayRepository.findAll(pageable).map(chatLieuDeGiayResponseMapper ::toDTO).getContent();
+
     }
 
     @Override
@@ -99,5 +101,13 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
         ChatLieuDeGiay cldg = chatLieuDeGiayRepository.findById(aLong).orElseThrow(() ->
                 new ResourceNotFoundException("Chất liệu để giày không tồn tại id"));
         return chatLieuDeGiayResponseMapper.toDTO(cldg);
+    }
+
+    public Page<ChatLieuDeGiayResponse> searchPageChatLieuDeGiay(Pageable pageable, ChatLieuDeGiaySearchRequest chatLieuDeGiaySearchRequest){
+        Page<ChatLieuDeGiay> chatLieuDeGiayPage = chatLieuDeGiayRepository.searchPageChatLieuDeGiay(pageable,
+                chatLieuDeGiaySearchRequest.getMaChatLieuDeGiay(),
+                chatLieuDeGiaySearchRequest.getTenChatLieuDeGiay()
+        );
+        return chatLieuDeGiayPage.map(chatLieuDeGiayResponseMapper::toDTO);
     }
 }

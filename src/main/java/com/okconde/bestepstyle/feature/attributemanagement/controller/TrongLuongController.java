@@ -4,12 +4,15 @@ import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
 import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
+import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongSearchRequest;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.TrongLuongService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,10 +74,14 @@ public class TrongLuongController {
     }
 
     // get by id trọng lượng
-    @GetMapping("get-by-id")
-    public ResponseEntity<ResponseData<TrongLuongResponse>> getTrongLuongById(@RequestParam Long id) {
-        TrongLuongResponse trongLuongResponse = trongLuongService.getById(id);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy trọng lượng thành công", trongLuongResponse));
+    @GetMapping("{id}")
+    public ResponseEntity<ResponseData<?>> getTrongLuongById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Lấy thành trọng lượng với id: " + id,
+                trongLuongService.getById(id)));
     }
 
     // delete trong lượng
@@ -88,4 +95,17 @@ public class TrongLuongController {
         }
     }
 
+    // Hàm phân trang
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<TrongLuongResponse>>> getPageTrongLuong(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) TrongLuongSearchRequest trongLuongSearchRequest
+
+    ){
+
+        Page<TrongLuongResponse> page = trongLuongService.searchPageTrongLuong(pageable, trongLuongSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang trọng lượng thành công", page));
+
+    }
 }

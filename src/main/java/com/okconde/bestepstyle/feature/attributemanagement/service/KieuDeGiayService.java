@@ -2,7 +2,11 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiayRequest;
+import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiaySearchRequest;
+import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.entity.KieuDeGiay;
+import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.kieudegiay.request.KieuDeGiayRequestMapper;
 import com.okconde.bestepstyle.core.mapper.kieudegiay.response.KieuDeGiayResponseMapper;
@@ -10,6 +14,7 @@ import com.okconde.bestepstyle.core.repository.KieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +46,7 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
 
     @Override
     public List<KieuDeGiayResponse> getPage(Pageable pageable) {
-        List<KieuDeGiay> kieuDeGiayList = kieuDeGiayRepository.findAll(pageable).getContent();
-        return kieuDeGiayResponseMapper.listToDTO(kieuDeGiayList);
+        return kieuDeGiayRepository.findAll(pageable).map(kieuDeGiayResponseMapper ::toDTO).getContent();
     }
 
     @Override
@@ -66,10 +70,6 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
         KieuDeGiay kieuDeGiay = kieuDeGiayRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy kiểu đế giầy với id" + id));
 
-        kieuDeGiay.setTenKieuDeGiay(kieuDeGiayRequest.getTenKieuDeGiay());
-        kieuDeGiay.setGiaTri(kieuDeGiayRequest.getGiaTri());
-        kieuDeGiay.setMoTa(kieuDeGiayRequest.getMoTa());
-        kieuDeGiay.setTrangThai(StatusEnum.ACTIVE);
         kieuDeGiay.setMaKieuDeGiay(kieuDeGiayRequest.getMaKieuDeGiay());
         kieuDeGiay.setTenKieuDeGiay(kieuDeGiayRequest.getTenKieuDeGiay());
         kieuDeGiay.setGiaTri(kieuDeGiayRequest.getGiaTri());
@@ -98,5 +98,13 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
         KieuDeGiay kdg = kieuDeGiayRepository.findById(aLong).orElseThrow(() ->
                 new ResourceNotFoundException("Kiểu đế giày không tồn tại id"));
         return kieuDeGiayResponseMapper.toDTO(kdg);
+    }
+
+    public Page<KieuDeGiayResponse> searchPageKieuDeGiay(Pageable pageable, KieuDeGiaySearchRequest kieuDeGiaySearchRequest){
+        Page<KieuDeGiay> kieuDeGiayPage = kieuDeGiayRepository.searchPageKieuDeGiay(pageable,
+                kieuDeGiaySearchRequest.getMaKieuDeGiay(),
+                kieuDeGiaySearchRequest.getTenKieuDeGiay()
+        );
+        return kieuDeGiayPage.map(kieuDeGiayResponseMapper::toDTO);
     }
 }

@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiayRequest;
+import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiaySearchRequest;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.entity.KieuDeGiay;
@@ -11,8 +12,10 @@ import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.KieuDeGiayService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,10 +75,14 @@ public class KieuDeGiayController {
     }
 
     // get by id kiểu đế giày
-    @GetMapping("get-by-id")
-    public ResponseEntity<ResponseData<KieuDeGiayResponse>> getKieuDeGiayById(@RequestParam Long id) {
-        KieuDeGiayResponse kieuDeGiayResponse = kieuDeGiayService.getById(id);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy kiểu đế giày thành công", kieuDeGiayResponse));
+    @GetMapping("{id}")
+    public ResponseEntity<ResponseData<?>> getKieuDeGiayById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Lấy thành kiểu đế giày với id: " + id,
+                kieuDeGiayService.getById(id)));
     }
 
     // delete kiểu đế giày
@@ -87,5 +94,19 @@ public class KieuDeGiayController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }
+    }
+
+    // Hàm phân trang
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<KieuDeGiayResponse>>> getPageKieuDeGiay(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) KieuDeGiaySearchRequest kieuDeGiaySearchRequest
+
+    ){
+
+        Page<KieuDeGiayResponse> page = kieuDeGiayService.searchPageKieuDeGiay(pageable, kieuDeGiaySearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang kiểu đế giày thành công", page));
+
     }
 }

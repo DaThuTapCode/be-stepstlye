@@ -2,6 +2,7 @@ package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
+import com.okconde.bestepstyle.core.dto.kichco.request.KichCoSearchRequest;
 import com.okconde.bestepstyle.core.entity.KichCo;
 import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -11,6 +12,7 @@ import com.okconde.bestepstyle.core.repository.KichCoRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +45,7 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
 
     @Override
     public List<KichCoResponse> getPage(Pageable pageable) {
-        List<KichCo> kichCoList = kichCoRepository.findAll(pageable).getContent();
-        return kichCoResponseMapper.listToDTO(kichCoList);
+        return kichCoRepository.findAll(pageable).map(kichCoResponseMapper ::toDTO).getContent();
     }
 
     @Override
@@ -99,5 +100,13 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
         KichCo kc = kichCoRepository.findById(aLong).orElseThrow(() ->
                 new ResourceNotFoundException("Kích cỡ không tồn tại id"));
         return kichCoResponseMapper.toDTO(kc);
+    }
+
+    public Page<KichCoResponse> searchPageKichCo(Pageable pageable, KichCoSearchRequest kichCoSearchRequest){
+        Page<KichCo> kichCoPage = kichCoRepository.searchPageKichCo(pageable,
+                kichCoSearchRequest.getMaKichCo(),
+                kichCoSearchRequest.getGiaTri()
+        );
+        return kichCoPage.map(kichCoResponseMapper::toDTO);
     }
 }

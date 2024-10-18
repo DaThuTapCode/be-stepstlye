@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.attributemanagement.service;
 
 import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
+import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuSearchRequest;
 import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
 import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -11,6 +12,7 @@ import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.feature.attributemanagement.controller.ChatLieuController;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +47,7 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
 
     @Override
     public List<ChatLieuResponse> getPage(Pageable pageable) {
-        List<ChatLieu> list = chatLieuRepository.findAll(pageable).getContent();
-        return chatLieuResponseMapper.listToDTO(list);
+        return chatLieuRepository.findAll(pageable).map(chatLieuResponseMapper ::toDTO).getContent();
     }
 
     @Override
@@ -70,7 +71,7 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
         ChatLieu chatLieu = chatLieuRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Không tìm thấy chất liệu với id" + id));
 
-        chatLieu.setMaChatLieu(chatLieuRequest.getTenChatLieu());
+        chatLieu.setMaChatLieu(chatLieuRequest.getMaChatLieu());
         chatLieu.setTenChatLieu(chatLieuRequest.getTenChatLieu());
         chatLieu.setDoBen(chatLieuRequest.getDoBen());
         chatLieu.setMoTa(chatLieuRequest.getMoTa());
@@ -100,4 +101,11 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
         return chatLieuResponseMapper.toDTO(chatLieu);
     }
 
+    public Page<ChatLieuResponse> searchPageChatLieu(Pageable pageable, ChatLieuSearchRequest chatLieuSearchRequest){
+        Page<ChatLieu> chatLieuPage = chatLieuRepository.searchPageChatLieu(pageable,
+                chatLieuSearchRequest.getMaChatLieu(),
+                chatLieuSearchRequest.getTenChatLieu()
+        );
+        return chatLieuPage.map(chatLieuResponseMapper::toDTO);
+    }
 }

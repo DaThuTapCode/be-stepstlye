@@ -4,14 +4,17 @@ import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
 import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
 import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
+import com.okconde.bestepstyle.core.dto.kichco.request.KichCoSearchRequest;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.KichCoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,10 +74,14 @@ public class KichCoController {
     }
 
     // get by id kích cỡ
-    @GetMapping("get-by-id")
-    public ResponseEntity<ResponseData<KichCoResponse>> getKichCoById(@RequestParam Long id) {
-        KichCoResponse kichCoResponse = kichCoService.getById(id);
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy kích cỡ thành công", kichCoResponse));
+    @GetMapping("{id}")
+    public ResponseEntity<ResponseData<?>> getKichCoById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Lấy thành kích cỡ với id: " + id,
+                kichCoService.getById(id)));
     }
 
     // delete kich co
@@ -86,5 +93,18 @@ public class KichCoController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }
+    }
+
+    // Hàm phân trang
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<KichCoResponse>>> getPageKichCo(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) KichCoSearchRequest kichCoSearchRequest
+
+    ){
+        Page<KichCoResponse> page = kichCoService.searchPageKichCo(pageable, kichCoSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang kích cỡ thành công", page));
+
     }
 }
