@@ -43,7 +43,7 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
 
 
     public Page<HoaDonChiTietResponse> searchPageHoaDonChiTiet(Pageable pageable, HoaDonChiTietSearchRequest hoaDonChiTietSearchRequest){
-        Page<HoaDonChiTiet> hoaDonChiTietPage = hoaDonChiTietRepository.searchPageHoaDonChiTiet(pageable, hoaDonChiTietSearchRequest.getSoLuong(), hoaDonChiTietSearchRequest.getTongTien());
+        Page<HoaDonChiTiet> hoaDonChiTietPage = hoaDonChiTietRepository.searchPageHoaDonChiTiet(pageable, hoaDonChiTietSearchRequest.getSoLuong(), hoaDonChiTietSearchRequest.getMaHoaDonChiTiet());
         return hoaDonChiTietPage.map(hoaDonChiTietResponseMapper::toDTO);
     }
 

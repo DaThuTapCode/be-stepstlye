@@ -1,12 +1,13 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.controller;
 
-import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaRequest;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaSearchRequest;
 import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.PhieuGiamGiaService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -32,12 +33,18 @@ public class PhieuGiamGiaController {
         this.phieuGiamGiaService = phieuGiamGiaService;
     }
 
-    @GetMapping("get-page")
-    public ResponseEntity<ResponseData<List<PhieuGiamGiaResponse>>> getPagePhieuGiamGia(
-            @PageableDefault(size = 10) Pageable pageable
-    ) {
-        List<PhieuGiamGiaResponse> responses = phieuGiamGiaService.getPage(pageable);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công Phiếu Giảm Giá", responses));
+    // Hàm phân trang
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<PhieuGiamGiaResponse>>> getPagePhieuGiamGia(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) PhieuGiamGiaSearchRequest phieuGiamGiaSearchRequest
+
+    ){
+
+        Page<PhieuGiamGiaResponse> page = phieuGiamGiaService.searchPagePhieuGiamGia(pageable, phieuGiamGiaSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang Phiếu Giảm Giá thành công", page));
+
     }
 
     @GetMapping("get-all")
@@ -85,4 +92,5 @@ public class PhieuGiamGiaController {
         PhieuGiamGiaResponse response = phieuGiamGiaService.getById(id);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công Phiếu Giảm Giá", response));
     }
+
 }

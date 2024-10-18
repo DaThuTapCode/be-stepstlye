@@ -1,6 +1,5 @@
 package com.okconde.bestepstyle.core.repository;
 
-import com.okconde.bestepstyle.core.entity.HoaDon;
 import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,10 +26,10 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
 
     @Query("""
                 select distinct hdct from HoaDonChiTiet hdct where (:soLuong is null or hdct.soLuong = :soLuong)
-                and (:tongTien is null or hdct.tongTien = :tongTien)
+                and (:maHoaDonChiTiet is null or hdct.maHoaDonChiTiet = :maHoaDonChiTiet)
 """)
     Page<HoaDonChiTiet> searchPageHoaDonChiTiet(Pageable pageable,
                                                 @Param(value = "soLuong") Integer soLuong,
-                                                @Param("tongTien") BigDecimal tongTien
+                                                @Param(value = "maHoaDonChiTiet") String maHoaDonChiTiet
                                                 );
 }

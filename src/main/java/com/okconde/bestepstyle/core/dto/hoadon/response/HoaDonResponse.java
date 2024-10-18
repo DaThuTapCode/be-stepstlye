@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.core.dto.hoadon.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangShortResponse;
+import com.okconde.bestepstyle.core.dto.lichsuhoadon.response.LichSuHoaDonShortResponse;
 import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienShortResponse;
 import com.okconde.bestepstyle.core.dto.thanhtoan.response.ThanhToanResponse;
 import com.okconde.bestepstyle.core.entity.KhachHang;
@@ -82,4 +83,6 @@ public class HoaDonResponse {
     private PhieuGiamGiaResponse phieuGiamGia;
 
     private List<HoaDonChiTietResponse> hoaDonChiTiet;
+
+    private List<LichSuHoaDonShortResponse> lichSuHoaDon;
 }

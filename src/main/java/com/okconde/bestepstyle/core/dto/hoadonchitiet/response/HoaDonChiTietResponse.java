@@ -40,6 +40,6 @@ public class HoaDonChiTietResponse {
     @Enumerated(EnumType.STRING)
     private StatusHoaDonChiTiet trangThai;
 
-//    private SPCTShortResponse sanPhamChiTiet;
+    private SPCTShortResponse sanPhamChiTiet;
 
 }

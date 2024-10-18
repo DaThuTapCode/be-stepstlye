@@ -34,19 +34,20 @@ public class HoaDonChiTietController {
     }
 
     // Hàm phân trang
-    @PostMapping("get-page")
-    public ResponseEntity<ResponseData<List<HoaDonChiTietResponse>>> getPageHoaDonChiTiet(
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<HoaDonChiTietResponse>>> getPageHoaDonChiTiet(
             @PageableDefault Pageable pageable,
-            @RequestBody HoaDonChiTietSearchRequest hoaDonChiTietSearchRequest
+            @RequestBody(required = false) HoaDonChiTietSearchRequest hoaDonChiTietSearchRequest
 
     ){
 
         Page<HoaDonChiTietResponse> page = hoaDonChiTietService.searchPageHoaDonChiTiet(pageable, hoaDonChiTietSearchRequest);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Lấy trang hóa đơn thành công", page));
+                "Lấy trang hóa đơn chi tiết thành công", page));
 
     }
 
+    // Hàm lấy tất cả danh sách hóa đơn chi tiết
     @GetMapping("get-all")
     public ResponseEntity<ResponseData<?>> getAllHoaDonChiTiet() {
         return ResponseEntity.ok(
@@ -55,6 +56,7 @@ public class HoaDonChiTietController {
                         hoaDonChiTietService.getAll()));
     }
 
+    // Hàm tạo mới hóa đơn chi tiết
     @PostMapping("create")
     public ResponseEntity<ResponseData<HoaDonChiTietResponse>> createHoaDonChiTiet(
             @RequestBody HoaDonChiTietRequest request
@@ -66,6 +68,7 @@ public class HoaDonChiTietController {
 
     }
 
+    // Hàm cập nhật hóa đơn chi tiết
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<HoaDonChiTietResponse>> updateHoaDonChiTiet(
             @PathVariable Long id,
@@ -79,6 +82,7 @@ public class HoaDonChiTietController {
     }
 
 
+    // Hàm xóa hóa đơn chi tiết
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseData<String>> deleteHoaDonChiTiet(
             @PathVariable Long id
@@ -93,6 +97,7 @@ public class HoaDonChiTietController {
         }
     }
 
+    // Hàm lấy id hóa đơn chi tiết
     @GetMapping("{id}")
     public ResponseEntity<ResponseData<?>> getById(
             @PathVariable Long id
@@ -102,6 +107,8 @@ public class HoaDonChiTietController {
                 "Lấy thành công Hóa Đơn Chi Tiết" + id,
                 hoaDonChiTietService.getById(id)));
     }
+
+    // Hàm lấy danh sách id hóa đơn
     @GetMapping("by-id-hoa-don/{id}")
     public ResponseEntity<ResponseData<?>> getHDCTByIdHoaDon(
             @PathVariable Long id

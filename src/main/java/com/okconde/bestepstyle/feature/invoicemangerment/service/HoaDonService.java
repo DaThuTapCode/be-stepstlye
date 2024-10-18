@@ -1,8 +1,8 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.service;
 
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
+import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
-import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.entity.HoaDon;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
@@ -10,6 +10,7 @@ import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,8 +46,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
     @Override
     public List<HoaDonResponse> getPage(Pageable pageable) {
-        Page<HoaDon> page = hoaDonRepository.findAll(pageable);
-        return page.map(hoaDonResponseMapper::toDTO).getContent();
+        return null;
     }
 
     @Override
@@ -95,6 +95,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         hoaDonExisting.setDiaChiGiaoHang(hoaDonRequest.getDiaChiGiaoHang());
         hoaDonExisting.setSoDienThoaiKhachHang(hoaDonRequest.getSoDienThoaiKhachHang());
         hoaDonExisting.setGhiChu(hoaDonRequest.getGhiChu());
+        hoaDonExisting.setTrangThai(StatusHoaDon.CANCELLED);
 
         HoaDon hoaDonUpdated = hoaDonRepository.save(hoaDonExisting);
         return hoaDonResponseMapper.toDTO(hoaDonUpdated);
@@ -117,5 +118,18 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         HoaDon hoaDon = hoaDonRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy id: " + id));
         return hoaDonResponseMapper.toDTO(hoaDon);
+    }
+
+    public Page<HoaDonResponse> searchPageHoaDon(Pageable pageable, HoaDonSearchRequest hoaDonSearchRequest){
+        Page<HoaDon> hoaDonPage = hoaDonRepository.searchPageHoaDon(pageable,
+                hoaDonSearchRequest.getMaHoaDon(),
+                hoaDonSearchRequest.getNgayTaoStart(),
+                DateFormater.setEndDate(hoaDonSearchRequest.getNgayTaoEnd()),
+                hoaDonSearchRequest.getIdKhachHang(),
+                hoaDonSearchRequest.getIdNhanVien(),
+                hoaDonSearchRequest.getIdThanhToan(),
+                hoaDonSearchRequest.getIdPhieuGiamGia()
+                );
+        return hoaDonPage.map(hoaDonResponseMapper::toDTO);
     }
 }

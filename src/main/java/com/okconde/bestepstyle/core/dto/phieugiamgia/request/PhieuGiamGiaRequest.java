@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 
 public class PhieuGiamGiaRequest {
 
+    private Long idPhieuGiamGia;
+
     private String maPhieuGiamGia;
 
     private String tenPhieuGiamGia;

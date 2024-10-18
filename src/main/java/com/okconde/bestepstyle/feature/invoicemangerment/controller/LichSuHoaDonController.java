@@ -1,12 +1,13 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.controller;
 
-import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonRequest;
+import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.response.LichSuHoaDonResponse;
 import com.okconde.bestepstyle.core.entity.LichSuHoaDon;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.LichSuHoaDonService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -33,12 +34,18 @@ public class LichSuHoaDonController {
         this.lichSuHoaDonService = lichSuHoaDonService;
     }
 
-    @GetMapping("get-page")
-    public ResponseEntity<ResponseData<List<LichSuHoaDonResponse>>> getPageLichSuHoaDon(
-            @PageableDefault(size = 10) Pageable pageable
+    // Hàm phân trang
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<LichSuHoaDonResponse>>> getPageLichSuHoaDon(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) LichSuHoaDonSearchRequest lichSuHoaDonSearchRequest
+
     ){
-        List<LichSuHoaDonResponse> responses =    lichSuHoaDonService.getPage(pageable);
-        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công LSHĐ", responses));
+
+        Page<LichSuHoaDonResponse> page = lichSuHoaDonService.searchPageLichSuHoaDon(pageable, lichSuHoaDonSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang LSHĐ thành công", page));
+
     }
 
     @GetMapping("get-all")

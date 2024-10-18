@@ -1,6 +1,8 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.service;
 
+
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonRequest;
+import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.response.LichSuHoaDonResponse;
 import com.okconde.bestepstyle.core.entity.LichSuHoaDon;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -98,5 +100,10 @@ public class LichSuHoaDonService implements IBaseService<LichSuHoaDon, Long, Lic
         LichSuHoaDon lichSuHoaDon = lichSuHoaDonRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
         return lichSuHoaDonResponseMapper.toDTO(lichSuHoaDon);
+    }
+
+    public Page<LichSuHoaDonResponse> searchPageLichSuHoaDon(Pageable pageable, LichSuHoaDonSearchRequest lichSuHoaDonSearchRequest){
+        Page<LichSuHoaDon> lichSuHoaDonPage = lichSuHoaDonRepository.searchPageLichSuHoaDon(pageable, lichSuHoaDonSearchRequest.getMaLichSuHoaDon());
+        return lichSuHoaDonPage.map(lichSuHoaDonResponseMapper::toDTO);
     }
 }

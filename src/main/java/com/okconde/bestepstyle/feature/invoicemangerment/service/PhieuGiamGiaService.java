@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.service;
 
 import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaRequest;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaSearchRequest;
 import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -9,6 +10,7 @@ import com.okconde.bestepstyle.core.mapper.phieugiamgia.response.PhieuGiamGiaRes
 import com.okconde.bestepstyle.core.repository.PhieuGiamGiaRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
+import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -109,5 +111,16 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
         PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
         return phieuGiamGiaResponseMapper.toDTO(phieuGiamGia);
+    }
+
+    public Page<PhieuGiamGiaResponse> searchPagePhieuGiamGia(Pageable pageable, PhieuGiamGiaSearchRequest phieuGiamGiaSearchRequest){
+        Page<PhieuGiamGia> phieuGiamGiaPage = phieuGiamGiaRepository.searchPagePhieuGiamGia(pageable,
+                phieuGiamGiaSearchRequest.getMaPhieuGiamGia(),
+                phieuGiamGiaSearchRequest.getTenPhieuGiamGia(),
+                phieuGiamGiaSearchRequest.getNgayBatDau(),
+                DateFormater.setEndDate(phieuGiamGiaSearchRequest.getNgayKetThuc()),
+                phieuGiamGiaSearchRequest.getLoaiGiam()
+        );
+        return phieuGiamGiaPage.map(phieuGiamGiaResponseMapper::toDTO);
     }
 }
