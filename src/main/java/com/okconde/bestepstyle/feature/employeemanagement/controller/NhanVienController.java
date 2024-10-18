@@ -1,12 +1,14 @@
 package com.okconde.bestepstyle.feature.employeemanagement.controller;
 
 import com.okconde.bestepstyle.core.dto.nhanvien.request.NhanVienRequest;
+import com.okconde.bestepstyle.core.dto.nhanvien.request.NhanVienSearchRequest;
 import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.employeemanagement.service.NhanVienServive;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -46,16 +47,15 @@ public class NhanVienController {
     }
 
     // Hàm phân trang
-    @GetMapping("get-page")
+    @PostMapping("get-page")
     public ResponseEntity<ResponseData<List<NhanVienResponse>>> getPageNhanVien(
-            @RequestParam(value = "currentPage", defaultValue = "0") Integer current
-    ){
+            @PageableDefault Pageable pageable,
+            @RequestBody NhanVienSearchRequest nhanVienSearchRequest
+            ){
 
-        int size = 5;
-        Pageable pageable = PageRequest.of(current, size);
-        List<NhanVienResponse> lst = nhanVienServive.getPage(pageable);
+        Page<NhanVienResponse> page = nhanVienServive.searchPageNV(pageable, nhanVienSearchRequest);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Lấy trang nhân viên thành công", lst));
+                "Lấy trang khách hàng thành công", page));
 
     }
 

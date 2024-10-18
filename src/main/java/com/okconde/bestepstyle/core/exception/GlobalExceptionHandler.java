@@ -44,4 +44,18 @@ public class GlobalExceptionHandler {
         System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION MethodArgumentNotValidException]");
         return ResponseEntity.badRequest().body(setData(e, request));
     }
+
+    @ExceptionHandler({CustomerCodeDuplicateException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ResponseError> handlerCustomerCodeDuplicateException(Exception e, WebRequest request) {
+        System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION CustomerCodeDuplicateException]");
+        return ResponseEntity.badRequest().body(setData(e, request));
+    }
+
+    @ExceptionHandler({EmployeeCodeDuplicateException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ResponseError> handlerEmployeeCodeDuplicateException(Exception e, WebRequest request) {
+        System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION EmployeeCodeDuplicateException]");
+        return ResponseEntity.badRequest().body(setData(e, request));
+    }
 }
