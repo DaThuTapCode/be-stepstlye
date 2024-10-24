@@ -27,6 +27,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
             (:idDanhMuc IS NULL OR sp.danhMuc.idDanhMuc = :idDanhMuc)
             AND 
             (:idThuongHieu IS NULL OR sp.thuongHieu.idThuongHieu = :idThuongHieu)
+            ORDER BY sp.idSanPham desc
             """)
     Page<SanPham> searchPage(Pageable pageable,
                              @Param("tenSanPham") String tenSanPham,

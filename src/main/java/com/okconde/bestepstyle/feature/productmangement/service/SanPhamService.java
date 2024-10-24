@@ -5,9 +5,12 @@ import com.okconde.bestepstyle.core.dto.sanpham.request.SanPhamSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamResponse;
 import com.okconde.bestepstyle.core.entity.SanPham;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
+import com.okconde.bestepstyle.core.mapper.sanpham.request.SanPhamRequestMapper;
 import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamResponseMapper;
 import com.okconde.bestepstyle.core.repository.SanPhamRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
+import com.okconde.bestepstyle.core.util.enumutil.StatusSP;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,11 +30,13 @@ public class SanPhamService implements IBaseService<SanPham, Long, SanPhamReques
 
     //Mapper
     private final SanPhamResponseMapper sanPhamResponseMapper;
+    private final SanPhamRequestMapper sanPhamRequestMapper;
     //Constructor
     public SanPhamService(SanPhamRepository sanPhamRepository,
-                          SanPhamResponseMapper sanPhamResponseMapper) {
+                          SanPhamResponseMapper sanPhamResponseMapper, SanPhamRequestMapper sanPhamRequestMapper) {
         this.sanPhamRepository = sanPhamRepository;
         this.sanPhamResponseMapper = sanPhamResponseMapper;
+        this.sanPhamRequestMapper = sanPhamRequestMapper;
     }
 
 
@@ -47,7 +52,9 @@ public class SanPhamService implements IBaseService<SanPham, Long, SanPhamReques
 
     @Override
     public SanPhamResponse create(SanPhamRequest sanPhamRequest) {
-        return null;
+        sanPhamRequest.setMaSanPham(GenerateCodeRandomUtil.generateProductCode("SP", 8));
+        sanPhamRequest.setTrangThai(StatusSP.ACTIVE);
+        return sanPhamResponseMapper.toDTO(sanPhamRepository.save(sanPhamRequestMapper.toEntity(sanPhamRequest)));
     }
 
     @Override
