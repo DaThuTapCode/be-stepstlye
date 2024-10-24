@@ -18,7 +18,7 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
     @Query("""
                 select distinct kh from KhachHang kh where (:maKH is null or kh.maKhachHang like %:maKH%)
                 and (:tenKH is null or kh.tenKhachHang like %:tenKH%)
-                and (:SDT is null or kh.soDienThoai like %:SDT%)
+                and (:SDT is null or kh.soDienThoai like %:SDT%) order by kh.idKhachHang desc
 """)
     Page<KhachHang> searchPageKHByMaAndTenAndSDT(Pageable pageable, String maKH, String tenKH, String SDT);
 
