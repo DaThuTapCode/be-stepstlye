@@ -89,6 +89,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
         phieuGiamGiaExisting.setGiaTriGiamToiDa(phieuGiamGiaRequest.getGiaTriGiamToiDa());
         phieuGiamGiaExisting.setGiaTriGiam(phieuGiamGiaRequest.getGiaTriGiam());
         phieuGiamGiaExisting.setGiaTriGiamToiThieu(phieuGiamGiaRequest.getGiaTriGiamToiThieu());
+        phieuGiamGiaExisting.setTrangThai(phieuGiamGiaRequest.getTrangThai());
 
         PhieuGiamGia phieuGiamGiaUpdated = phieuGiamGiaRepository.save(phieuGiamGiaExisting);
         return phieuGiamGiaResponseMapper.toDTO(phieuGiamGiaUpdated);
@@ -96,14 +97,11 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
 
     @Override
     public void delete(Long id) {
-        Optional<PhieuGiamGia> optionalPhieuGiamGia = phieuGiamGiaRepository.findById(id);
-        if (optionalPhieuGiamGia.isPresent()) {
-            PhieuGiamGia phieuGiamGia = optionalPhieuGiamGia.get();
-            phieuGiamGia.setTrangThai(StatusPhieuGiamGia.ACTIVE);
-            phieuGiamGiaRepository.save(phieuGiamGia);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + id);
-        }
+
+        PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Phiếu giảm giá không tồn tại"));
+        phieuGiamGia.setTrangThai(StatusPhieuGiamGia.ACTIVE);
+        phieuGiamGiaRepository.save(phieuGiamGia);
     }
 
     @Override

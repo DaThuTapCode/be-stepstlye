@@ -69,7 +69,7 @@ public class ThanhToanService implements IBaseService<ThanhToan, Long, ThanhToan
 
         thanhToanExisting.setMaThanhToan(thanhToanRequest.getMaThanhToan());
         thanhToanExisting.setPhuongThucThanhToan(thanhToanRequest.getPhuongThucThanhToan());
-        thanhToanExisting.setTrangThai(StatusEnum.ACTIVE);
+        thanhToanExisting.setTrangThai(thanhToanRequest.getTrangThai());
 
         ThanhToan thanhToanUpdated = thanhToanRepository.save(thanhToanExisting);
         return thanhToanResponseMapper.toDTO(thanhToanUpdated);
@@ -77,14 +77,11 @@ public class ThanhToanService implements IBaseService<ThanhToan, Long, ThanhToan
 
     @Override
     public void delete(Long id) {
-        Optional<ThanhToan> optionalThanhToan = thanhToanRepository.findById(id);
-        if (optionalThanhToan.isPresent()) {
-            ThanhToan thanhToan = optionalThanhToan.get();
-            thanhToan.setTrangThai(StatusEnum.ACTIVE);
-            thanhToanRepository.save(thanhToan);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + id);
-        }
+
+        ThanhToan thanhToan = thanhToanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Thanh toán không tồn tại"));
+        thanhToan.setTrangThai(StatusEnum.ACTIVE);
+        thanhToanRepository.save(thanhToan);
     }
 
     @Override

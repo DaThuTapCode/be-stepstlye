@@ -1,6 +1,14 @@
 package com.okconde.bestepstyle.core.dto.hoadonchitiet.request;
 
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 
@@ -18,13 +26,26 @@ import java.math.BigDecimal;
 
 public class HoaDonChiTietRequest {
 
+    private Long idHoaDonChiTiet;
+
+    @NotNull(message = "Số lượng không được rỗng!")
+    @Min(value = 1, message = "Số lượng phải lớn hơn 0")
     private int soLuong;
 
+    @NotBlank(message = "Mã HDCT không được để trống!")
+    @Length(min = 5, message = "Mã HDCT phải lớn hơn 5 ký tự!")
+    @Length(max = 10, message = "Mã HDCT không được vượt quá 10 ký tự!")
     private String maHoaDonChiTiet;
 
+    @NotNull(message = "Đơn giá không được để trống!")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Đơn giá > 0!")
     private BigDecimal donGia;
 
+    @NotNull(message = "Tong tiền không được để trống!")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Tong tiền > 0!")
     private BigDecimal tongTien;
 
+    @Enumerated(EnumType.STRING)
+    private StatusHoaDonChiTiet trangThai;
 
 }

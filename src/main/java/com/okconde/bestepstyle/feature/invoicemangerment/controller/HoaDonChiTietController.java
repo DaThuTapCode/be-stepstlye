@@ -6,6 +6,7 @@ import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResp
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.HoaDonChiTietService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -59,7 +60,7 @@ public class HoaDonChiTietController {
     // Hàm tạo mới hóa đơn chi tiết
     @PostMapping("create")
     public ResponseEntity<ResponseData<HoaDonChiTietResponse>> createHoaDonChiTiet(
-            @RequestBody HoaDonChiTietRequest request
+            @RequestBody @Valid HoaDonChiTietRequest request
     ) {
         HoaDonChiTietResponse response = hoaDonChiTietService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -72,7 +73,7 @@ public class HoaDonChiTietController {
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<HoaDonChiTietResponse>> updateHoaDonChiTiet(
             @PathVariable Long id,
-            @RequestBody HoaDonChiTietRequest request
+            @RequestBody @Valid HoaDonChiTietRequest request
     ) {
         HoaDonChiTietResponse response = hoaDonChiTietService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(
@@ -84,17 +85,12 @@ public class HoaDonChiTietController {
 
     // Hàm xóa hóa đơn chi tiết
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<ResponseData<String>> deleteHoaDonChiTiet(
+    public ResponseEntity<ResponseData<Void>> deleteHoaDonChiTiet(
             @PathVariable Long id
     ) {
-        try {
-            hoaDonChiTietService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
-                    "Xóa thành công Hóa Đơn Chi  Tiết", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
-        }
+        hoaDonChiTietService.delete(id);
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
+                "Xóa hóa đơn chi tiết thành công", null));
     }
 
     // Hàm lấy id hóa đơn chi tiết

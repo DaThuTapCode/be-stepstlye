@@ -78,6 +78,7 @@ public class LichSuHoaDonService implements IBaseService<LichSuHoaDon, Long, Lic
         lichSuHoaDonExisting.setHanhDong(lichSuHoaDonRequest.getHanhDong());
         lichSuHoaDonExisting.setNgayTao(LocalDateTime.now());
         lichSuHoaDonExisting.setNguoiThucHien(lichSuHoaDonRequest.getNguoiThucHien());
+        lichSuHoaDonExisting.setTrangThai(lichSuHoaDonRequest.getTrangThai());
 
         LichSuHoaDon lichSuHoaDonUpdated = lichSuHoaDonRepository.save(lichSuHoaDonExisting);
         return lichSuHoaDonResponseMapper.toDTO(lichSuHoaDonUpdated);
@@ -85,14 +86,10 @@ public class LichSuHoaDonService implements IBaseService<LichSuHoaDon, Long, Lic
 
     @Override
     public void delete(Long id) {
-        Optional<LichSuHoaDon> optionalLichSuHoaDon = lichSuHoaDonRepository.findById(id);
-        if (optionalLichSuHoaDon.isPresent()) {
-            LichSuHoaDon lichSuHoaDon = optionalLichSuHoaDon.get();
-            lichSuHoaDon.setTrangThai(StatusEnum.ACTIVE);
-            lichSuHoaDonRepository.save(lichSuHoaDon);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + id);
-        }
+        LichSuHoaDon lichSuHoaDon = lichSuHoaDonRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Lịch sử hóa đơn không tồn tại"));
+        lichSuHoaDon.setTrangThai(StatusEnum.ACTIVE);
+        lichSuHoaDonRepository.save(lichSuHoaDon);
     }
 
     @Override

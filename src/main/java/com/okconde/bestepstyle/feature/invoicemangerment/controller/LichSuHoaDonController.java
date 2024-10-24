@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.entity.LichSuHoaDon;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.LichSuHoaDonService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -55,7 +56,7 @@ public class LichSuHoaDonController {
 
     @GetMapping("create")
     public ResponseEntity<ResponseData<LichSuHoaDonResponse>> createLichSuHoaDon(
-            @RequestBody LichSuHoaDonRequest request
+            @RequestBody @Valid LichSuHoaDonRequest request
     ) {
         LichSuHoaDonResponse response = lichSuHoaDonService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -66,7 +67,7 @@ public class LichSuHoaDonController {
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<LichSuHoaDonResponse>> updateLichSuHoaDon(
             @PathVariable Long id,
-            @RequestBody LichSuHoaDonRequest request
+            @RequestBody @Valid LichSuHoaDonRequest request
     ) {
         LichSuHoaDonResponse response = lichSuHoaDonService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
@@ -74,17 +75,12 @@ public class LichSuHoaDonController {
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<ResponseData<String>> deleteLichSuHoaDon(
+    public ResponseEntity<ResponseData<Void>> deleteLichSuHoaDon(
             @PathVariable Long id
     ) {
-        try {
-            lichSuHoaDonService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
-            , "Xóa thành công LSHĐ", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseData<>(HttpStatus.NO_CONTENT.value(), e.getMessage(), null));
-        }
+        lichSuHoaDonService.delete(id);
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
+                "Xóa LSHĐ thành công", null));
     }
 
     @GetMapping("{id}")

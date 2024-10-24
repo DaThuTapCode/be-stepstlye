@@ -60,8 +60,7 @@ public class HoaDonController {
     //Hàm tạo mới hóa đơn
     @PostMapping("create")
     public ResponseEntity<ResponseData<HoaDonResponse>> createHoaDon(
-            @Valid
-            @RequestBody HoaDonRequest request
+            @RequestBody @Valid HoaDonRequest request
     ) {
         HoaDonResponse response = hoaDonService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -75,7 +74,7 @@ public class HoaDonController {
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<HoaDonResponse>> updateHoaDon(
             @PathVariable Long id,
-            @RequestBody HoaDonRequest request
+            @RequestBody @Valid HoaDonRequest request
     ) {
         HoaDonResponse response = hoaDonService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
@@ -87,14 +86,9 @@ public class HoaDonController {
     public ResponseEntity<ResponseData<String>> deleteHoaDon(
             @PathVariable Long id
     ) {
-        try {
-            hoaDonService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
-                    "Xóa thành công Hóa Đơn", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
-        }
+        hoaDonService.delete(id);
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
+                "Xóa Hóa Đơn thành công", null));
     }
 
     //Hàm lấy id hóa đơn
