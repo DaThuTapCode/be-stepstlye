@@ -62,11 +62,13 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
     @Override
     @Transactional
     public HoaDonChiTietResponse create(HoaDonChiTietRequest hoaDonChiTietRequest) {
+
         HoaDonChiTiet hoaDonChiTietNew = hoaDonChiTietRequestMapper.toEntity(hoaDonChiTietRequest);
         hoaDonChiTietNew.setSoLuong(hoaDonChiTietNew.getSoLuong());
         hoaDonChiTietNew.setDonGia(hoaDonChiTietNew.getDonGia());
         hoaDonChiTietNew.setTongTien(hoaDonChiTietNew.getTongTien());
         hoaDonChiTietNew.setTrangThai(StatusHoaDonChiTiet.ACTIVE);
+
         HoaDonChiTiet hoaDonChiTietSaved = hoaDonChiTietRepository.save(hoaDonChiTietNew);
         return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTietSaved);
     }
@@ -80,6 +82,7 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
         hoaDonChiTietExisting.setSoLuong(hoaDonChiTietRequest.getSoLuong());
         hoaDonChiTietExisting.setDonGia(hoaDonChiTietRequest.getDonGia());
         hoaDonChiTietExisting.setTongTien(hoaDonChiTietRequest.getTongTien());
+        hoaDonChiTietExisting.setTrangThai(hoaDonChiTietRequest.getTrangThai());
 
         HoaDonChiTiet hoaDonChiTietUpdated = hoaDonChiTietRepository.save(hoaDonChiTietExisting);
         return hoaDonChiTietResponseMapper.toDTO(hoaDonChiTietUpdated);
@@ -87,14 +90,12 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
 
     @Override
     public void delete(Long id) {
-        Optional<HoaDonChiTiet> optionalHoaDonChiTiet = hoaDonChiTietRepository.findById(id);
-        if (optionalHoaDonChiTiet.isPresent()){
-            HoaDonChiTiet hoaDonChiTiet = optionalHoaDonChiTiet.get();
-            hoaDonChiTiet.setTrangThai(StatusHoaDonChiTiet.INACTIVE);
-            hoaDonChiTietRepository.save(hoaDonChiTiet);
-        } else {
-            throw new ResourceNotFoundException("Không tìm thấy id: " + id);
-        }
+
+        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hóa đơn chi tiết không tồn tại"));
+        hoaDonChiTiet.setTrangThai(StatusHoaDonChiTiet.ACTIVE);
+        hoaDonChiTietRepository.save(hoaDonChiTiet);
+
     }
 
     @Override

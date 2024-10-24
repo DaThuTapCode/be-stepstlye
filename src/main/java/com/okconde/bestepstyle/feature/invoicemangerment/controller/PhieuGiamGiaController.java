@@ -6,7 +6,7 @@ import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaRespon
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.PhieuGiamGiaService;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -54,7 +54,7 @@ public class PhieuGiamGiaController {
 
     @PostMapping("create")
     public ResponseEntity<ResponseData<PhieuGiamGiaResponse>> createPhieuGiamGia(
-            @RequestBody PhieuGiamGiaRequest request
+            @RequestBody @Valid PhieuGiamGiaRequest request
     ) {
         PhieuGiamGiaResponse response = phieuGiamGiaService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -65,7 +65,7 @@ public class PhieuGiamGiaController {
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<PhieuGiamGiaResponse>> updatePhieuGiamGia(
             @PathVariable Long id,
-            @RequestBody PhieuGiamGiaRequest request
+            @RequestBody @Valid PhieuGiamGiaRequest request
     ) {
         PhieuGiamGiaResponse response = phieuGiamGiaService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
@@ -73,16 +73,12 @@ public class PhieuGiamGiaController {
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<ResponseData<String>> deletePhieuGiamGia(
+    public ResponseEntity<ResponseData<Void>> deletePhieuGiamGia(
             @PathVariable Long id
     ) {
-        try {
-            phieuGiamGiaService.delete(id); //Xóa mềm
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Xóa thành công Phiếu Giảm Giá", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
-        }
+        phieuGiamGiaService.delete(id);
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
+                "Xóa hóa đơn thành công", null));
     }
 
     @GetMapping("{id}")

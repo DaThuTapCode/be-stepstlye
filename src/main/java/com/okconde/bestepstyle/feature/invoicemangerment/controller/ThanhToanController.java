@@ -59,8 +59,7 @@ public class ThanhToanController {
     //Hàm tạo mới Thanh Toán
     @PostMapping("create")
     public ResponseEntity<ResponseData<ThanhToanResponse>> createThanhToan(
-            @Valid
-            @RequestBody ThanhToanRequest request
+            @RequestBody @Valid ThanhToanRequest request
     ) {
         ThanhToanResponse response = thanhToanService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -74,7 +73,7 @@ public class ThanhToanController {
     @PutMapping("update/{id}")
     public ResponseEntity<ResponseData<ThanhToanResponse>> updateThanhToan(
             @PathVariable Long id,
-            @RequestBody ThanhToanRequest request
+            @RequestBody @Valid ThanhToanRequest request
     ) {
         ThanhToanResponse response = thanhToanService.update(id, request);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value()
@@ -83,17 +82,12 @@ public class ThanhToanController {
 
     //Hàm xóa Thanh Toán
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<ResponseData<String>> deleteThanhToan(
+    public ResponseEntity<ResponseData<Void>> deleteThanhToan(
             @PathVariable Long id
     ) {
-        try {
-            thanhToanService.delete(id);
-            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
-                    "Xóa thành công Thanh Toán", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
-        }
+        thanhToanService.delete(id);
+        return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),
+                "Xóa thanh toán thành công", null));
     }
 
     //Hàm lấy id Thanh Toán

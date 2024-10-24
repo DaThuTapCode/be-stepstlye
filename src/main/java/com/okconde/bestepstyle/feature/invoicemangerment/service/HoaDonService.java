@@ -71,7 +71,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         hoaDonNew.setDiaChiGiaoHang(hoaDonNew.getDiaChiGiaoHang());
         hoaDonNew.setSoDienThoaiKhachHang(hoaDonNew.getSoDienThoaiKhachHang());
         hoaDonNew.setGhiChu(hoaDonNew.getGhiChu());
-        hoaDonNew.setTrangThai(StatusHoaDon.CANCELLED);
+        hoaDonNew.setTrangThai(StatusHoaDon.PAID);
 
         HoaDon hoaDonSaved = hoaDonRepository.save(hoaDonNew);
         return hoaDonResponseMapper.toDTO(hoaDonSaved);
@@ -95,7 +95,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         hoaDonExisting.setDiaChiGiaoHang(hoaDonRequest.getDiaChiGiaoHang());
         hoaDonExisting.setSoDienThoaiKhachHang(hoaDonRequest.getSoDienThoaiKhachHang());
         hoaDonExisting.setGhiChu(hoaDonRequest.getGhiChu());
-        hoaDonExisting.setTrangThai(StatusHoaDon.CANCELLED);
+        hoaDonExisting.setTrangThai(hoaDonRequest.getTrangThai());
 
         HoaDon hoaDonUpdated = hoaDonRepository.save(hoaDonExisting);
         return hoaDonResponseMapper.toDTO(hoaDonUpdated);
@@ -103,14 +103,11 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
     @Override
     public void delete(Long id) {
-        Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(id);
-        if (optionalHoaDon.isPresent()) {
-            HoaDon hoaDon = optionalHoaDon.get();
-            hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
-            hoaDonRepository.save(hoaDon);
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + id);
-        }
+
+        HoaDon hoaDon = hoaDonRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hóa đơn không tồn tại"));
+                hoaDon.setTrangThai(StatusHoaDon.PAID);
+                hoaDonRepository.save(hoaDon);
     }
 
     @Override

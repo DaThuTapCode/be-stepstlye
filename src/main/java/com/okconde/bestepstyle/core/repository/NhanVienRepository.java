@@ -18,7 +18,7 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Long> {
     @Query("""
                 select distinct nv from NhanVien nv where (:maNV is null or nv.maNhanVien like %:maNV%)
                 and (:tenNV is null or nv.hoTen like %:tenNV%)
-                and (:SDT is null or nv.soDienThoai like %:SDT%)
+                and (:SDT is null or nv.soDienThoai like %:SDT%) order by nv.idNhanVien DESC
 """)
     Page<NhanVien> searchPageNVByMaAndTenAndSDT(Pageable pageable, String maNV, String tenNV, String SDT);
 
