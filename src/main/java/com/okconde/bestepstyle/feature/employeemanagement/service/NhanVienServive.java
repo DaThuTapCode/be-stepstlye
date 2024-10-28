@@ -11,6 +11,7 @@ import com.okconde.bestepstyle.core.mapper.nhanvien.request.NhanVienRequestMappe
 import com.okconde.bestepstyle.core.mapper.nhanvien.response.NhanVienResponseMapper;
 import com.okconde.bestepstyle.core.repository.NhanVienRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,7 +62,7 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     @Override
     @Transactional
     public NhanVienResponse create(NhanVienRequest nhanVienRequest) {
-
+        nhanVienRequest.setMaNhanVien(GenerateCodeRandomUtil.generateProductCode("NV", 8));
         if (nhanVienRepository.timNVTheoMaNV(nhanVienRequest.getMaNhanVien()).isPresent()){
             throw new CustomerCodeDuplicateException("Mã nhân viên " + nhanVienRequest.getMaNhanVien() + " đã tồn tại!");
         }

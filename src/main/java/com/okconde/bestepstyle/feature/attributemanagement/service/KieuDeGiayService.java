@@ -7,11 +7,13 @@ import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.entity.KieuDeGiay;
 import com.okconde.bestepstyle.core.entity.MauSac;
+import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.kieudegiay.request.KieuDeGiayRequestMapper;
 import com.okconde.bestepstyle.core.mapper.kieudegiay.response.KieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.KieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -58,6 +60,10 @@ public class KieuDeGiayService implements IBaseService<KieuDeGiay, Long, KieuDeG
     @Override
     @Transactional
     public KieuDeGiayResponse create(KieuDeGiayRequest kieuDeGiayRequest) {
+        kieuDeGiayRequest.setMaKieuDeGiay(GenerateCodeRandomUtil.generateProductCode("KDG", 7));
+        if (kieuDeGiayRepository.getKieuDeGiayByMaKieuDeGiay(kieuDeGiayRequest.getMaKieuDeGiay()).isPresent()){
+            throw new AttributeCodeDuplicateException("Mã kiểu đế giày " + kieuDeGiayRequest.getMaKieuDeGiay() + " đã tồn tại");
+        }
         KieuDeGiay entity = kieuDeGiayRequestMapper.toEntity(kieuDeGiayRequest);
         entity.setTrangThai(StatusEnum.ACTIVE);
         KieuDeGiay kieuDeGiay = kieuDeGiayRepository.save(entity);

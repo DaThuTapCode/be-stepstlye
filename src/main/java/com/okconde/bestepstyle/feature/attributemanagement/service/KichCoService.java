@@ -5,11 +5,13 @@ import com.okconde.bestepstyle.core.dto.kichco.request.KichCoRequest;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoSearchRequest;
 import com.okconde.bestepstyle.core.entity.KichCo;
 import com.okconde.bestepstyle.core.entity.MauSac;
+import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.kichco.request.KichCoRequestMapper;
 import com.okconde.bestepstyle.core.mapper.kichco.response.KichCoResponseMapper;
 import com.okconde.bestepstyle.core.repository.KichCoRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -57,6 +59,10 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
     @Override
     @Transactional
     public KichCoResponse create(KichCoRequest kichCoRequest) {
+        kichCoRequest.setMaKichCo(GenerateCodeRandomUtil.generateProductCode("KC", 8));
+        if (kichCoRepository.getKichCoByMaKichCo(kichCoRequest.getMaKichCo()).isPresent()){
+            throw new AttributeCodeDuplicateException("Mã kích cỡ " + kichCoRequest.getMaKichCo() + " đã tồn tại");
+        }
         KichCo entity = kichCoRequestMapper.toEntity(kichCoRequest);
         entity.setTrangThai(StatusEnum.ACTIVE);
         KichCo kichCo = kichCoRepository.save(entity);

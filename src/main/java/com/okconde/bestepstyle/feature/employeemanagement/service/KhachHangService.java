@@ -10,10 +10,10 @@ import com.okconde.bestepstyle.core.mapper.khachhang.request.KhachHangRequestMap
 import com.okconde.bestepstyle.core.mapper.khachhang.response.KhachHangResponseMapper;
 import com.okconde.bestepstyle.core.repository.KhachHangRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +62,7 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     @Override
     @Transactional
     public KhachHangResponse create(KhachHangRequest khachHangRequest) {
+        khachHangRequest.setMaKhachHang(GenerateCodeRandomUtil.generateProductCode("KH", 8));
 
         if (khachHangRepository.timKHTheoMaKH(khachHangRequest.getMaKhachHang()).isPresent()){
             throw new CustomerCodeDuplicateException("Mã khách hàng " + khachHangRequest.getMaKhachHang() + " đã tồn tại!");
