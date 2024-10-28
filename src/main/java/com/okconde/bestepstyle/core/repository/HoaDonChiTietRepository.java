@@ -26,7 +26,7 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
 
     @Query("""
                 select distinct hdct from HoaDonChiTiet hdct where (:soLuong is null or hdct.soLuong = :soLuong)
-                and (:maHoaDonChiTiet is null or hdct.maHoaDonChiTiet = :maHoaDonChiTiet)
+                and (:maHoaDonChiTiet is null or hdct.maHoaDonChiTiet = :maHoaDonChiTiet) order by hdct.idHoaDonChiTiet desc
 """)
     Page<HoaDonChiTiet> searchPageHoaDonChiTiet(Pageable pageable,
                                                 @Param(value = "soLuong") Integer soLuong,

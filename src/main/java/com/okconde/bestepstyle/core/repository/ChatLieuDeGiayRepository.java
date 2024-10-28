@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.repository;
 
+import com.okconde.bestepstyle.core.entity.ChatLieu;
 import com.okconde.bestepstyle.core.entity.ChatLieuDeGiay;
 
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 
 
 /**
@@ -19,10 +21,14 @@ public interface ChatLieuDeGiayRepository extends JpaRepository<ChatLieuDeGiay, 
     @Query("""
             select distinct cldg from ChatLieuDeGiay cldg
             where (:maChatLieuDeGiay is null or cldg.maChatLieuDeGiay like %:maChatLieuDeGiay%)
-            and (:tenChatLieuDeGiay is null or cldg.tenChatLieuDeGiay like %:tenChatLieuDeGiay%)
+            and (:tenChatLieuDeGiay is null or cldg.tenChatLieuDeGiay like %:tenChatLieuDeGiay%) order by cldg.idChatLieuDeGiay desc 
             """)
     Page<ChatLieuDeGiay> searchPageChatLieuDeGiay(Pageable pageable,
                                                   @Param("maChatLieuDeGiay") String maChatLieuDeGiay,
                                                   @Param("tenChatLieuDeGiay") String tenChatLieuDeGiay
     );
+    @Query("""
+        select cldg from ChatLieuDeGiay cldg where cldg.maChatLieuDeGiay = :maChatLieuDeGiay
+    """)
+    Optional<ChatLieuDeGiay> getChatLieuDeGiayByMaChatLieuDeGiay(String maChatLieuDeGiay);
 }

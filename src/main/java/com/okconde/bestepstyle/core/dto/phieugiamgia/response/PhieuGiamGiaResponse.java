@@ -1,14 +1,13 @@
 package com.okconde.bestepstyle.core.dto.phieugiamgia.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Created by TuanIf on 9/25/2024 21:14:50
@@ -34,19 +33,16 @@ public class PhieuGiamGiaResponse {
 
     private String loaiGiam;
 
-    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
-    private LocalDateTime ngayBatDau;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate ngayBatDau;
 
-    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
-    private LocalDateTime ngayKetThuc;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate ngayKetThuc;
 
-    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private BigDecimal giaTriGiamToiDa;
 
-    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private BigDecimal giaTriGiamToiThieu;
 
-    @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private BigDecimal giaTriGiam;
 
     @Enumerated(EnumType.STRING)

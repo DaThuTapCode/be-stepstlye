@@ -4,11 +4,13 @@ import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
 import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuSearchRequest;
 import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
 import com.okconde.bestepstyle.core.entity.*;
+import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.chatlieu.request.ChatLieuRequestMapper;
 import com.okconde.bestepstyle.core.mapper.chatlieu.response.ChatLieuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.feature.attributemanagement.controller.ChatLieuController;
 import jakarta.persistence.EntityNotFoundException;
@@ -59,6 +61,10 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
     @Override
     @Transactional
     public ChatLieuResponse create(ChatLieuRequest chatLieuRequest) {
+        chatLieuRequest.setMaChatLieu(GenerateCodeRandomUtil.generateProductCode("CL", 8));
+        if (chatLieuRepository.getChatLieuByMaChatLieu(chatLieuRequest.getMaChatLieu()).isPresent()){
+            throw new AttributeCodeDuplicateException("Mã chất liệu " + chatLieuRequest.getMaChatLieu() + " đã tồn tại");
+        }
         ChatLieu chatLieu = chatLieuRequestMapper.toEntity(chatLieuRequest);
         chatLieu.setTrangThai(StatusEnum.ACTIVE);
         ChatLieu chatLieuSave = chatLieuRepository.save(chatLieu);

@@ -24,7 +24,7 @@ public class MauSacRequest {
 
     @NotBlank(message = "Tên màu sắc không được để trống!")
     @Length(max = 255, message = "Tên màu sắc không được vượt quá 255 ký tự!")
-    @Length(min = 2, message = "Tên màu sắc phải từ 2 ký tự trở lên!")
+    @Length(min = 1, message = "Tên màu sắc phải từ 1 ký tự trở lên!")
     private String tenMau;
 
     private String giaTri;

@@ -54,4 +54,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     """)
     List<HoaDon> getHoaDonByStatus(StatusHoaDon trangThai, String loaiHoaDon);
 
+
+
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE hd.trangThai = :trangThai")
+    int countByStatus(StatusHoaDon trangThai);
 }

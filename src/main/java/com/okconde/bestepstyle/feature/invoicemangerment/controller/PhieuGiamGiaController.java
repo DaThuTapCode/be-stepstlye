@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TuanIf on 9/25/2024 20:20:48
@@ -87,6 +88,13 @@ public class PhieuGiamGiaController {
     ) {
         PhieuGiamGiaResponse response = phieuGiamGiaService.getById(id);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công Phiếu Giảm Giá", response));
+    }
+
+    //Hàm lấy trạng thái phiếu giảm giá
+    @GetMapping("count")
+    public ResponseEntity<Map<String, Integer>> getPhieuGiamGiaByStatus() {
+        Map<String, Integer> counts = phieuGiamGiaService.getPhieuGiamGiaByStatus();
+        return ResponseEntity.ok(counts);
     }
 
 }

@@ -5,11 +5,13 @@ import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
+import com.okconde.bestepstyle.core.exception.AttributeValueDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.mausac.request.MauSacRequestMapper;
 import com.okconde.bestepstyle.core.mapper.mausac.response.MauSacResponseMapper;
 import com.okconde.bestepstyle.core.repository.MauSacRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -55,8 +57,12 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
     @Override
     @Transactional
     public MauSacResponse create(MauSacRequest mauSacRequest) {
+        mauSacRequest.setMaMauSac(GenerateCodeRandomUtil.generateProductCode("MS", 8));
         if (mauSacRepository.getMauSacByMaMau(mauSacRequest.getMaMauSac()).isPresent()){
             throw new AttributeCodeDuplicateException("Mã màu sắc " + mauSacRequest.getMaMauSac() + " đã tồn tại");
+        }
+        if (mauSacRepository.existsByTenMau(mauSacRequest.getTenMau())){
+            throw new AttributeValueDuplicateException("Tên màu sắc " + mauSacRequest.getTenMau() + " đã tồn tại");
         }
         MauSac entity = mauSacRequestMapper.toEntity(mauSacRequest);
         entity.setTrangThai(StatusEnum.ACTIVE);

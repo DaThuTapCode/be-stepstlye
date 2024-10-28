@@ -15,7 +15,7 @@ import org.springframework.data.repository.query.Param;
 public interface ThanhToanRepository extends JpaRepository<ThanhToan, Long> {
     @Query("""
                 select distinct tt from ThanhToan tt where (:maThanhToan is null or tt.maThanhToan = :maThanhToan)
-                and (:phuongThucThanhToan is null or tt.phuongThucThanhToan = :phuongThucThanhToan)
+                and (:phuongThucThanhToan is null or tt.phuongThucThanhToan = :phuongThucThanhToan) order by tt.idThanhToan desc
 """)
     Page<ThanhToan> searchPageThanhToan(Pageable pageable,
                                   @Param(value = "maThanhToan") String maThanhToan,

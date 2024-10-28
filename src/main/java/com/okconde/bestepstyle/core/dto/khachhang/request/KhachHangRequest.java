@@ -32,9 +32,6 @@ public class KhachHangRequest {
 
     private Long idKhachHang;
 
-    @NotBlank(message = "Mã khách hàng không được để trống!")
-    @Length(min = 5, message = "Mã khách hàng phải lớn hơn 5 ký tự!")
-    @Length(max = 10, message = "Mã khách hàng không được vượt quá 10 ký tự!")
     private String maKhachHang;
 
     @NotBlank(message = "Tên khách hàng không được để trống!")

@@ -9,6 +9,7 @@ import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -58,23 +61,11 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
     @Override
     @Transactional
     public HoaDonResponse create(HoaDonRequest hoaDonRequest) {
-        HoaDon hoaDonNew = hoaDonRequestMapper.toEntity(hoaDonRequest);
-        hoaDonNew.setNgayTaoDon(LocalDateTime.now());
-        hoaDonNew.setPhiVanChuyen(hoaDonNew.getPhiVanChuyen());
-        hoaDonNew.setTongTien(hoaDonNew.getTongTien());
-        hoaDonNew.setTongTienSauGiam(hoaDonNew.getTongTienSauGiam());
-        hoaDonNew.setNgayChinhSua(LocalDateTime.now());
-        hoaDonNew.setNgayXacNhan(LocalDateTime.now());
-        hoaDonNew.setNgayNhanHang(LocalDateTime.now());
-        hoaDonNew.setLoaiHoaDon(hoaDonNew.getLoaiHoaDon());
-        hoaDonNew.setTenKhachHang(hoaDonNew.getTenKhachHang());
-        hoaDonNew.setDiaChiGiaoHang(hoaDonNew.getDiaChiGiaoHang());
-        hoaDonNew.setSoDienThoaiKhachHang(hoaDonNew.getSoDienThoaiKhachHang());
-        hoaDonNew.setGhiChu(hoaDonNew.getGhiChu());
-        hoaDonNew.setTrangThai(StatusHoaDon.PAID);
 
-        HoaDon hoaDonSaved = hoaDonRepository.save(hoaDonNew);
-        return hoaDonResponseMapper.toDTO(hoaDonSaved);
+        hoaDonRequest.setMaHoaDon(GenerateCodeRandomUtil.generateProductCode("HD",8));
+        hoaDonRequest.setTrangThai(StatusHoaDon.PAID);
+
+        return hoaDonResponseMapper.toDTO(hoaDonRepository.save(hoaDonRequestMapper.toEntity(hoaDonRequest)));
     }
 
     @Override
@@ -128,5 +119,22 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
                 hoaDonSearchRequest.getIdPhieuGiamGia()
                 );
         return hoaDonPage.map(hoaDonResponseMapper::toDTO);
+    }
+
+    public Map<String, Integer> getHoaDonByStatus() {
+            int pendingCount = hoaDonRepository.countByStatus(StatusHoaDon.PENDING);
+            int paidCount = hoaDonRepository.countByStatus(StatusHoaDon.PAID);
+            int cancelledCount = hoaDonRepository.countByStatus(StatusHoaDon.CANCELLED);
+            int refundedCount = hoaDonRepository.countByStatus(StatusHoaDon.REFUNDED);
+            int overdueCount = hoaDonRepository.countByStatus(StatusHoaDon.OVERDUE);
+
+            Map<String, Integer> counts = new HashMap<>();
+            counts.put("PENDING", pendingCount);
+            counts.put("PAID", paidCount);
+            counts.put("CANCELLED", cancelledCount);
+            counts.put("REFUNDED", refundedCount);
+            counts.put("OVERDUE", overdueCount);
+
+            return counts;
     }
 }

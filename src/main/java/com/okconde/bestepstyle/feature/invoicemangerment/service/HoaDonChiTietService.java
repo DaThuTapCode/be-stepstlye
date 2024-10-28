@@ -9,6 +9,7 @@ import com.okconde.bestepstyle.core.mapper.hoadonchitiet.request.HoaDonChiTietRe
 import com.okconde.bestepstyle.core.mapper.hoadonchitiet.response.HoaDonChiTietResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonChiTietRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -62,6 +63,8 @@ public class HoaDonChiTietService implements IBaseService<HoaDonChiTiet, Long, H
     @Override
     @Transactional
     public HoaDonChiTietResponse create(HoaDonChiTietRequest hoaDonChiTietRequest) {
+
+        hoaDonChiTietRequest.setMaHoaDonChiTiet(GenerateCodeRandomUtil.generateProductCode("HDCT", 6));
 
         HoaDonChiTiet hoaDonChiTietNew = hoaDonChiTietRequestMapper.toEntity(hoaDonChiTietRequest);
         hoaDonChiTietNew.setSoLuong(hoaDonChiTietNew.getSoLuong());

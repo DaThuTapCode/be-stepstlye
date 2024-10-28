@@ -9,6 +9,7 @@ import com.okconde.bestepstyle.core.mapper.thanhtoan.request.ThanhToanRequestMap
 import com.okconde.bestepstyle.core.mapper.thanhtoan.response.ThanhToanResponseMapper;
 import com.okconde.bestepstyle.core.repository.ThanhToanRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -53,6 +54,9 @@ public class ThanhToanService implements IBaseService<ThanhToan, Long, ThanhToan
 
     @Override
     public ThanhToanResponse create(ThanhToanRequest thanhToanRequest) {
+
+        thanhToanRequest.setMaThanhToan(GenerateCodeRandomUtil.generateProductCode("TT",8));
+
         ThanhToan thanhToanNew = thanhToanRequestMapper.toEntity(thanhToanRequest);
         thanhToanNew.setMaThanhToan(thanhToanNew.getMaThanhToan());
         thanhToanNew.setPhuongThucThanhToan(thanhToanNew.getPhuongThucThanhToan());

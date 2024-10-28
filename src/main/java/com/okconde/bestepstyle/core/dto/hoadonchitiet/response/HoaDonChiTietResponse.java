@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.dto.hoadonchitiet.response;
 
 import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamShortResponse;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTShortResponse;
 import com.okconde.bestepstyle.core.entity.SanPhamChiTiet;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
@@ -40,6 +41,6 @@ public class HoaDonChiTietResponse {
     @Enumerated(EnumType.STRING)
     private StatusHoaDonChiTiet trangThai;
 
-    private SPCTShortResponse sanPhamChiTiet;
+    private SPCTResponse sanPhamChiTiet;
 
 }

@@ -6,11 +6,13 @@ import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayRe
 import com.okconde.bestepstyle.core.entity.ChatLieuDeGiay;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.entity.KichCo;
+import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.chatlieudegiay.request.ChatLieuDeGiayRequestMapper;
 import com.okconde.bestepstyle.core.mapper.chatlieudegiay.response.ChatLieuDeGiayResponseMapper;
 import com.okconde.bestepstyle.core.repository.ChatLieuDeGiayRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -60,6 +62,10 @@ public class ChatLieuDeGiayService implements IBaseService<ChatLieuDeGiay, Long,
     @Override
     @Transactional
     public ChatLieuDeGiayResponse create(ChatLieuDeGiayRequest chatLieuDeGiayRequest) {
+        chatLieuDeGiayRequest.setMaChatLieuDeGiay(GenerateCodeRandomUtil.generateProductCode("CLDG", 6));
+        if (chatLieuDeGiayRepository.getChatLieuDeGiayByMaChatLieuDeGiay(chatLieuDeGiayRequest.getMaChatLieuDeGiay()).isPresent()){
+            throw new AttributeCodeDuplicateException("Mã chất liệu dế giày " + chatLieuDeGiayRequest.getMaChatLieuDeGiay() + " đã tồn tại");
+        }
         ChatLieuDeGiay entity = chatLieuDeGiayRequestMapper.toEntity(chatLieuDeGiayRequest);
         entity.setTrangThai(StatusEnum.ACTIVE);
         ChatLieuDeGiay chatLieuDeGiay = chatLieuDeGiayRepository.save(entity);

@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.core.dto.phieugiamgia.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +11,8 @@ import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
 
 /**
  * Created by TuanIf on 9/25/2024 21:14:40
@@ -27,9 +30,6 @@ public class PhieuGiamGiaRequest {
 
     private Long idPhieuGiamGia;
 
-    @NotBlank(message = "Mã PGG không được để trống!")
-    @Length(min = 5, message = "Mã PGG phải lớn hơn 5 ký tự!")
-    @Length(max = 10, message = "Mã PGG không được vượt quá 10 ký tự!")
     private String maPhieuGiamGia;
 
     @NotBlank(message = "Tên PGG không được để trống!")
@@ -40,6 +40,12 @@ public class PhieuGiamGiaRequest {
     private String moTa;
 
     private String loaiGiam;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate ngayBatDau;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate ngayKetThuc;
 
     @NotNull(message = "Gia tri giảm tối đa không được để trống!")
     @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm tối đa > 0!")

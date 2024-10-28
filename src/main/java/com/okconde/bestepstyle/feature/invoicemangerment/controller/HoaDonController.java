@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TuanIf on 9/25/2024 20:20:16
@@ -98,5 +99,12 @@ public class HoaDonController {
     ){
         HoaDonResponse response = hoaDonService.getById(id);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Lấy thành công Hóa Đơn", response));
+    }
+
+    //Hàm lấy trạng thái hóa đơn
+    @GetMapping("count")
+    public ResponseEntity<Map<String, Integer>> getHoaDonByStatus() {
+        Map<String, Integer> counts = hoaDonService.getHoaDonByStatus();
+        return ResponseEntity.ok(counts);
     }
 }
