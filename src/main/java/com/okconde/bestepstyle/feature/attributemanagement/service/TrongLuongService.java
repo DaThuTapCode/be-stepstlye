@@ -7,11 +7,13 @@ import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
 import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongSearchRequest;
 import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.entity.TrongLuong;
+import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.trongluong.request.TrongLuongRequestMapper;
 import com.okconde.bestepstyle.core.mapper.trongluong.response.TrongLuongResponseMapper;
 import com.okconde.bestepstyle.core.repository.TrongLuongRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -59,6 +61,10 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
     @Override
     @Transactional
     public TrongLuongResponse create(TrongLuongRequest trongLuongRequest) {
+        trongLuongRequest.setMaTrongLuong(GenerateCodeRandomUtil.generateProductCode("TL", 8));
+        if (trongLuongRepository.getTrongLuongByMaTrongLuong(trongLuongRequest.getMaTrongLuong()).isPresent()){
+            throw new AttributeCodeDuplicateException("Mã trọng lượng " + trongLuongRequest.getMaTrongLuong() + " đã tồn tại");
+        }
         TrongLuong entity = trongLuongRequestMapper.toEntity(trongLuongRequest);
         entity.setTrangThai(StatusEnum.ACTIVE);
         TrongLuong trongLuong = trongLuongRepository.save(entity);
