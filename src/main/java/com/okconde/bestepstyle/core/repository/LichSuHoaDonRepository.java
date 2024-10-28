@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
  */
 public interface LichSuHoaDonRepository extends JpaRepository<LichSuHoaDon, Long> {
     @Query("""
-                select distinct lshd from LichSuHoaDon lshd where (:maLichSuHoaDon is null or lshd.maLichSuHoaDon = :maLichSuHoaDon)
+                select distinct lshd from LichSuHoaDon lshd where (:maLichSuHoaDon is null or lshd.maLichSuHoaDon = :maLichSuHoaDon) order by lshd.idLshd desc
 """)
     Page<LichSuHoaDon> searchPageLichSuHoaDon(Pageable pageable,
                                         @Param(value = "maLichSuHoaDon") String maLichSuHoaDon

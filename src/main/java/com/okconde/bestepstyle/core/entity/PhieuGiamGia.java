@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Created by TuanIf on 9/23/2024 21:31:04
@@ -36,9 +36,9 @@ public class PhieuGiamGia {
 
     private String loaiGiam;
 
-    private LocalDateTime ngayBatDau;
+    private LocalDate ngayBatDau;
 
-    private LocalDateTime ngayKetThuc;
+    private LocalDate ngayKetThuc;
 
     private BigDecimal giaTriGiamToiDa;
 

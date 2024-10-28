@@ -10,6 +10,7 @@ import com.okconde.bestepstyle.core.mapper.lichsuhoadon.request.LichSuHoaDonRequ
 import com.okconde.bestepstyle.core.mapper.lichsuhoadon.response.LichSuHoaDonResponseMapper;
 import com.okconde.bestepstyle.core.repository.LichSuHoaDonRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -59,6 +60,9 @@ public class LichSuHoaDonService implements IBaseService<LichSuHoaDon, Long, Lic
     @Override
     @Transactional
     public LichSuHoaDonResponse create(LichSuHoaDonRequest lichSuHoaDonRequest) {
+
+        lichSuHoaDonRequest.setMaLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD",6));
+
         LichSuHoaDon lichSuHoaDonNew = lichSuHoaDonRequestMapper.toEntity(lichSuHoaDonRequest);
         lichSuHoaDonNew.setHanhDong(lichSuHoaDonNew.getHanhDong());
         lichSuHoaDonNew.setNgayTao(LocalDateTime.now());

@@ -1,6 +1,8 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,7 +27,7 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
                 and
                  (:ngayKetThuc IS NULL OR pgg.ngayKetThuc <= :ngayKetThuc)
                 and
-                 (:loaiGiam IS NULL OR pgg.loaiGiam = :loaiGiam)
+                 (:loaiGiam IS NULL OR pgg.loaiGiam = :loaiGiam) order by pgg.idPhieuGiamGia desc
 """)
     Page<PhieuGiamGia> searchPagePhieuGiamGia(Pageable pageable,
                                         @Param(value = "maPhieuGiamGia") String maPhieuGiamGia,
@@ -34,4 +36,7 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
                                         @Param(value = "ngayKetThuc") Date ngayKetThuc,
                                         @Param(value = "loaiGiam") String loaiGiam
     );
+
+    @Query("SELECT COUNT(pgg) FROM PhieuGiamGia pgg WHERE pgg.trangThai = :trangThai")
+    int countByStatus(StatusPhieuGiamGia trangThai);
 }

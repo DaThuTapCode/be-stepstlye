@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.HoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,7 +31,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
                             and 
                             (:idThanhToan is null or hd.thanhToan.idThanhToan = :idThanhToan)
                             and 
-                            (:idPhieuGiamGia is null or hd.phieuGiamGia.idPhieuGiamGia = :idPhieuGiamGia)
+                            (:idPhieuGiamGia is null or hd.phieuGiamGia.idPhieuGiamGia = :idPhieuGiamGia) order by hd.idHoaDon desc
             """)
     Page<HoaDon> searchPageHoaDon(Pageable pageable,
                                   @Param(value = "maHoaDon") String maHoaDon,
@@ -41,4 +42,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
                                   @Param(value = "idThanhToan") Long idThanhToan,
                                   @Param(value = "idPhieuGiamGia") Long idPhieuGiamGia
     );
+
+
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE hd.trangThai = :trangThai")
+    int countByStatus(StatusHoaDon trangThai);
 }

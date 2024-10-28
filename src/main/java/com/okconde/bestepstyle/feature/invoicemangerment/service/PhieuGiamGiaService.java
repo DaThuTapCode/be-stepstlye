@@ -9,6 +9,8 @@ import com.okconde.bestepstyle.core.mapper.phieugiamgia.request.PhieuGiamGiaRequ
 import com.okconde.bestepstyle.core.mapper.phieugiamgia.response.PhieuGiamGiaResponseMapper;
 import com.okconde.bestepstyle.core.repository.PhieuGiamGiaRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,8 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -59,20 +64,14 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
     }
 
     @Override
+    @Transactional
     public PhieuGiamGiaResponse create(PhieuGiamGiaRequest phieuGiamGiaRequest) {
-        PhieuGiamGia phieuGiamGiaNew = phieuGiamGiaRequestMapper.toEntity(phieuGiamGiaRequest);
-        phieuGiamGiaNew.setTenPhieuGiamGia(phieuGiamGiaNew.getTenPhieuGiamGia());
-        phieuGiamGiaNew.setMoTa(phieuGiamGiaNew.getMoTa());
-        phieuGiamGiaNew.setLoaiGiam(phieuGiamGiaNew.getLoaiGiam());
-        phieuGiamGiaNew.setNgayBatDau(LocalDateTime.now());
-        phieuGiamGiaNew.setNgayKetThuc(LocalDateTime.now());
-        phieuGiamGiaNew.setGiaTriGiamToiDa(phieuGiamGiaNew.getGiaTriGiamToiThieu());
-        phieuGiamGiaNew.setGiaTriGiam(phieuGiamGiaNew.getGiaTriGiam());
-        phieuGiamGiaNew.setGiaTriGiamToiThieu(phieuGiamGiaNew.getGiaTriGiamToiDa());
-        phieuGiamGiaNew.setTrangThai(StatusPhieuGiamGia.ACTIVE);
-
-        PhieuGiamGia phieuGiamGiaSaved = phieuGiamGiaRepository.save(phieuGiamGiaNew);
-        return phieuGiamGiaResponseMapper.toDTO(phieuGiamGiaSaved);
+        // Tạo mã phiếu giảm giá
+        phieuGiamGiaRequest.setMaPhieuGiamGia(GenerateCodeRandomUtil.generateProductCode("PGG", 7));;
+        // Đặt trạng thái phiếu giảm giá là ACTIVE
+        phieuGiamGiaRequest.setTrangThai(StatusPhieuGiamGia.ACTIVE);
+        // Luu va chuyen doi doi tuong thanh DTO
+        return phieuGiamGiaResponseMapper.toDTO(phieuGiamGiaRepository.save(phieuGiamGiaRequestMapper.toEntity(phieuGiamGiaRequest)));
     }
 
     @Override
@@ -84,8 +83,8 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
         phieuGiamGiaExisting.setTenPhieuGiamGia(phieuGiamGiaRequest.getTenPhieuGiamGia());
         phieuGiamGiaExisting.setMoTa(phieuGiamGiaRequest.getMoTa());
         phieuGiamGiaExisting.setLoaiGiam(phieuGiamGiaRequest.getLoaiGiam());
-        phieuGiamGiaExisting.setNgayBatDau(LocalDateTime.now());
-        phieuGiamGiaExisting.setNgayKetThuc(LocalDateTime.now());
+        phieuGiamGiaExisting.setNgayBatDau(phieuGiamGiaRequest.getNgayBatDau());
+        phieuGiamGiaExisting.setNgayKetThuc(phieuGiamGiaRequest.getNgayKetThuc());
         phieuGiamGiaExisting.setGiaTriGiamToiDa(phieuGiamGiaRequest.getGiaTriGiamToiDa());
         phieuGiamGiaExisting.setGiaTriGiam(phieuGiamGiaRequest.getGiaTriGiam());
         phieuGiamGiaExisting.setGiaTriGiamToiThieu(phieuGiamGiaRequest.getGiaTriGiamToiThieu());
@@ -120,5 +119,20 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
                 phieuGiamGiaSearchRequest.getLoaiGiam()
         );
         return phieuGiamGiaPage.map(phieuGiamGiaResponseMapper::toDTO);
+    }
+
+    public Map<String, Integer> getPhieuGiamGiaByStatus() {
+        int activeCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.ACTIVE);
+        int usedCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.USED);
+        int expiredCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.EXPIRED);
+        int cancelledCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.CANCELLED);
+
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put("ACTIVE", activeCount);
+        counts.put("USED", usedCount);
+        counts.put("EXPIRED", expiredCount);
+        counts.put("CANCELLED", cancelledCount);
+
+        return counts;
     }
 }
