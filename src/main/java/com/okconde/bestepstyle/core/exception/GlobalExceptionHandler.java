@@ -65,4 +65,11 @@ public class GlobalExceptionHandler {
         System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION EmployeeCodeDuplicateException]");
         return ResponseEntity.badRequest().body(setData(e, request));
     }
+
+    @ExceptionHandler({AttributeValueDuplicateException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ResponseError> handlerAttributeValueDuplicateException(Exception e, WebRequest request) {
+        System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION AttributeValueDuplicateException]");
+        return ResponseEntity.badRequest().body(setData(e, request));
+    }
 }

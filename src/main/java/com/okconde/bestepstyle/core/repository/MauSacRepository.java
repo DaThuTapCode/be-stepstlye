@@ -19,7 +19,7 @@ public interface MauSacRepository extends JpaRepository<MauSac, Long> {
     @Query("""
             select distinct ms from MauSac ms 
             where (:maMauSac is null or ms.maMauSac like %:maMauSac%)
-            and (:tenMau is null or ms.tenMau like %:tenMau%)
+            and (:tenMau is null or ms.tenMau like %:tenMau%) order by ms.idMauSac desc 
             """)
     Page<MauSac> searchPageMauSac(Pageable pageable,
                                   @Param("maMauSac") String maMauSac,
@@ -29,4 +29,10 @@ public interface MauSacRepository extends JpaRepository<MauSac, Long> {
         select ms from MauSac ms where ms.maMauSac = :maMau
     """)
     Optional<MauSac> getMauSacByMaMau(String maMau);
+
+    @Query("""
+    select case when count(ms) > 0 then true else false end from MauSac ms where ms.tenMau = :tenMau
+""")
+    boolean existsByTenMau(String tenMau);
+
 }
