@@ -1,9 +1,16 @@
 package com.okconde.bestepstyle.core.mapper.sanpham.response;
 
+import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamShortResponse;
+import com.okconde.bestepstyle.core.entity.SanPham;
+import com.okconde.bestepstyle.core.mapper.IBaseMapper;
+import org.mapstruct.Mapper;
+
 /**
  * Created by Trong Phu on 25/09/2024 22:18
  *
  * @author Trong Phu
  */
-public interface SanPhamShortResponseMapper {
+@Mapper(componentModel = "spring")
+public interface SanPhamShortResponseMapper extends IBaseMapper<SanPham, SanPhamShortResponse> {
+
 }

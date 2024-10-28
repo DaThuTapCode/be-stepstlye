@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.HoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by TuanIf on 9/23/2024 22:48:53
@@ -41,4 +43,15 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
                                   @Param(value = "idThanhToan") Long idThanhToan,
                                   @Param(value = "idPhieuGiamGia") Long idPhieuGiamGia
     );
+
+    /**
+     * Query select lấy hóa đơn theo trạng thái và loại hóa đơn
+     * @param trangThai trạng thái của hóa đơn cần lấy
+     * @param loaiHoaDon loại hóa đơn cần lấy
+     * */
+    @Query("""
+        SELECT hd FROM HoaDon hd WHERE hd.trangThai = :trangThai AND hd.loaiHoaDon = :loaiHoaDon ORDER BY hd.idHoaDon DESC
+    """)
+    List<HoaDon> getHoaDonByStatus(StatusHoaDon trangThai, String loaiHoaDon);
+
 }

@@ -65,4 +65,10 @@ public class GlobalExceptionHandler {
         System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION EmployeeCodeDuplicateException]");
         return ResponseEntity.badRequest().body(setData(e, request));
     }
+    @ExceptionHandler({BusinessException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ResponseError> handlerBusinessException(Exception e, WebRequest request) {
+        System.out.println("[------> ĐÃ BẮT ĐƯỢC EXCEPTION BusinessException]");
+        return ResponseEntity.badRequest().body(setData(e, request));
+    }
 }

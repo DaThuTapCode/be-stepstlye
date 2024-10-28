@@ -61,12 +61,4 @@ public class HoaDonShortResponse {
 
     @Enumerated(EnumType.STRING)
     private StatusHoaDon trangThai;
-
-    private KhachHang khachHang;
-
-    private NhanVien nhanVien;
-
-    private ThanhToan thanhToan;
-
-    private PhieuGiamGia phieuGiamGia;
 }
