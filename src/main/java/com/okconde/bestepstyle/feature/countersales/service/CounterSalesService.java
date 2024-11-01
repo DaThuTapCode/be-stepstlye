@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
+import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.entity.HoaDon;
@@ -12,10 +13,13 @@ import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonShortResponseMapper;
+import com.okconde.bestepstyle.core.mapper.khachhang.response.KhachHangResponseMapper;
 import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamShortResponseMapper;
 import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +48,7 @@ public class CounterSalesService implements ICounterSalesService {
     private final HoaDonShortResponseMapper hoaDonShortResponseMapper;
     private final HoaDonRequestMapper hoaDonRequestMapper;
     private final SanPhamShortResponseMapper sanPhamShortResponseMapper;
+    private final KhachHangResponseMapper khachHangResponseMapper;
     /**Constructor*/
     public CounterSalesService(
             HoaDonRepository hoaDonRepository,
@@ -56,7 +61,8 @@ public class CounterSalesService implements ICounterSalesService {
             NhanVienRepository nhanVienRepository,
             HoaDonShortResponseMapper hoaDonShortResponseMapper,
             SanPhamShortResponseMapper sanPhamShortResponseMapper,
-            HoaDonRequestMapper hoaDonRequestMapper
+            HoaDonRequestMapper hoaDonRequestMapper,
+            KhachHangResponseMapper khachHangResponseMapper
     ) {
         this.hoaDonRepository = hoaDonRepository;
         this.sanPhamRepository = sanPhamRepository;
@@ -69,6 +75,7 @@ public class CounterSalesService implements ICounterSalesService {
         this.hoaDonShortResponseMapper = hoaDonShortResponseMapper;
         this.sanPhamShortResponseMapper = sanPhamShortResponseMapper;
         this.hoaDonRequestMapper = hoaDonRequestMapper;
+        this.khachHangResponseMapper = khachHangResponseMapper;
     }
 
     @Override
@@ -128,8 +135,10 @@ public class CounterSalesService implements ICounterSalesService {
      * @implNote Minh thực hiện
      */
     @Override
-    public List<KhachHangResponse> getListKhachHangCounterSales() {
-        return List.of();
+    public Page<KhachHangResponse> getPageKhachHangCounterSales(Pageable pageable, KhachHangSearchRequest khachHangSearchRequest) {
+        Page<KhachHang> khachHangPage = khachHangRepository.searchPageKHByMaAndTenAndSDT
+                (pageable, khachHangSearchRequest.getMaKhachHang(), khachHangSearchRequest.getTenKhachHang(), khachHangSearchRequest.getSoDienThoai());
+        return khachHangPage.map(khachHangResponseMapper::toDTO);
     }
 
     /**
