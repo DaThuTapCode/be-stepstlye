@@ -1,6 +1,10 @@
 package com.okconde.bestepstyle.core.dto.phieugiamgia.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.util.Date;
@@ -31,4 +35,6 @@ public class PhieuGiamGiaSearchRequest {
 
     private String loaiGiam;
 
+    @Enumerated(EnumType.STRING)
+    private StatusPhieuGiamGia trangThai;
 }

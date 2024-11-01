@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.controller;
 
+import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonRequest;
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.request.LichSuHoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.lichsuhoadon.response.LichSuHoaDonResponse;
@@ -9,6 +10,7 @@ import com.okconde.bestepstyle.feature.invoicemangerment.service.LichSuHoaDonSer
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -35,9 +37,23 @@ public class LichSuHoaDonController {
         this.lichSuHoaDonService = lichSuHoaDonService;
     }
 
-    // Hàm phân trang
+    //Hàm phân trang
+    @GetMapping("get-page")
+    public ResponseEntity<ResponseData<List<LichSuHoaDonResponse>>> getPageLichSuHoaDon(
+            @RequestParam(value = "currentPage", defaultValue = "0") Integer current
+    ){
+        int size = 10;
+        Pageable pageable = PageRequest.of(current, size);
+        List<LichSuHoaDonResponse> list = lichSuHoaDonService.getPage(pageable);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Láy trang LSHĐ thành công",list)
+        );
+    }
+
+    // Hàm phân tìm kiếm
     @PostMapping("search")
-    public ResponseEntity<ResponseData<Page<LichSuHoaDonResponse>>> getPageLichSuHoaDon(
+    public ResponseEntity<ResponseData<Page<LichSuHoaDonResponse>>> searchLichSuHoaDon(
             @PageableDefault Pageable pageable,
             @RequestBody(required = false) LichSuHoaDonSearchRequest lichSuHoaDonSearchRequest
 
@@ -45,7 +61,7 @@ public class LichSuHoaDonController {
 
         Page<LichSuHoaDonResponse> page = lichSuHoaDonService.searchPageLichSuHoaDon(pageable, lichSuHoaDonSearchRequest);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Lấy trang LSHĐ thành công", page));
+                "Tìm kiếm LSHĐ thành công", page));
 
     }
 

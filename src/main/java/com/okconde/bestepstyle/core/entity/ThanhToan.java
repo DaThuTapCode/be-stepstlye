@@ -2,10 +2,7 @@ package com.okconde.bestepstyle.core.entity;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Created by TuanIf on 9/23/2024 21:52:04
@@ -18,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 
 public class ThanhToan {
     @Id

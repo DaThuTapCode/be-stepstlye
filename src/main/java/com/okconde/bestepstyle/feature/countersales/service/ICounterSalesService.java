@@ -32,7 +32,7 @@ public interface ICounterSalesService {
      * @param idHoaDon của các HDCT cần lấy
      * @implNote Anh Tuấn thực hiện phần này
      * */
-    public List<HoaDonChiTietResponse> geListHoaDonChiTietCounterSales(Long idHoaDon);
+    public List<HoaDonChiTietResponse> getListHoaDonChiTietCounterSales(Long idHoaDon);
 
     /**Hàm lấy danh sách khách hành
      * @implNote Minh thực hiện */

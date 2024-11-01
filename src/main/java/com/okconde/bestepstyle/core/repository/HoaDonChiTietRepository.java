@@ -18,11 +18,12 @@ import java.util.List;
 public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Long> {
 
     @Query("""
-            select hdct from HoaDonChiTiet hdct where hdct.hoaDon.idHoaDon = :idHoaDon
+            select hdct from HoaDonChiTiet hdct where hdct.hoaDon.idHoaDon = :idHoaDon order by hdct.idHoaDonChiTiet desc
             """)
     List<HoaDonChiTiet> findHoaDonChiTietByIdHoaDon(
             @Param (value = "idHoaDon") Long idHoaDon
     );
+
 
     @Query("""
                 select distinct hdct from HoaDonChiTiet hdct where (:soLuong is null or hdct.soLuong = :soLuong)
@@ -32,4 +33,6 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
                                                 @Param(value = "soLuong") Integer soLuong,
                                                 @Param(value = "maHoaDonChiTiet") String maHoaDonChiTiet
                                                 );
+
+
 }

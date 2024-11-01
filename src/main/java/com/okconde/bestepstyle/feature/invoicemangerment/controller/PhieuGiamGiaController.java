@@ -8,6 +8,7 @@ import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.PhieuGiamGiaService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -34,9 +35,27 @@ public class PhieuGiamGiaController {
         this.phieuGiamGiaService = phieuGiamGiaService;
     }
 
+    @GetMapping("get-page")
+    public ResponseEntity<ResponseData<List<PhieuGiamGiaResponse>>> getPagePhieuGiamGia(
+            @RequestParam(value = "currentPage", defaultValue = "0") Integer current
+    ){
+        int size = 10;
+        Pageable pageable = PageRequest.of(current, size);
+        List<PhieuGiamGiaResponse> list = phieuGiamGiaService.getPage(pageable);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Láy trang phiếu giảm giá thành công",list)
+        );
+    }
+
+    @GetMapping("get-all")
+    public ResponseEntity<ResponseData<List<PhieuGiamGia>>> getAllPhieuGiamGia() {
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công Phiếu Giảm Giá", phieuGiamGiaService.getAll()));
+    }
+
     // Hàm phân trang
     @PostMapping("search")
-    public ResponseEntity<ResponseData<Page<PhieuGiamGiaResponse>>> getPagePhieuGiamGia(
+    public ResponseEntity<ResponseData<Page<PhieuGiamGiaResponse>>> searchPhieuGiamGia(
             @PageableDefault Pageable pageable,
             @RequestBody(required = false) PhieuGiamGiaSearchRequest phieuGiamGiaSearchRequest
 
@@ -44,13 +63,8 @@ public class PhieuGiamGiaController {
 
         Page<PhieuGiamGiaResponse> page = phieuGiamGiaService.searchPagePhieuGiamGia(pageable, phieuGiamGiaSearchRequest);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Lấy trang Phiếu Giảm Giá thành công", page));
+                "Tìm kiếm Phiếu Giảm Giá thành công", page));
 
-    }
-
-    @GetMapping("get-all")
-    public ResponseEntity<ResponseData<List<PhieuGiamGia>>> getAllPhieuGiamGia() {
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công Phiếu Giảm Giá", phieuGiamGiaService.getAll()));
     }
 
     @PostMapping("create")

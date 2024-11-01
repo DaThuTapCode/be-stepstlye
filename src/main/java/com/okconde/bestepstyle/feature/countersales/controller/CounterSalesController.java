@@ -2,6 +2,8 @@ package com.okconde.bestepstyle.feature.countersales.controller;
 
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.util.groupsvalidation.Create;
 import com.okconde.bestepstyle.core.util.groupsvalidation.Update;
@@ -59,4 +61,53 @@ public class CounterSalesController {
                     )
                 );
             }
+
+    /**
+     * @apiNote API lấy danh sách hóa đơn chi tiết theo id hóa đơn
+     * GET <a href="http://localhost:8080/api/bhtq/{idHoaDon}/hoa-don-chi-tiet">...</a>
+     * @param idHoaDon ID của hóa đơn để lấy danh sách chi tiết
+     * @return Danh sách chi tiết hóa đơn cho ID hóa đơn được chỉ định
+     */
+    @GetMapping("/list-invoice-counter-sales/{idHoaDon}")
+    public ResponseEntity<ResponseData<List<HoaDonChiTietResponse>>> getListHoaDonChiTietCounterSales(
+            @PathVariable Long idHoaDon
+    ){
+        List<HoaDonChiTietResponse> hoaDonChiTietResponses = counterSalesService.getListHoaDonChiTietCounterSales(idHoaDon);
+
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Lấy danh sách hóa đơn chi tiết thành công",
+                        hoaDonChiTietResponses
+                        )
+        );
+    }
+
+    /**
+     * @apiNote API tạo hóa đơn chi tiết mới cho bán hàng tại quầy
+     * POST <a href="http://localhost:8080/api/bhtq/{idHoaDon}/create-detail-invoice/{idSPCT}">...</a>
+     * @param hoaDonChiTietRequest Dữ liệu chi tiết hóa đơn
+     * @param idHoaDon ID của hóa đơn
+     * @param idSPCT ID của sản phẩm chi tiết
+     * @return Đối tượng ResponseData chứa thông tin chi tiết hóa đơn mới tạo
+     */
+    @PostMapping("/{idHoaDon}/create-detail-invoice/{idSPCT}")
+    public ResponseEntity<ResponseData<HoaDonChiTietResponse>> createDetailInvoiceCounterSales(
+            @RequestBody @Validated HoaDonChiTietRequest hoaDonChiTietRequest,
+            @PathVariable Long idHoaDon,
+            @PathVariable Long idSPCT) {
+
+        // Gọi service để tạo hóa đơn chi tiết mới
+        HoaDonChiTietResponse hoaDonChiTietResponse = counterSalesService.createDetailInvoiceCounterSales(
+                hoaDonChiTietRequest, idHoaDon, idSPCT);
+
+        // Trả về ResponseData với trạng thái thành công và thông tin chi tiết hóa đơn
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Tạo hóa đơn chi tiết mới thành công",
+                        hoaDonChiTietResponse)
+        );
+    }
+
 }
+
+
