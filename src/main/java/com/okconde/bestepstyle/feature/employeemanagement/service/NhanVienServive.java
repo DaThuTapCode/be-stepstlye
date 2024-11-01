@@ -62,7 +62,7 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     @Override
     @Transactional
     public NhanVienResponse create(NhanVienRequest nhanVienRequest) {
-        nhanVienRequest.setMaNhanVien(GenerateCodeRandomUtil.generateProductCode("NV", 8));
+//        nhanVienRequest.setMaNhanVien(GenerateCodeRandomUtil.generateProductCode("NV", 8));
         if (nhanVienRepository.timNVTheoMaNV(nhanVienRequest.getMaNhanVien()).isPresent()){
             throw new CustomerCodeDuplicateException("Mã nhân viên " + nhanVienRequest.getMaNhanVien() + " đã tồn tại!");
         }

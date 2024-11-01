@@ -113,10 +113,9 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
                 hoaDonSearchRequest.getMaHoaDon(),
                 hoaDonSearchRequest.getNgayTaoStart(),
                 DateFormater.setEndDate(hoaDonSearchRequest.getNgayTaoEnd()),
-                hoaDonSearchRequest.getIdKhachHang(),
-                hoaDonSearchRequest.getIdNhanVien(),
-                hoaDonSearchRequest.getIdThanhToan(),
-                hoaDonSearchRequest.getIdPhieuGiamGia()
+                hoaDonSearchRequest.getTenKhachHang(),
+                hoaDonSearchRequest.getSoDienThoai(),
+                hoaDonSearchRequest.getTrangThai()
                 );
         return hoaDonPage.map(hoaDonResponseMapper::toDTO);
     }

@@ -64,7 +64,8 @@ public class KhachHang {
 
     @OneToMany(
             mappedBy = "khachHang",
-            fetch = FetchType.LAZY
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST}
     )
     private List<DiaChiKhachHang> diaChiKhachHangs;
 

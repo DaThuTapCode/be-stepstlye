@@ -5,9 +5,9 @@ import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.HoaDonService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -35,16 +35,30 @@ public class HoaDonController {
         this.hoaDonService = hoaDonService;
     }
 
-    // Hàm phân trang
+    //Hàm phân trang
+    @GetMapping("get-page")
+    public ResponseEntity<ResponseData<List<HoaDonResponse>>> getPageHoaDon(
+            @RequestParam(value = "currentPage", defaultValue = "0") Integer current
+    ){
+        int size = 10;
+        Pageable pageable = PageRequest.of(current, size);
+        List<HoaDonResponse> list = hoaDonService.getPage(pageable);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Láy trang Hóa Đơn thành công",list)
+        );
+    }
+
+    // Hàm phân tìm kiếm
     @PostMapping(value = "search")
-    public ResponseEntity<ResponseData<Page<HoaDonResponse>>> getPageHoaDon(
+    public ResponseEntity<ResponseData<Page<HoaDonResponse>>> searchHoaDon(
             @PageableDefault Pageable pageable,
             @RequestBody(required = false) HoaDonSearchRequest hoaDonSearchRequest
 
     ){
         Page<HoaDonResponse> page = hoaDonService.searchPageHoaDon(pageable, hoaDonSearchRequest);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Lấy trang hóa đơn thành công", page));
+                "Tìm kiếm hóa đơn thành công", page));
 
     }
 

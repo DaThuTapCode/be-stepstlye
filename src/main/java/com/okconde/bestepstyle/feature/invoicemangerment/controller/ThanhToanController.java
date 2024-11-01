@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.controller;
 
+import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.thanhtoan.request.ThanhToanRequest;
 import com.okconde.bestepstyle.core.dto.thanhtoan.request.ThanhToanSearchRequest;
 import com.okconde.bestepstyle.core.dto.thanhtoan.response.ThanhToanResponse;
@@ -8,6 +9,7 @@ import com.okconde.bestepstyle.feature.invoicemangerment.service.ThanhToanServic
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -33,9 +35,23 @@ public class ThanhToanController {
         this.thanhToanService = thanhToanService;
     }
 
-    // Hàm phân trang
+    //Hàm phân trang
+    @GetMapping("get-page")
+    public ResponseEntity<ResponseData<List<ThanhToanResponse>>> getPageThanhToan(
+            @RequestParam(value = "currentPage", defaultValue = "0") Integer current
+    ){
+        int size = 10;
+        Pageable pageable = PageRequest.of(current, size);
+        List<ThanhToanResponse> list = thanhToanService.getPage(pageable);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Láy trang Thanh toán thành công",list)
+        );
+    }
+
+    // Hàm phân tìm kiếm
     @PostMapping("search")
-    public ResponseEntity<ResponseData<Page<ThanhToanResponse>>> getPageThanhToan(
+    public ResponseEntity<ResponseData<Page<ThanhToanResponse>>> searchThanhToan(
             @PageableDefault Pageable pageable,
             @RequestBody(required = false) ThanhToanSearchRequest thanhToanSearchRequest
 
@@ -43,7 +59,7 @@ public class ThanhToanController {
 
         Page<ThanhToanResponse> page = thanhToanService.searchPageThanhToan(pageable, thanhToanSearchRequest);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Lấy trang thanh toán thành công", page));
+                "Tìm kiếm thanh toán thành công", page));
 
     }
 

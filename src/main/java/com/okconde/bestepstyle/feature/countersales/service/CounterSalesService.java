@@ -5,26 +5,38 @@ import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
+import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
-import com.okconde.bestepstyle.core.entity.HoaDon;
-import com.okconde.bestepstyle.core.entity.KhachHang;
-import com.okconde.bestepstyle.core.entity.NhanVien;
+import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonShortResponseMapper;
+import com.okconde.bestepstyle.core.mapper.khachhang.response.KhachHangResponseMapper;
+import com.okconde.bestepstyle.core.mapper.hoadonchitiet.response.HoaDonChiTietResponseMapper;
 import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamShortResponseMapper;
+import com.okconde.bestepstyle.core.mapper.sanphamchitiet.response.SPCTResponseMapper;
 import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * Created by Trong Phu on 27/10/2024 22:07
@@ -49,6 +61,12 @@ public class CounterSalesService implements ICounterSalesService {
     private final HoaDonResponseMapper hoaDonResponseMapper;
     private final HoaDonRequestMapper hoaDonRequestMapper;
     private final SanPhamShortResponseMapper sanPhamShortResponseMapper;
+    private final HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper;
+
+    private final KhachHangResponseMapper khachHangResponseMapper;
+    private final SPCTResponseMapper sanPhamChiTietResponseMapper;
+
+
     /**Constructor*/
     public CounterSalesService(
             HoaDonRepository hoaDonRepository,
@@ -59,10 +77,13 @@ public class CounterSalesService implements ICounterSalesService {
             ThanhToanRepository thanhToanRepository,
             KhachHangRepository khachHangRepository,
             NhanVienRepository nhanVienRepository,
-            HoaDonShortResponseMapper hoaDonShortResponseMapper, HoaDonResponseMapper hoaDonResponseMapper,
+            HoaDonShortResponseMapper hoaDonShortResponseMapper,
+            HoaDonResponseMapper hoaDonResponseMapper,
             SanPhamShortResponseMapper sanPhamShortResponseMapper,
-            HoaDonRequestMapper hoaDonRequestMapper
-    ) {
+            HoaDonRequestMapper hoaDonRequestMapper,
+            KhachHangResponseMapper khachHangResponseMapper,
+            SPCTResponseMapper sanPhamChiTietResponseMapper,
+            HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper) {
         this.hoaDonRepository = hoaDonRepository;
         this.sanPhamRepository = sanPhamRepository;
         this.sanPhamChiTietRepository = sanPhamChiTietRepository;
@@ -75,6 +96,9 @@ public class CounterSalesService implements ICounterSalesService {
         this.hoaDonResponseMapper = hoaDonResponseMapper;
         this.sanPhamShortResponseMapper = sanPhamShortResponseMapper;
         this.hoaDonRequestMapper = hoaDonRequestMapper;
+        this.khachHangResponseMapper = khachHangResponseMapper;
+        this.sanPhamChiTietResponseMapper = sanPhamChiTietResponseMapper;
+        this.hoaDonChiTietResponseMapper = hoaDonChiTietResponseMapper;
     }
 
     /**Hàm lấy danh sách hóa đơn chờ*/
@@ -126,8 +150,10 @@ public class CounterSalesService implements ICounterSalesService {
      * @implNote Anh Tuấn thực hiện phần này
      */
     @Override
-    public List<HoaDonChiTietResponse> geListHoaDonChiTietCounterSales(Long idHoaDon) {
-        return List.of();
+    public List<HoaDonChiTietResponse> getListHoaDonChiTietCounterSales(Long idHoaDon) {
+        // Lấy danh sách HoaDonChiTiet từ repository dựa trên idHoaDon
+        List<HoaDonChiTiet> hoaDonChiTietList = hoaDonChiTietRepository.findHoaDonChiTietByIdHoaDon(idHoaDon);
+        return hoaDonChiTietList.isEmpty() ? List.of() : hoaDonChiTietResponseMapper.listToDTO(hoaDonChiTietList);
     }
 
     /**
@@ -136,8 +162,10 @@ public class CounterSalesService implements ICounterSalesService {
      * @implNote Minh thực hiện
      */
     @Override
-    public List<KhachHangResponse> getListKhachHangCounterSales() {
-        return List.of();
+    public Page<KhachHangResponse> getPageKhachHangCounterSales(Pageable pageable, KhachHangSearchRequest khachHangSearchRequest) {
+        Page<KhachHang> khachHangPage = khachHangRepository.searchPageKHByMaAndTenAndSDT
+                (pageable, khachHangSearchRequest.getMaKhachHang(), khachHangSearchRequest.getTenKhachHang(), khachHangSearchRequest.getSoDienThoai());
+        return khachHangPage.map(khachHangResponseMapper::toDTO);
     }
 
     /**
@@ -150,8 +178,26 @@ public class CounterSalesService implements ICounterSalesService {
      * TH2: Hóa đơn đã có sản phẩm
      */
     @Override
+    @Transactional
     public Boolean cancelPendingInvoiceCounterSales(Long idHoaDon) {
-        return null;
+        Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(idHoaDon);
+
+        if (optionalHoaDon.isPresent()) {
+            HoaDon hoaDon = optionalHoaDon.get();
+
+            // TH1: Nếu hóa đơn không có sản phẩm
+            if (hoaDon.getHoaDonChiTiet() == null || hoaDon.getHoaDonChiTiet().isEmpty()) {
+                hoaDonRepository.delete(hoaDon);
+                return true; // Hóa đơn đã được xóa thành công
+            } else {
+                // TH2: Nếu hóa đơn đã có sản phẩm, cập nhật trạng thái thành REFUNDED
+                hoaDon.setTrangThai(StatusHoaDon.REFUNDED); // Cập nhật trạng thái
+                hoaDonRepository.save(hoaDon);
+                return true; // Hóa đơn đã được cập nhật trạng thái thành công
+            }
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id: " + idHoaDon);
+        }
     }
 
     /**
@@ -167,8 +213,54 @@ public class CounterSalesService implements ICounterSalesService {
      */
     @Override
     public HoaDonChiTietResponse createDetailInvoiceCounterSales(HoaDonChiTietRequest hoaDonChiTietRequest, Long idHoaDon, Long idSPCT) {
-        return null;
+        // Kiểm tra xem hóa đơn có tồn tại hay không
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+                .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
+
+        // Kiểm tra xem sản phẩm chi tiết có tồn tại hay không
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(idSPCT)
+                .orElseThrow(() -> new BusinessException("Sản phẩm chi tiết không tồn tại"));
+
+        // Tạo hóa đơn chi tiết mới
+        HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
+        hoaDonChiTiet.setHoaDon(hoaDon);
+        hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
+        hoaDonChiTiet.setSoLuong(hoaDonChiTietRequest.getSoLuong());
+
+        // Tính tổng tiền = đơn giá sản phẩm chi tiết * số lượng
+        BigDecimal tongTien = sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hoaDonChiTietRequest.getSoLuong()));
+        hoaDonChiTiet.setTongTien(tongTien);
+
+        // Lưu hóa đơn chi tiết vào repository
+        HoaDonChiTiet savedHoaDonChiTiet = hoaDonChiTietRepository.save(hoaDonChiTiet);
+
+        // Chuyển đổi và trả về đối tượng HoaDonChiTietResponse
+        return hoaDonChiTietResponseMapper.toDTO(savedHoaDonChiTiet);
+    }
+
+    /**
+     * Hàm lấy danh sách thuộc tính
+     *
+     * @implNote Ngô Tự thực hiện
+     */
+    @Override
+        public Page<SPCTResponse> searchPageSPCTCounterSales(Pageable pageable, SPCTSearchRequest spctSearchRequest) {
+            // Gọi repository để lấy dữ liệu dựa trên điều kiện tìm kiếm
+            Page<SanPhamChiTiet> sanPhamChiTiets = sanPhamChiTietRepository.searchPageSPCT(
+                    pageable,
+                    spctSearchRequest.getMaSpct(),
+                    spctSearchRequest.getIdMauSac(),
+                    spctSearchRequest.getIdChatLieu(),
+                    spctSearchRequest.getIdChatLieuDeGiay(),
+                    spctSearchRequest.getIdKieuDeGiay(),
+                    spctSearchRequest.getIdKichCo(),
+                    spctSearchRequest.getIdTrongLuong()
+            );
+            // Sử dụng mapper để chuyển đổi từ SanPhamChiTiet sang SPCTResponse
+            return sanPhamChiTiets.map(sanPhamChiTietResponseMapper::toDTO);
+        }
     }
 
 
-}
+
+

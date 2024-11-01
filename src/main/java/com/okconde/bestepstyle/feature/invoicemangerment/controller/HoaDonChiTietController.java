@@ -3,11 +3,13 @@ package com.okconde.bestepstyle.feature.invoicemangerment.controller;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.HoaDonChiTietService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -34,9 +36,22 @@ public class HoaDonChiTietController {
         this.hoaDonChiTietService = hoaDonChiTietService;
     }
 
-    // Hàm phân trang
+    @GetMapping("get-page")
+    public ResponseEntity<ResponseData<List<HoaDonChiTietResponse>>> getPageHoaDonChiTiet(
+            @RequestParam(value = "currentPage", defaultValue = "0") Integer current
+    ){
+        int size = 10;
+        Pageable pageable = PageRequest.of(current, size);
+        List<HoaDonChiTietResponse> list = hoaDonChiTietService.getPage(pageable);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Láy trang HĐCT thành công",list)
+        );
+    }
+
+    // Hàm phân tìm kiếm
     @PostMapping("search")
-    public ResponseEntity<ResponseData<Page<HoaDonChiTietResponse>>> getPageHoaDonChiTiet(
+    public ResponseEntity<ResponseData<Page<HoaDonChiTietResponse>>> searchHoaDonChiTiet(
             @PageableDefault Pageable pageable,
             @RequestBody(required = false) HoaDonChiTietSearchRequest hoaDonChiTietSearchRequest
 
@@ -44,7 +59,7 @@ public class HoaDonChiTietController {
 
         Page<HoaDonChiTietResponse> page = hoaDonChiTietService.searchPageHoaDonChiTiet(pageable, hoaDonChiTietSearchRequest);
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-                "Lấy trang hóa đơn chi tiết thành công", page));
+                "Tìm kiếm HĐCT thành công", page));
 
     }
 

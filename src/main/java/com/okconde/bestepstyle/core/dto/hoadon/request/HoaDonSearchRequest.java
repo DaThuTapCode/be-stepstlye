@@ -1,8 +1,12 @@
 package com.okconde.bestepstyle.core.dto.hoadon.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -27,13 +31,12 @@ public class HoaDonSearchRequest {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date ngayTaoEnd;
 
-    private Long idKhachHang;
+    private String tenKhachHang;
 
-    private Long idNhanVien;
+    private String soDienThoai;
 
-    private Long idThanhToan;
-
-    private Long idPhieuGiamGia;
+    @Enumerated(EnumType.STRING)
+    private StatusHoaDon trangThai;
 
 
 }

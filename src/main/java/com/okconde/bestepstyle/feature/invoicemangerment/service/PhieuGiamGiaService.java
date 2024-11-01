@@ -9,11 +9,9 @@ import com.okconde.bestepstyle.core.mapper.phieugiamgia.request.PhieuGiamGiaRequ
 import com.okconde.bestepstyle.core.mapper.phieugiamgia.response.PhieuGiamGiaResponseMapper;
 import com.okconde.bestepstyle.core.repository.PhieuGiamGiaRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
-import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
-import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -111,13 +109,13 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
     }
 
     public Page<PhieuGiamGiaResponse> searchPagePhieuGiamGia(Pageable pageable, PhieuGiamGiaSearchRequest phieuGiamGiaSearchRequest){
-        Page<PhieuGiamGia> phieuGiamGiaPage = phieuGiamGiaRepository.searchPagePhieuGiamGia(pageable,
+        Page<PhieuGiamGia> phieuGiamGiaPage =   phieuGiamGiaRepository.searchPagePhieuGiamGia(pageable,
                 phieuGiamGiaSearchRequest.getMaPhieuGiamGia(),
                 phieuGiamGiaSearchRequest.getTenPhieuGiamGia(),
                 phieuGiamGiaSearchRequest.getNgayBatDau(),
                 DateFormater.setEndDate(phieuGiamGiaSearchRequest.getNgayKetThuc()),
-                phieuGiamGiaSearchRequest.getLoaiGiam()
-        );
+                phieuGiamGiaSearchRequest.getLoaiGiam(),
+                phieuGiamGiaSearchRequest.getTrangThai());
         return phieuGiamGiaPage.map(phieuGiamGiaResponseMapper::toDTO);
     }
 
