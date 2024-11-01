@@ -5,22 +5,27 @@ import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
-import com.okconde.bestepstyle.core.entity.HoaDon;
-import com.okconde.bestepstyle.core.entity.KhachHang;
-import com.okconde.bestepstyle.core.entity.NhanVien;
+import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonShortResponseMapper;
 import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamShortResponseMapper;
+import com.okconde.bestepstyle.core.mapper.sanphamchitiet.response.SPCTResponseMapper;
 import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Trong Phu on 27/10/2024 22:07
@@ -44,6 +49,9 @@ public class CounterSalesService implements ICounterSalesService {
     private final HoaDonShortResponseMapper hoaDonShortResponseMapper;
     private final HoaDonRequestMapper hoaDonRequestMapper;
     private final SanPhamShortResponseMapper sanPhamShortResponseMapper;
+    private final SPCTResponseMapper sanPhamChiTietResponseMapper;
+
+
     /**Constructor*/
     public CounterSalesService(
             HoaDonRepository hoaDonRepository,
@@ -56,8 +64,8 @@ public class CounterSalesService implements ICounterSalesService {
             NhanVienRepository nhanVienRepository,
             HoaDonShortResponseMapper hoaDonShortResponseMapper,
             SanPhamShortResponseMapper sanPhamShortResponseMapper,
-            HoaDonRequestMapper hoaDonRequestMapper
-    ) {
+            HoaDonRequestMapper hoaDonRequestMapper,
+            SPCTResponseMapper sanPhamChiTietResponseMapper) {
         this.hoaDonRepository = hoaDonRepository;
         this.sanPhamRepository = sanPhamRepository;
         this.sanPhamChiTietRepository = sanPhamChiTietRepository;
@@ -69,6 +77,7 @@ public class CounterSalesService implements ICounterSalesService {
         this.hoaDonShortResponseMapper = hoaDonShortResponseMapper;
         this.sanPhamShortResponseMapper = sanPhamShortResponseMapper;
         this.hoaDonRequestMapper = hoaDonRequestMapper;
+        this.sanPhamChiTietResponseMapper = sanPhamChiTietResponseMapper;
     }
 
     @Override
@@ -142,8 +151,26 @@ public class CounterSalesService implements ICounterSalesService {
      * TH2: Hóa đơn đã có sản phẩm
      */
     @Override
+    @Transactional
     public Boolean cancelPendingInvoiceCounterSales(Long idHoaDon) {
-        return null;
+        Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(idHoaDon);
+
+        if (optionalHoaDon.isPresent()) {
+            HoaDon hoaDon = optionalHoaDon.get();
+
+            // TH1: Nếu hóa đơn không có sản phẩm
+            if (hoaDon.getHoaDonChiTiet() == null || hoaDon.getHoaDonChiTiet().isEmpty()) {
+                hoaDonRepository.delete(hoaDon);
+                return true; // Hóa đơn đã được xóa thành công
+            } else {
+                // TH2: Nếu hóa đơn đã có sản phẩm, cập nhật trạng thái thành REFUNDED
+                hoaDon.setTrangThai(StatusHoaDon.REFUNDED); // Cập nhật trạng thái
+                hoaDonRepository.save(hoaDon);
+                return true; // Hóa đơn đã được cập nhật trạng thái thành công
+            }
+        } else {
+            throw new EntityNotFoundException("Không tìm thấy id: " + idHoaDon);
+        }
     }
 
     /**
@@ -162,5 +189,29 @@ public class CounterSalesService implements ICounterSalesService {
         return null;
     }
 
+    /**
+     * Hàm lấy danh sách thuộc tính
+     *
+     * @implNote Ngô Tự thực hiện
+     */
+    @Override
+        public Page<SPCTResponse> searchPageSPCTCounterSales(Pageable pageable, SPCTSearchRequest spctSearchRequest) {
+            // Gọi repository để lấy dữ liệu dựa trên điều kiện tìm kiếm
+            Page<SanPhamChiTiet> sanPhamChiTiets = sanPhamChiTietRepository.searchPageSPCT(
+                    pageable,
+                    spctSearchRequest.getMaSpct(),
+                    spctSearchRequest.getIdMauSac(),
+                    spctSearchRequest.getIdChatLieu(),
+                    spctSearchRequest.getIdChatLieuDeGiay(),
+                    spctSearchRequest.getIdKieuDeGiay(),
+                    spctSearchRequest.getIdKichCo(),
+                    spctSearchRequest.getIdTrongLuong()
+            );
+            // Sử dụng mapper để chuyển đổi từ SanPhamChiTiet sang SPCTResponse
+            return sanPhamChiTiets.map(sanPhamChiTietResponseMapper::toDTO);
+        }
+    }
 
-}
+
+
+
