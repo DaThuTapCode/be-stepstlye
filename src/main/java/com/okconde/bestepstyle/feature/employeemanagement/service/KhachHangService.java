@@ -62,8 +62,8 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     @Override
     @Transactional
     public KhachHangResponse create(KhachHangRequest khachHangRequest) {
-        khachHangRequest.setMaKhachHang(GenerateCodeRandomUtil.generateProductCode("KH", 8));
-
+//        khachHangRequest.setMaKhachHang(GenerateCodeRandomUtil.generateProductCode("KH", 8));
+        khachHangRequest.getDiaChiKhachHangs().get(0).setMaDiaChiKhachHang(GenerateCodeRandomUtil.generateProductCode("DCKH", 6));
         if (khachHangRepository.timKHTheoMaKH(khachHangRequest.getMaKhachHang()).isPresent()){
             throw new CustomerCodeDuplicateException("Mã khách hàng " + khachHangRequest.getMaKhachHang() + " đã tồn tại!");
         }

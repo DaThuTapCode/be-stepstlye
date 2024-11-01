@@ -6,6 +6,8 @@ import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiaySea
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
+import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
+import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
 import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kichco.request.KichCoSearchRequest;
 import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
@@ -25,6 +27,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +40,7 @@ import java.util.List;
 /**
  * Created by Trong Phu on 27/10/2024 22:06
  * Controller bán hàng tại quầy
+ *
  * @author Trong Phu
  */
 @RestController
@@ -53,7 +59,7 @@ public class CounterSalesController {
     /**
      * @apiNote API lấy danh sách hóa đơn chờ thanh toán của loại hóa đơn bán tại quầy
      * GET <a href="http://localhost:8080/api/bhtq/list-pending-invoice">...</a>
-     * */
+     */
     @GetMapping("/list-pending-invoice")
     public ResponseEntity<ResponseData<List<HoaDonShortResponse>>> getListPendingInvoice() {
         return ResponseEntity.ok(
@@ -63,19 +69,34 @@ public class CounterSalesController {
     }
 
     /**
+     * @param hoaDonRequest hứng dữ liệu
      * @apiNote API tạo hóa đơn chờ thanh toán mới cho bán hàng tại quầy POST <a href="http://localhost:8080/api/bhtq/create-pending-invoice-counter-sales">...</a>
-     * @param hoaDonRequest hứng dữ liệu*/
+     */
     @PostMapping("/create-pending-invoice-counter-sales")
     public ResponseEntity<ResponseData<HoaDonShortResponse>> createPendingInvoiceCounterSales(
             @RequestBody @Validated(value = {Create.class,}) HoaDonRequest hoaDonRequest
-            ){
-                return ResponseEntity.ok(
-                    new ResponseData<>(HttpStatus.OK.value(),
-                            "Tạo hóa đơn bán hàn tại quầy mới thành công",
-                            counterSalesService.createNewPendingInvoiceCounterSales(hoaDonRequest)
-                    )
-                );
-            }
+    ) {
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Tạo hóa đơn bán hàn tại quầy mới thành công",
+                        counterSalesService.createNewPendingInvoiceCounterSales(hoaDonRequest)
+                )
+        );
+    }
+
+    // Hàm phân trang
+    @PostMapping("/list-customer")
+    public ResponseEntity<ResponseData<List<KhachHangResponse>>> getPageKH(
+            @PageableDefault Pageable pageable,
+            @RequestBody KhachHangSearchRequest khachHangSearchRequest
+
+    ){
+
+        Page<KhachHangResponse> page = counterSalesService.getPageKhachHangCounterSales(pageable, khachHangSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang khách hàng thành công", page));
+
+    }
 
     /**
      * Tìm kiếm màu sắc theo yêu cầu tìm kiếm và phân trang.
