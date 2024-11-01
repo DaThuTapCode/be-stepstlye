@@ -50,7 +50,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
      * @param loaiHoaDon loại hóa đơn cần lấy
      * */
     @Query("""
-        SELECT hd FROM HoaDon hd WHERE hd.trangThai = :trangThai AND hd.loaiHoaDon = :loaiHoaDon ORDER BY hd.idHoaDon DESC
+        SELECT hd FROM HoaDon hd WHERE hd.trangThai = :trangThai AND hd.loaiHoaDon = :loaiHoaDon
     """)
     List<HoaDon> getHoaDonByStatus(StatusHoaDon trangThai, String loaiHoaDon);
 

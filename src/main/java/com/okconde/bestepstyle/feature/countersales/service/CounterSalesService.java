@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.countersales.service;
 
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
+import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
@@ -11,14 +12,17 @@ import com.okconde.bestepstyle.core.entity.KhachHang;
 import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
+import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonShortResponseMapper;
 import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamShortResponseMapper;
 import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,6 +46,7 @@ public class CounterSalesService implements ICounterSalesService {
 
     //  Mapper
     private final HoaDonShortResponseMapper hoaDonShortResponseMapper;
+    private final HoaDonResponseMapper hoaDonResponseMapper;
     private final HoaDonRequestMapper hoaDonRequestMapper;
     private final SanPhamShortResponseMapper sanPhamShortResponseMapper;
     /**Constructor*/
@@ -54,7 +59,7 @@ public class CounterSalesService implements ICounterSalesService {
             ThanhToanRepository thanhToanRepository,
             KhachHangRepository khachHangRepository,
             NhanVienRepository nhanVienRepository,
-            HoaDonShortResponseMapper hoaDonShortResponseMapper,
+            HoaDonShortResponseMapper hoaDonShortResponseMapper, HoaDonResponseMapper hoaDonResponseMapper,
             SanPhamShortResponseMapper sanPhamShortResponseMapper,
             HoaDonRequestMapper hoaDonRequestMapper
     ) {
@@ -67,15 +72,16 @@ public class CounterSalesService implements ICounterSalesService {
         this.khachHangRepository = khachHangRepository;
         this.nhanVienRepository = nhanVienRepository;
         this.hoaDonShortResponseMapper = hoaDonShortResponseMapper;
+        this.hoaDonResponseMapper = hoaDonResponseMapper;
         this.sanPhamShortResponseMapper = sanPhamShortResponseMapper;
         this.hoaDonRequestMapper = hoaDonRequestMapper;
     }
 
+    /**Hàm lấy danh sách hóa đơn chờ*/
     @Override
-    public List<HoaDonShortResponse> geListPendingInvoiceCounterSales() {
+    public List<HoaDonResponse> geListPendingInvoiceCounterSales() {
         List<HoaDon> listPendingInvoice = hoaDonRepository.getHoaDonByStatus(StatusHoaDon.PENDING, "COUNTERSALES");
-        List<HoaDonShortResponse> listPendingInvoiceResponse = hoaDonShortResponseMapper.listToDTO(listPendingInvoice);
-        return listPendingInvoiceResponse;
+        return hoaDonResponseMapper.listToDTO(listPendingInvoice);
     }
 
     /**
@@ -91,14 +97,16 @@ public class CounterSalesService implements ICounterSalesService {
         if(listPendingInvoice.size() >= 5) {
             throw new BusinessException("Số lượng hóa đơn chờ thanh toán được tạo dưới 5");
         }
-
-        HoaDon hoaDonNew = hoaDonRequestMapper.toEntity(hoaDonRequest);
+        //Khởi tạo đối tượng hóa đơn mới và set các giá trị mặc định ban đầu
+        HoaDon hoaDonNew = new HoaDon();
         hoaDonNew.setMaHoaDon(GenerateCodeRandomUtil.generateProductCode("HDTQ", 6));
         hoaDonNew.setNgayTaoDon(LocalDateTime.now());
         hoaDonNew.setNhanVien(NhanVien.builder().idNhanVien(1l).build());
         hoaDonNew.setKhachHang(KhachHang.builder().idKhachHang(1l).build());
         hoaDonNew.setTrangThai(StatusHoaDon.PENDING);
         hoaDonNew.setLoaiHoaDon("COUNTERSALES");
+        hoaDonNew.setTongTien(BigDecimal.ZERO);
+        hoaDonNew.setTongTienSauGiam(BigDecimal.ZERO);
         HoaDon hoaDonSaved = hoaDonRepository.save(hoaDonNew);
         return hoaDonShortResponseMapper.toDTO(hoaDonSaved);
     }
@@ -107,7 +115,7 @@ public class CounterSalesService implements ICounterSalesService {
      * Hàm lấy sản phẩm chi tiết lên
      */
     @Override
-    public SPCTResponse getProductDetail() {
+    public Page<SPCTResponse> getPageProductDetail() {
         return null;
     }
 

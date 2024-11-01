@@ -69,7 +69,5 @@ public class SanPhamChiTiet {
     @OneToMany(mappedBy = "sanPhamChiTiet")
     private List<Anh> anhs;
 
-    @OneToMany(mappedBy = "sanPhamChiTiet")
-    private List<HoaDonChiTiet> hoaDonChiTiets;
 
 }

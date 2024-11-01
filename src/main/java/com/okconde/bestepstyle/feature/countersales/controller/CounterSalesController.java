@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.countersales.controller;
 
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
+import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.util.groupsvalidation.Create;
@@ -38,7 +39,7 @@ public class CounterSalesController {
      * GET <a href="http://localhost:8080/api/bhtq/list-pending-invoice">...</a>
      * */
     @GetMapping("/list-pending-invoice")
-    public ResponseEntity<ResponseData<List<HoaDonShortResponse>>> getListPendingInvoice() {
+    public ResponseEntity<ResponseData<List<HoaDonResponse>>> getListPendingInvoice() {
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy danh sách hóa đơn chờ thanh toán thành công",
@@ -50,7 +51,7 @@ public class CounterSalesController {
      * @param hoaDonRequest hứng dữ liệu*/
     @PostMapping("/create-pending-invoice-counter-sales")
     public ResponseEntity<ResponseData<HoaDonShortResponse>> createPendingInvoiceCounterSales(
-            @RequestBody @Validated(value = {Create.class,}) HoaDonRequest hoaDonRequest
+            @RequestBody(required = false) HoaDonRequest hoaDonRequest
             ){
                 return ResponseEntity.ok(
                     new ResponseData<>(HttpStatus.OK.value(),

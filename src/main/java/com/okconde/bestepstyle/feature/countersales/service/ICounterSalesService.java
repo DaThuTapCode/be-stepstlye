@@ -1,11 +1,13 @@
 package com.okconde.bestepstyle.feature.countersales.service;
 
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
+import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
  */
 public interface ICounterSalesService {
     /**Hàm lấy danh sách hóa đơn chờ*/
-    public List<HoaDonShortResponse> geListPendingInvoiceCounterSales();
+    public List<HoaDonResponse> geListPendingInvoiceCounterSales();
 
     /**
      * Hàm tạo hóa đơn chờ cho bán hàng tại quầy
@@ -25,7 +27,7 @@ public interface ICounterSalesService {
     public HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest);
 
     /**Hàm lấy sản phẩm chi tiết lên*/
-    public SPCTResponse getProductDetail();
+    public Page<SPCTResponse> getPageProductDetail();
 
     /**
      * Hàm lấy danh sách hóa đơn chi tiết by id hóa đơn
