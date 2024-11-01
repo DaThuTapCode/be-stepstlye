@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.dto.sanphamchitiet.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
 import com.okconde.bestepstyle.core.dto.anh.response.AnhShortResponse;
@@ -54,5 +55,7 @@ public class SPCTShortResponse {
     private KichCo kichCo;
 
     private List<AnhShortResponse> anhs;
+
+    private List<HoaDonShortResponse> hoaDonChiTiets;
 
 }

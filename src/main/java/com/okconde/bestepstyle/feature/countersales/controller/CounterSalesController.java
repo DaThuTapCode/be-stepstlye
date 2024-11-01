@@ -1,15 +1,37 @@
 package com.okconde.bestepstyle.feature.countersales.controller;
 
+import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuSearchRequest;
+import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
+import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiaySearchRequest;
+import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
+import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
+import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
+import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
+import com.okconde.bestepstyle.core.dto.kichco.request.KichCoSearchRequest;
+import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
+import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiaySearchRequest;
+import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
+import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
+import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.util.groupsvalidation.Create;
 import com.okconde.bestepstyle.core.util.groupsvalidation.Update;
 import com.okconde.bestepstyle.feature.countersales.service.ICounterSalesService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -53,14 +75,72 @@ public class CounterSalesController {
     @PostMapping("/create-pending-invoice-counter-sales")
     public ResponseEntity<ResponseData<HoaDonShortResponse>> createPendingInvoiceCounterSales(
             @RequestBody @Validated(value = {Create.class,}) HoaDonRequest hoaDonRequest
-            ){
-                return ResponseEntity.ok(
-                    new ResponseData<>(HttpStatus.OK.value(),
-                            "Tạo hóa đơn bán hàn tại quầy mới thành công",
-                            counterSalesService.createNewPendingInvoiceCounterSales(hoaDonRequest)
-                    )
-                );
+    ) {
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Tạo hóa đơn bán hàn tại quầy mới thành công",
+                        counterSalesService.createNewPendingInvoiceCounterSales(hoaDonRequest)
+                )
+        );
+    }
+
+    // Hàm phân trang
+    @PostMapping("/list-customer")
+    public ResponseEntity<ResponseData<List<KhachHangResponse>>> getPageKH(
+            @PageableDefault Pageable pageable,
+            @RequestBody KhachHangSearchRequest khachHangSearchRequest
+
+    ){
+
+        Page<KhachHangResponse> page = counterSalesService.getPageKhachHangCounterSales(pageable, khachHangSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang khách hàng thành công", page));
+
+    }
+
+    /**
+     * Tìm kiếm màu sắc theo yêu cầu tìm kiếm và phân trang.
+     *
+     * @param pageable - thông tin phân trang
+     * @return ResponseEntity chứa danh sách kết quả
+     */
+    @PostMapping("/search-thuoc-tinh")
+    public ResponseEntity<ResponseData<Page<SPCTResponse>>> searchPageSPCTCounterSales(
+            Pageable pageable,
+            @RequestBody(required = false) SPCTSearchRequest spctSearchRequest) {
+        Page<SPCTResponse> result = counterSalesService.searchPageSPCTCounterSales(pageable, spctSearchRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Tìm kiếm thuộc tính thành công thành công",
+                        result)
+        );
+    }
+
+    /**
+     * Hủy hóa đơn theo ID.
+     *
+     * @param id ID của hóa đơn cần hủy
+     * @return ResponseEntity chứa thông tin về trạng thái của yêu cầu
+     * @throws EntityNotFoundException nếu không tìm thấy hóa đơn với ID đã cho
+     */
+    @DeleteMapping("/invoices/cancel/{id}")
+    public ResponseEntity<ResponseData<String>> cancelInvoice(@PathVariable Long id) {
+        try {
+            boolean isCanceled = counterSalesService.cancelPendingInvoiceCounterSales(id);
+            if (isCanceled) {
+                return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Hủy hóa đơn thành công", null));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseData<>(HttpStatus.BAD_REQUEST.value(), "Không thể hủy hóa đơn", null));
             }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Lỗi hệ thống", null));
+        }
+    }
 
     /**
      * @apiNote API lấy danh sách hóa đơn chi tiết theo id hóa đơn
@@ -78,7 +158,7 @@ public class CounterSalesController {
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy danh sách hóa đơn chi tiết thành công",
                         hoaDonChiTietResponses
-                        )
+                )
         );
     }
 
@@ -109,5 +189,3 @@ public class CounterSalesController {
     }
 
 }
-
-

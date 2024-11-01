@@ -2,6 +2,7 @@ package com.okconde.bestepstyle.core.dto.sanphamchitiet.request;
 
 import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
+import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
 import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
@@ -47,4 +48,6 @@ public class SPCTRequest {
     private KichCoResponse kichCo;
 
     private List<Anh> anhs;
+
+    private List<HoaDonShortResponse> hoaDonChiTiets;
 }
