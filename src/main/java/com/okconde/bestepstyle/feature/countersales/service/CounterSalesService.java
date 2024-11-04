@@ -21,6 +21,8 @@ import com.okconde.bestepstyle.core.mapper.sanphamchitiet.response.SPCTResponseM
 import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
+import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -136,14 +138,6 @@ public class CounterSalesService implements ICounterSalesService {
     }
 
     /**
-     * Hàm lấy sản phẩm chi tiết lên
-     */
-    @Override
-    public Page<SPCTResponse> getPageProductDetail() {
-        return null;
-    }
-
-    /**
      * Hàm lấy danh sách hóa đơn chi tiết by id hóa đơn
      *
      * @param idHoaDon của các HDCT cần lấy
@@ -208,38 +202,75 @@ public class CounterSalesService implements ICounterSalesService {
      * 4. Tính tổng tiền của hdct theo đơn giá của spct * số lượng nhập vào
      *
      * @param hoaDonChiTietRequest
-     * @param idHoaDon
-     * @param idSPCT
      */
     @Override
-    public HoaDonChiTietResponse createDetailInvoiceCounterSales(HoaDonChiTietRequest hoaDonChiTietRequest, Long idHoaDon, Long idSPCT) {
+    @Transactional
+    public HoaDonChiTietResponse createDetailInvoiceCounterSales(HoaDonChiTietRequest hoaDonChiTietRequest) {
         // Kiểm tra xem hóa đơn có tồn tại hay không
-        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+        HoaDon hoaDon = hoaDonRepository.findById(hoaDonChiTietRequest.getIdHoaDon())
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
 
         // Kiểm tra xem sản phẩm chi tiết có tồn tại hay không
-        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(idSPCT)
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(hoaDonChiTietRequest.getIdSpct())
                 .orElseThrow(() -> new BusinessException("Sản phẩm chi tiết không tồn tại"));
 
-        // Tạo hóa đơn chi tiết mới
-        HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-        hoaDonChiTiet.setHoaDon(hoaDon);
-        hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
-        hoaDonChiTiet.setSoLuong(hoaDonChiTietRequest.getSoLuong());
+        // Kiểm tra số lượng sản phâm chi tiết còn đủ hay không
+        if(sanPhamChiTiet.getSoLuong() < hoaDonChiTietRequest.getSoLuong()) {
+            throw new BusinessException("Số lượng sản phẩm trong kho không đủ");
+        }
 
-        // Tính tổng tiền = đơn giá sản phẩm chi tiết * số lượng
-        BigDecimal tongTien = sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hoaDonChiTietRequest.getSoLuong()));
-        hoaDonChiTiet.setTongTien(tongTien);
+        // Kiểm tra sản phẩm chi tiết đã tồm tại trong hóa đơn chi tiết hay chưa
+        // Nếu đã có rồi thì cập nhật số lượng sản phẩm trong hóa đơn chi tiết
+        Optional<HoaDonChiTiet> hoaDonChiTietExisting = hoaDonChiTietRepository.getHDCTByIdHoaDonAndIdSPCT(hoaDonChiTietRequest.getIdHoaDon(), hoaDonChiTietRequest.getIdSpct());
+        if(hoaDonChiTietExisting.isPresent()) {
+            // Set lại đơn giá cho hóa đơn chi tiết đã tồn tại
+            hoaDonChiTietExisting.get().setDonGia(sanPhamChiTiet.getGia());
 
-        // Lưu hóa đơn chi tiết vào repository
-        HoaDonChiTiet savedHoaDonChiTiet = hoaDonChiTietRepository.save(hoaDonChiTiet);
+            // Set lại số lượng cho hdct = số lượng ban đầu + số lượng mới
+            int soLuong = hoaDonChiTietExisting.get().getSoLuong() + hoaDonChiTietRequest.getSoLuong();
+            hoaDonChiTietExisting.get().setSoLuong(soLuong);
 
-        // Chuyển đổi và trả về đối tượng HoaDonChiTietResponse
-        return hoaDonChiTietResponseMapper.toDTO(savedHoaDonChiTiet);
+            // Tính tổng tiền = đơn giá sản phẩm chi tiết * số lượng
+            BigDecimal tongTien = sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(soLuong));
+            hoaDonChiTietExisting.get().setTongTien(tongTien);
+
+            // Set lại số lượng cho sản phẩm chi tiết  = số lượng hiện tại - số lượng thêm vào hóa đơn chi tiết
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - hoaDonChiTietRequest.getSoLuong());
+
+            // Set lại tổng tiền cho hóa đơn = tổng tiền hiện tại + (đơn giá *  số lượng mới được thêm)
+            hoaDon.setTongTien(hoaDon.getTongTien().add(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hoaDonChiTietRequest.getSoLuong()))));
+        }
+        //Chưa thì thêm mới hóa đơn chi tiết
+        else {
+            // Tạo hóa đơn chi tiết mới
+            HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
+            hoaDonChiTiet.setHoaDon(hoaDon);
+            hoaDonChiTiet.setMaHoaDonChiTiet(GenerateCodeRandomUtil.generateProductCode("HDCT", 6));
+            hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
+            hoaDonChiTiet.setSoLuong(hoaDonChiTietRequest.getSoLuong());
+            hoaDonChiTiet.setTrangThai(StatusHoaDonChiTiet.PENDING);
+            // Tính tổng tiền = đơn giá sản phẩm chi tiết * số lượng
+            BigDecimal tongTien = sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hoaDonChiTietRequest.getSoLuong()));
+            hoaDonChiTiet.setDonGia(sanPhamChiTiet.getGia());
+            hoaDonChiTiet.setTongTien(tongTien);
+
+            // Set lại số lượng cho sản phẩm chi tiết  = số lượng hiện tại - số lượng thêm vào hóa đơn chi tiết
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - hoaDonChiTietRequest.getSoLuong());
+
+            // Set lại tổng tiền cho hóa đơn = tổng tiền hiện tại + (số lượng * đơn giá)
+            hoaDon.setTongTien(hoaDon.getTongTien().add(hoaDonChiTiet.getTongTien()));
+
+            // Lưu hóa đơn chi tiết vào repository
+            HoaDonChiTiet savedHoaDonChiTiet = hoaDonChiTietRepository.save(hoaDonChiTiet);
+
+            // Chuyển đổi và trả về đối tượng HoaDonChiTietResponse
+            return hoaDonChiTietResponseMapper.toDTO(savedHoaDonChiTiet);
+        }
+        return null;
     }
 
     /**
-     * Hàm lấy danh sách thuộc tính
+     * Hàm lấy phân trang tìm kiếm sản phẩm chi tiết
      *
      * @implNote Ngô Tự thực hiện
      */
@@ -259,7 +290,48 @@ public class CounterSalesService implements ICounterSalesService {
             // Sử dụng mapper để chuyển đổi từ SanPhamChiTiet sang SPCTResponse
             return sanPhamChiTiets.map(sanPhamChiTietResponseMapper::toDTO);
         }
+
+    /**
+     * Hủy hóa đơn chi tiết
+     *
+     * @param idHDCT id hóa đơn chi tiết cần hủy
+     */
+    @Override
+    @Transactional
+    public HoaDonChiTietResponse cancelDetailInvoice(Long idHDCT) {
+        // Lấy hdct by id
+        HoaDonChiTiet hoaDonChiTietExisting = hoaDonChiTietRepository.getHDCTByIdAndStatus(idHDCT, StatusHoaDonChiTiet.PENDING)
+                .orElseThrow(() -> new BusinessException("Hóa đơn chi tiết không tồn tại"));
+
+        // Lấy hóa đơn theo id và status
+        HoaDon hoaDonExisting = hoaDonRepository.findByIdHoaDonAndTrangThai(hoaDonChiTietExisting.getHoaDon().getIdHoaDon(), StatusHoaDon.PENDING)
+                .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
+
+        // Lấy sản phẩm chi tiết theo id
+        SanPhamChiTiet sanPhamChiTietExisting = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(hoaDonChiTietExisting.getSanPhamChiTiet().getIdSpct(), StatusSPCT.ACTIVE)
+                .orElseThrow(() -> new BusinessException("Sản phẩm chi tiết không tồn tại"));
+
+
+        // Set lại số lượng cho sản phẩm chi tiết ( số lượng = số lượng hiện tại + số lượng trong hóa đơn chi tiết)
+        int soLuongHienTai = sanPhamChiTietExisting.getSoLuong();
+        int soLuongTrongHoaDonChiTiet = hoaDonChiTietExisting.getSoLuong();
+        int soLuong = soLuongHienTai + soLuongTrongHoaDonChiTiet;
+        sanPhamChiTietExisting.setSoLuong(soLuong);
+
+        // Set lại tổng tiền cho hóa đơn(tổng tiền = tổng tiền hiện tại - tổng tiền của hóa đơn chi tiết)
+        BigDecimal tongTienHienTaiCuaHoaDon = hoaDonExisting.getTongTien();
+        BigDecimal tongTienCuaHoaDonChiTiet = hoaDonChiTietExisting.getTongTien();
+        BigDecimal tongTien = tongTienHienTaiCuaHoaDon.subtract(tongTienCuaHoaDonChiTiet);
+        hoaDonExisting.setTongTien(tongTien);
+
+        //Xóa cứng hdct
+        hoaDonChiTietRepository.delete(hoaDonChiTietExisting);
+
+        return new HoaDonChiTietResponse();
     }
+
+
+}
 
 
 

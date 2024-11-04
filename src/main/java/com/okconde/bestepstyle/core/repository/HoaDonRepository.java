@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by TuanIf on 9/23/2024 22:48:53
@@ -57,4 +58,10 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE hd.trangThai = :trangThai")
     int countByStatus(StatusHoaDon trangThai);
 
+    /**
+     * Query lấy hóa đơn theo id và trạng thái*/
+    @Query("""
+        SELECT hd FROM HoaDon hd WHERE hd.idHoaDon = :idHoaDon AND hd.trangThai = :trangThai
+    """)
+    Optional<HoaDon> findByIdHoaDonAndTrangThai(Long idHoaDon, StatusHoaDon trangThai);
 }

@@ -29,4 +29,6 @@ public class Anh {
     @ManyToOne
     @JoinColumn(name = "id_spct")
     private SanPhamChiTiet sanPhamChiTiet;
+
+    private int thu_tu;
 }

@@ -21,6 +21,8 @@ import lombok.*;
 public class SPCTSearchRequest {
     private String maSpct;
 
+    private Long idSanPham;
+
     private Long idChatLieu;
 
     private Long idKieuDeGiay;
