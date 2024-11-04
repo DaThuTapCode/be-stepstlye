@@ -57,5 +57,5 @@ public class SPCTRequest {
 
     private KichCoRequest kichCo;
 
-    private List<MultipartFile> anhs;
+//    private List<MultipartFile> anhs;
 }
