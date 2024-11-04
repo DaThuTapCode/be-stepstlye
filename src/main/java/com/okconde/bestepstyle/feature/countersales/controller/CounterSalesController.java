@@ -111,14 +111,14 @@ public class CounterSalesController {
      * @param pageable - thông tin phân trang
      * @return ResponseEntity chứa danh sách kết quả
      */
-    @PostMapping("/search-thuoc-tinh")
+    @PostMapping("/search-spct")
     public ResponseEntity<ResponseData<Page<SPCTResponse>>> searchPageSPCTCounterSales(
-            Pageable pageable,
+            @PageableDefault Pageable pageable,
             @RequestBody(required = false) SPCTSearchRequest spctSearchRequest) {
         Page<SPCTResponse> result = counterSalesService.searchPageSPCTCounterSales(pageable, spctSearchRequest);
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
-                        "Tìm kiếm thuộc tính thành công thành công",
+                        "Tìm kiếm sản phẩm chi tiết thành công thành công",
                         result)
         );
     }
@@ -164,24 +164,39 @@ public class CounterSalesController {
      * @apiNote API tạo hóa đơn chi tiết mới cho bán hàng tại quầy
      * POST <a href="http://localhost:8080/api/bhtq/{idHoaDon}/create-detail-invoice/{idSPCT}">...</a>
      * @param hoaDonChiTietRequest Dữ liệu chi tiết hóa đơn
-     * @param idHoaDon ID của hóa đơn
-     * @param idSPCT ID của sản phẩm chi tiết
      * @return Đối tượng ResponseData chứa thông tin chi tiết hóa đơn mới tạo
      */
-    @PostMapping("/{idHoaDon}/create-detail-invoice/{idSPCT}")
+    @PostMapping("/create-detail-invoice")
     public ResponseEntity<ResponseData<HoaDonChiTietResponse>> createDetailInvoiceCounterSales(
-            @RequestBody @Validated HoaDonChiTietRequest hoaDonChiTietRequest,
-            @PathVariable Long idHoaDon,
-            @PathVariable Long idSPCT) {
+            @RequestBody @Validated HoaDonChiTietRequest hoaDonChiTietRequest) {
 
         // Gọi service để tạo hóa đơn chi tiết mới
         HoaDonChiTietResponse hoaDonChiTietResponse = counterSalesService.createDetailInvoiceCounterSales(
-                hoaDonChiTietRequest, idHoaDon, idSPCT);
+                hoaDonChiTietRequest);
 
         // Trả về ResponseData với trạng thái thành công và thông tin chi tiết hóa đơn
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
-                        "Tạo hóa đơn chi tiết mới thành công",
+                        "Thành công",
+                        hoaDonChiTietResponse)
+        );
+    }
+
+    /**
+     * @apiNote API hủy hóa đơn chi tiết
+     * @param idHdct ID của hóa đơn chi tiết cần hủy
+     */
+    @PostMapping("/cancel-detail-invoice/{idHdct}")
+    public ResponseEntity<ResponseData<HoaDonChiTietResponse>> cancelDetailInvoiceCounterSales(
+            @PathVariable Long idHdct
+    ) {
+        // Gọi service để hủy hóa đơn chi tiết
+        HoaDonChiTietResponse hoaDonChiTietResponse = counterSalesService.cancelDetailInvoice(idHdct);
+
+        // Trả về ResponseData với trạng thái thành công và thông tin chi tiết hóa đơn
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Thành công",
                         hoaDonChiTietResponse)
         );
     }

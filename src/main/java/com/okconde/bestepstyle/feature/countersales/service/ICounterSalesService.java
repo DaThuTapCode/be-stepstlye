@@ -29,8 +29,6 @@ public interface ICounterSalesService {
      * */
     public HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest);
 
-    /**Hàm lấy sản phẩm chi tiết lên*/
-    public Page<SPCTResponse> getPageProductDetail();
 
     /**
      * Hàm lấy danh sách hóa đơn chi tiết by id hóa đơn
@@ -46,10 +44,8 @@ public interface ICounterSalesService {
     /**
      * Lấy danh sách các thuộc tính cần tìm kiếm
      *
-     * @param mauSacSearchRequest - yêu cầu tìm kiếm màu sắc
      * @return Page chứa danh sách kết quả
      */
-    /** Màu sắc*/
     default Page<SPCTResponse> searchPageSPCTCounterSales(Pageable pageable, SPCTSearchRequest spctSearchRequest) {
         return null;
     }
@@ -70,7 +66,14 @@ public interface ICounterSalesService {
      * 3. Số lượng
      * 4. Tính tổng tiền của hdct theo đơn giá của spct * số lượng nhập vào
      * */
-    public HoaDonChiTietResponse createDetailInvoiceCounterSales(HoaDonChiTietRequest hoaDonChiTietRequest, Long idHoaDon, Long idSPCT);
+    public HoaDonChiTietResponse createDetailInvoiceCounterSales(HoaDonChiTietRequest hoaDonChiTietRequest);
+
+    /**
+     * Hủy hóa đơn chi tiết
+     * @param idHDCT id hóa đơn chi tiết cần hủy
+     * */
+     HoaDonChiTietResponse cancelDetailInvoice(Long idHDCT);
+
 
     Boolean updateKHtoHoaDon(Long idHoaDon, Long idKhachHang);
     /**

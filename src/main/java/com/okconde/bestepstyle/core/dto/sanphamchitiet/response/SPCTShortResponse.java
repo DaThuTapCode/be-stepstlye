@@ -56,6 +56,4 @@ public class SPCTShortResponse {
 
     private List<AnhShortResponse> anhs;
 
-    private List<HoaDonShortResponse> hoaDonChiTiets;
-
 }

@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.sanpham.request.SanPhamRequest;
 import com.okconde.bestepstyle.core.dto.sanpham.request.SanPhamSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanpham.response.SanPhamResponse;
 import com.okconde.bestepstyle.core.entity.SanPham;
+import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.sanpham.request.SanPhamRequestMapper;
 import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamResponseMapper;
@@ -53,6 +54,15 @@ public class SanPhamService implements IBaseService<SanPham, Long, SanPhamReques
     @Override
     public SanPhamResponse create(SanPhamRequest sanPhamRequest) {
         sanPhamRequest.setMaSanPham(GenerateCodeRandomUtil.generateProductCode("SP", 8));
+
+        // Kiểm tra trùng mã sản phẩm
+        if(sanPhamRepository.getSanPhamByMaSanPham(sanPhamRequest.getMaSanPham()).isPresent()) {
+            throw new BusinessException("Mã sản phẩm " + sanPhamRequest.getMaSanPham() + " đẫ tồn tại");
+        }
+        // Kiểm tra trùng tên sản phẩm
+        if(sanPhamRepository.getSanPhamByTenSanPham(sanPhamRequest.getTenSanPham().trim()).isPresent()) {
+            throw new BusinessException("Tên sản phẩm " + sanPhamRequest.getTenSanPham() +  " đã tồn tại");
+        }
         sanPhamRequest.setTrangThai(StatusSP.ACTIVE);
         return sanPhamResponseMapper.toDTO(sanPhamRepository.save(sanPhamRequestMapper.toEntity(sanPhamRequest)));
     }
@@ -81,7 +91,8 @@ public class SanPhamService implements IBaseService<SanPham, Long, SanPhamReques
             Pageable pageable,
             SanPhamSearchRequest sanPhamSearchRequest
     ){
-        Page<SanPham> sanPhamPage = sanPhamRepository.searchPage(pageable,
+        Page<SanPham> sanPhamPage = sanPhamRepository.searchPageSanPham(pageable,
+                sanPhamSearchRequest.getMaSanPham(),
                 sanPhamSearchRequest.getTenSanPham(),
                 sanPhamSearchRequest.getNgayTaoStart(),
                 DateFormater.setEndDate(sanPhamSearchRequest.getNgayTaoEnd()),

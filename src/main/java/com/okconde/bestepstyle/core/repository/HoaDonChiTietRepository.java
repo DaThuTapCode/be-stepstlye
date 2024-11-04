@@ -1,14 +1,15 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by TuanIf on 9/23/2024 22:49:25
@@ -34,5 +35,25 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
                                                 @Param(value = "maHoaDonChiTiet") String maHoaDonChiTiet
                                                 );
 
+    /**
+     * Query tìm kiếm hóa đơn chi tiết với id hóa đơn và id sản phẩm chi tiết* */
+    @Query(
+            """
+                SELECT hdct FROM HoaDonChiTiet hdct where hdct.hoaDon.idHoaDon = :idHoaDon and hdct.sanPhamChiTiet.idSpct = :idSpct
+            """
+    )
+    Optional<HoaDonChiTiet> getHDCTByIdHoaDonAndIdSPCT(
+            Long idHoaDon,
+            Long idSpct
+    );
+
+
+    /**
+     * Query tìm kiếm hóa đơn chi tiết theo id và status
+     * */
+    @Query("""
+        SELECT hdct FROM HoaDonChiTiet hdct WHERE hdct.idHoaDonChiTiet = :idHdct AND hdct.trangThai = :trangThai
+    """)
+    Optional<HoaDonChiTiet> getHDCTByIdAndStatus(Long idHdct, StatusHoaDonChiTiet trangThai);
 
 }

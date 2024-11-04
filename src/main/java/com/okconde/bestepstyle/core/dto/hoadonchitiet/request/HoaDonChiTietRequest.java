@@ -28,21 +28,20 @@ public class HoaDonChiTietRequest {
 
     private Long idHoaDonChiTiet;
 
+    @NotNull(message = "Id hóa đơn không được để trống")
+    private Long idHoaDon;
+
+    @NotNull(message = "Id sản phẩm chi tiêt không được để trống")
+    private Long idSpct;
+
     @NotNull(message = "Số lượng không được rỗng!")
     @Min(value = 1, message = "Số lượng phải lớn hơn 0")
     private int soLuong;
 
-    @NotBlank(message = "Mã HDCT không được để trống!")
-    @Length(min = 5, message = "Mã HDCT phải lớn hơn 5 ký tự!")
-    @Length(max = 10, message = "Mã HDCT không được vượt quá 10 ký tự!")
     private String maHoaDonChiTiet;
 
-    @NotNull(message = "Đơn giá không được để trống!")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Đơn giá > 0!")
     private BigDecimal donGia;
 
-    @NotNull(message = "Tong tiền không được để trống!")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Tong tiền > 0!")
     private BigDecimal tongTien;
 
     @Enumerated(EnumType.STRING)

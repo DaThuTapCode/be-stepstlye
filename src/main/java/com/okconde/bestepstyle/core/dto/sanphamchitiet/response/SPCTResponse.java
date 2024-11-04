@@ -57,6 +57,4 @@ public class SPCTResponse {
     private KichCo kichCo;
 
     private List<AnhShortResponse> anhs;
-
-    private List<HoaDonShortResponse> hoaDonChiTiets;
 }

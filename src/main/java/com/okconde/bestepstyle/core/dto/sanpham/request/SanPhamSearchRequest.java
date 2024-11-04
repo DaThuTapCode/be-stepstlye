@@ -18,6 +18,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SanPhamSearchRequest {
+
+    private String maSanPham;
+
     private String tenSanPham;
 
     @JsonFormat(pattern = "dd-MM-yyyy")

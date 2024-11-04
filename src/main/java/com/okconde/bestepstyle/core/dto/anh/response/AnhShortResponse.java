@@ -23,5 +23,7 @@ public class AnhShortResponse {
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
+    private int thu_tu;
+
 
 }

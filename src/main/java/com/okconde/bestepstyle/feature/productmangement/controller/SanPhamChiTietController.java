@@ -1,14 +1,12 @@
 package com.okconde.bestepstyle.feature.productmangement.controller;
 
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.productmangement.service.SanPhamChiTietService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class SanPhamChiTietController {
         this.sanPhamChiTietService = sanPhamChiTietService;
     }
 
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseData<SPCTResponse>> getSanPhamChiTietById(
             @PathVariable Long id
     ){
@@ -38,12 +36,24 @@ public class SanPhamChiTietController {
         );
     }
 
-    @GetMapping(value = "get-all")
+    @GetMapping(value = "/get-all")
     public ResponseEntity<ResponseData<List<SPCTResponse>>> getAllSanPhamChiTiet(){
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy thành công danh sách sản phẩm chi tiết",
                         sanPhamChiTietService.getAll())
+        );
+    }
+
+    @PostMapping(value = "/create-list/{idSanPham}")
+    public ResponseEntity<ResponseData<Boolean>> createSanPhamChiTiet(
+            @RequestBody List<SPCTRequest> spctRequest,
+            @PathVariable Long idSanPham){
+        sanPhamChiTietService.createListSPCTByIDSP(idSanPham, spctRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Tạo sản phẩm chi tiết thành công",
+                       true)
         );
     }
 }
