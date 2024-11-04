@@ -1,9 +1,5 @@
 package com.okconde.bestepstyle.feature.countersales.service;
 
-import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuSearchRequest;
-import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
-import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiaySearchRequest;
-import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
@@ -11,19 +7,8 @@ import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietReque
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
-import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
-import com.okconde.bestepstyle.core.dto.kichco.request.KichCoSearchRequest;
-import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
-import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiaySearchRequest;
-import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
-import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
-import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongSearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

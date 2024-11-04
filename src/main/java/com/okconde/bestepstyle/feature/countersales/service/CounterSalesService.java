@@ -22,20 +22,14 @@ import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
 
 /**
@@ -181,24 +175,17 @@ public class CounterSalesService implements ICounterSalesService {
     @Transactional
     public Boolean cancelPendingInvoiceCounterSales(Long idHoaDon) {
         Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(idHoaDon);
-
-        if (optionalHoaDon.isPresent()) {
-            HoaDon hoaDon = optionalHoaDon.get();
-
-            // TH1: Nếu hóa đơn không có sản phẩm
-            if (hoaDon.getHoaDonChiTiet() == null || hoaDon.getHoaDonChiTiet().isEmpty()) {
-                hoaDonRepository.delete(hoaDon);
-                return true; // Hóa đơn đã được xóa thành công
-            } else {
-                // TH2: Nếu hóa đơn đã có sản phẩm, cập nhật trạng thái thành REFUNDED
-                hoaDon.setTrangThai(StatusHoaDon.REFUNDED); // Cập nhật trạng thái
+            if (optionalHoaDon.isPresent()){
+                HoaDon hoaDon = optionalHoaDon.get();
+                hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
                 hoaDonRepository.save(hoaDon);
-                return true; // Hóa đơn đã được cập nhật trạng thái thành công
             }
-        } else {
-            throw new EntityNotFoundException("Không tìm thấy id: " + idHoaDon);
-        }
+            else {
+                throw new EntityNotFoundException("Không tìm thấy id: " + idHoaDon);
+            }
+        return null;
     }
+
 
     /**
      * Tạo hóa đơn chi tiết mới

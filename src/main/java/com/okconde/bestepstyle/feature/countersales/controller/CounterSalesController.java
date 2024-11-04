@@ -24,6 +24,7 @@ import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResp
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.util.groupsvalidation.Create;
 import com.okconde.bestepstyle.core.util.groupsvalidation.Update;
+import com.okconde.bestepstyle.feature.countersales.service.CounterSalesService;
 import com.okconde.bestepstyle.feature.countersales.service.ICounterSalesService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -124,22 +125,13 @@ public class CounterSalesController {
      * @return ResponseEntity chứa thông tin về trạng thái của yêu cầu
      * @throws EntityNotFoundException nếu không tìm thấy hóa đơn với ID đã cho
      */
-    @DeleteMapping("/invoices/cancel/{id}")
-    public ResponseEntity<ResponseData<String>> cancelInvoice(@PathVariable Long id) {
+    @DeleteMapping("cancel/{id}")
+    public ResponseEntity<ResponseData<String>> cancelPendingInvoiceCounterSales(@PathVariable Long id){
         try {
-            boolean isCanceled = counterSalesService.cancelPendingInvoiceCounterSales(id);
-            if (isCanceled) {
-                return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Hủy hóa đơn thành công", null));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ResponseData<>(HttpStatus.BAD_REQUEST.value(), "Không thể hủy hóa đơn", null));
-            }
+            counterSalesService.cancelPendingInvoiceCounterSales(id);
+            return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(),"Hủy hóa đơn chờ thành công", null));
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Lỗi hệ thống", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(),null));
         }
     }
 
