@@ -39,15 +39,15 @@ public class HoaDonRequest {
     private String maHoaDon;
 
     @NotNull(message = "Phí vận chuyeern không được để trống!")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Phí vận chuyeern > 0!")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Phí vận chuyển phải lớn hơn 0!")
     private BigDecimal phiVanChuyen;
 
     @NotNull(message = "Tong tiền không được để trống!")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Tong tiền > 0!")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Tổng tiền phải lớn hơn 0!")
     private BigDecimal tongTien;
 
     @NotNull(message = "Tong tiền sau giảm không được để trống!")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Tong tiền sau giảm > 0!")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Tong tiền sau giảm phải lớn hơn 0!")
     private BigDecimal tongTienSauGiam;
 
     @NotBlank(message = "Loại Hóa Đơn không được để trống!")

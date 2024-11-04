@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by TuanIf on 9/23/2024 22:50:21
@@ -41,4 +43,10 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
 
     @Query("SELECT COUNT(pgg) FROM PhieuGiamGia pgg WHERE pgg.trangThai = :trangThai")
     int countByStatus(StatusPhieuGiamGia trangThai);
+
+    @Query("SELECT pgg FROM PhieuGiamGia pgg WHERE pgg.trangThai = :trangThai AND pgg.ngayKetThuc < :today")
+    List<PhieuGiamGia> findByTrangThaiAndNgayKetThucBefore(
+            StatusPhieuGiamGia trangThai,
+            @Param("today") LocalDate today);
+
 }

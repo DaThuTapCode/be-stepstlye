@@ -9,20 +9,21 @@ import com.okconde.bestepstyle.core.mapper.phieugiamgia.request.PhieuGiamGiaRequ
 import com.okconde.bestepstyle.core.mapper.phieugiamgia.response.PhieuGiamGiaResponseMapper;
 import com.okconde.bestepstyle.core.repository.PhieuGiamGiaRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
-import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by TuanIf on 9/25/2024 20:28:25
@@ -121,16 +122,79 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
 
     public Map<String, Integer> getPhieuGiamGiaByStatus() {
         int activeCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.ACTIVE);
+        int comingsoonCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.COMINGSOON);
         int usedCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.USED);
         int expiredCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.EXPIRED);
         int cancelledCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.CANCELLED);
 
         Map<String, Integer> counts = new HashMap<>();
         counts.put("ACTIVE", activeCount);
+        counts.put("COMINGSOON", comingsoonCount);
         counts.put("USED", usedCount);
         counts.put("EXPIRED", expiredCount);
         counts.put("CANCELLED", cancelledCount);
 
         return counts;
     }
+
+    // Chạy mỗi ngày lúc 00:00 để kiểm tra và cập nhật trạng thái phiếu giảm giá
+    @Scheduled(cron = "0 0 0 * * *")
+    @Transactional
+    public List<PhieuGiamGiaResponse> expireCouponsIfNeeded() {
+        LocalDate today = LocalDate.now();
+
+        // Lấy danh sách phiếu giảm giá có trạng thái ACTIVE và ngày kết thúc trước ngày hiện tại
+        List<PhieuGiamGia> expiringCoupons = phieuGiamGiaRepository.findByTrangThaiAndNgayKetThucBefore(StatusPhieuGiamGia.ACTIVE, today);
+
+        // Cập nhật trạng thái của các phiếu giảm giá này thành EXPIRED
+        expiringCoupons.forEach(coupon -> coupon.setTrangThai(StatusPhieuGiamGia.EXPIRED));
+        phieuGiamGiaRepository.saveAll(expiringCoupons);
+
+        // Chuyển đổi danh sách phiếu giảm giá sang danh sách phản hồi
+        return convertToResponseList(expiringCoupons);
+    }
+
+    // Phương thức chuyển đổi từ List<PhieuGiamGia> sang List<PhieuGiamGiaResponse>
+    private List<PhieuGiamGiaResponse> convertToResponseList(List<PhieuGiamGia> coupons) {
+        List<PhieuGiamGiaResponse> responseList = new ArrayList<>();
+        for (PhieuGiamGia coupon : coupons) {
+            PhieuGiamGiaResponse response = new PhieuGiamGiaResponse();
+            response.setIdPhieuGiamGia(coupon.getIdPhieuGiamGia());
+            response.setMaPhieuGiamGia(coupon.getMaPhieuGiamGia());
+            response.setTenPhieuGiamGia(coupon.getTenPhieuGiamGia());
+            response.setMoTa(coupon.getMoTa());
+            response.setLoaiGiam(coupon.getLoaiGiam());
+            response.setNgayBatDau(coupon.getNgayBatDau());
+            response.setNgayKetThuc(coupon.getNgayKetThuc());
+            response.setGiaTriGiamToiDa(coupon.getGiaTriGiamToiDa());
+            response.setGiaTriGiamToiThieu(coupon.getGiaTriGiamToiThieu());
+            response.setGiaTriGiam(coupon.getGiaTriGiam());
+            response.setTrangThai(coupon.getTrangThai());
+
+            responseList.add(response);
+        }
+        return responseList;
+    }
+
+    // Hàm kết thúc nhanh phiếu giảm giá
+    @Transactional
+    public PhieuGiamGiaResponse endPromotion(Long id) {
+        PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phiếu giảm giá với id: " + id));
+
+        // Kiểm tra trạng thái phiếu giảm giá hiện tại
+        if (!phieuGiamGia.getTrangThai().equals(StatusPhieuGiamGia.ACTIVE)) {
+            throw new IllegalStateException("Chỉ có thể kết thúc chương trình khuyến mãi đang hoạt động");
+        }
+
+        // Cập nhật trạng thái phiếu giảm giá thành "CANCELLED"
+        phieuGiamGia.setTrangThai(StatusPhieuGiamGia.EXPIRED);
+        PhieuGiamGia updatedPhieuGiamGia = phieuGiamGiaRepository.save(phieuGiamGia);
+
+        return phieuGiamGiaResponseMapper.toDTO(updatedPhieuGiamGia);
+    }
+
+
+
+
 }

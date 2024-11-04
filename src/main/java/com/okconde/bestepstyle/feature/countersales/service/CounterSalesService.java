@@ -22,20 +22,15 @@ import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
 
 /**
@@ -238,6 +233,22 @@ public class CounterSalesService implements ICounterSalesService {
         return hoaDonChiTietResponseMapper.toDTO(savedHoaDonChiTiet);
     }
 
+    @Override
+    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon) {
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+                .orElseThrow(() -> new EntityNotFoundException("Hóa Đơn không tồn tại"));
+
+        //Cập nhật trạng thasi hóa đơn
+        hoaDon.setTrangThai(StatusHoaDon.PAID);
+
+        //Lưu hóa đơn được cập nhật
+        hoaDonRepository.save(hoaDon);
+
+        //Chuyển đổi thành HoaDonResponse và trả về
+        return hoaDonResponseMapper.toDTO(hoaDon);
+    }
+
+
     /**
      * Hàm lấy danh sách thuộc tính
      *
@@ -259,8 +270,7 @@ public class CounterSalesService implements ICounterSalesService {
             // Sử dụng mapper để chuyển đổi từ SanPhamChiTiet sang SPCTResponse
             return sanPhamChiTiets.map(sanPhamChiTietResponseMapper::toDTO);
         }
+
     }
 
-
-
-
+    

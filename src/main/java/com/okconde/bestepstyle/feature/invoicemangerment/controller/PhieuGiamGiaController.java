@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -109,6 +110,30 @@ public class PhieuGiamGiaController {
     public ResponseEntity<Map<String, Integer>> getPhieuGiamGiaByStatus() {
         Map<String, Integer> counts = phieuGiamGiaService.getPhieuGiamGiaByStatus();
         return ResponseEntity.ok(counts);
+    }
+
+    //Hàm chuyển trạng thái phiếu giảm giá kho hết hạn
+    @GetMapping("expired-active-coupons")
+    public ResponseEntity<ResponseData<List<PhieuGiamGiaResponse>>> getExpiredActiveCoupons() {
+        List<PhieuGiamGiaResponse> expiredCoupons = phieuGiamGiaService.expireCouponsIfNeeded();
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Cập nhật phiếu giảm giá hết hạn thành công",
+                        expiredCoupons)
+        );
+    }
+
+    //Hàm kết thúc nhanh phiếu giảm giá
+    @PutMapping("end-promotion/{id}")
+    public ResponseEntity<ResponseData<PhieuGiamGiaResponse>> endPromotion(
+            @PathVariable Long id
+    ){
+        PhieuGiamGiaResponse response = phieuGiamGiaService.endPromotion(id);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Kết thúc nhanh phiếu giảm giá thành công!",
+                        response)
+        );
     }
 
 }

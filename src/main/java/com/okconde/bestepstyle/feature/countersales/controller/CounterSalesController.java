@@ -189,4 +189,22 @@ public class CounterSalesController {
         );
     }
 
+    /**
+     * @apiNote API chuyển trạng thái hóa đơn sau khi thanh toán
+     * @param idHoaDon ID của hóa đơn
+     * @return Đối tượng ResponseData chứa thông tin hóa đơn
+     */
+    @PostMapping("invoice/pay/{idHoaDon}")
+    public ResponseEntity<ResponseData<HoaDonResponse>> payInvoice(
+            @PathVariable Long idHoaDon
+    ){
+        HoaDonResponse paidInvoice = counterSalesService.markInvoiceAsPaid(idHoaDon);
+
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Hóa đơn được thanh toán thành công",
+                        paidInvoice)
+        );
+    }
+
 }
