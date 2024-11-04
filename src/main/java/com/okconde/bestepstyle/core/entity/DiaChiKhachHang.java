@@ -36,19 +36,19 @@ public class DiaChiKhachHang {
 
     private String maDiaChiKhachHang;
 
-    private String quocGia;
+    private String idTinh;
 
-    private String thanhPho;
+    private String tenTinh;
 
-    private String huyen;
+    private String idQuanHuyen;
+
+    private String tenQuanHuyen;
 
     private String maPhuongXa;
 
-    private String xa;
+    private String tenPhuongXa;
 
-    private String duong;
-
-    private String soNha;
+    private String diaChiChiTiet;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;

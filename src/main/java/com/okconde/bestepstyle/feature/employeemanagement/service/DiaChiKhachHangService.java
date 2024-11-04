@@ -75,30 +75,6 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
             existingDCKH.setKhachHang(diaChiKhachHangRequest.getKhachHang());
         }
 
-        if (diaChiKhachHangRequest.getQuocGia() != null) {
-            existingDCKH.setQuocGia(diaChiKhachHangRequest.getQuocGia());
-        }
-
-        if (diaChiKhachHangRequest.getThanhPho() != null) {
-            existingDCKH.setThanhPho(diaChiKhachHangRequest.getThanhPho());
-        }
-
-        if (diaChiKhachHangRequest.getHuyen() != null) {
-            existingDCKH.setHuyen(diaChiKhachHangRequest.getHuyen());
-        }
-
-        if (diaChiKhachHangRequest.getXa() != null) {
-            existingDCKH.setXa(diaChiKhachHangRequest.getXa());
-        }
-
-        if (diaChiKhachHangRequest.getDuong() != null) {
-            existingDCKH.setDuong(diaChiKhachHangRequest.getDuong());
-        }
-
-        if (diaChiKhachHangRequest.getSoNha() != null) {
-            existingDCKH.setSoNha(diaChiKhachHangRequest.getSoNha());
-        }
-
         // Lưu lại đối tượng địa chỉ khách hàng đã cập nhật vào cơ sở dữ liệu
         DiaChiKhachHang updatedDCKH = diaChiKhachHangRepository.save(existingDCKH);
 

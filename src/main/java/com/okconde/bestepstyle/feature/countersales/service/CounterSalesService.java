@@ -20,6 +20,7 @@ import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamShortResponse
 import com.okconde.bestepstyle.core.mapper.sanphamchitiet.response.SPCTResponseMapper;
 import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Page;
@@ -259,6 +260,24 @@ public class CounterSalesService implements ICounterSalesService {
             // Sử dụng mapper để chuyển đổi từ SanPhamChiTiet sang SPCTResponse
             return sanPhamChiTiets.map(sanPhamChiTietResponseMapper::toDTO);
         }
+
+    /**
+     * Hàm sửa khách hàng trong hoá đơn
+     *
+     * @implNote Minh thực hiện
+     */
+    @Override
+    @Transactional
+    public Boolean updateKHtoHoaDon(Long idHoaDon, Long idKhachHang) {
+        // Kiểm tra xem hóa đơn có tồn tại hay không
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+                .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
+        // Kiểm tra xem khách hàng có tồn tại hay không
+        KhachHang khachHang = khachHangRepository.timKHTheoIDVaTrangThai(idKhachHang, StatusEnum.ACTIVE)
+                .orElseThrow(() -> new BusinessException("Khách hàng không tồn tại"));
+        hoaDon.setKhachHang(khachHang);
+        return true;
+    }
     }
 
 

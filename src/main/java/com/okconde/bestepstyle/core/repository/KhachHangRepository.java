@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.KhachHang;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,9 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
                 select kh from KhachHang kh where kh.maKhachHang like :maKH
 """)
     Optional<KhachHang> timKHTheoMaKH(String maKH);
+
+    @Query("""
+                select kh from KhachHang kh where kh.idKhachHang = :idKhachHang and kh.trangThai = :trangThai
+""")
+    Optional<KhachHang> timKHTheoIDVaTrangThai(Long idKhachHang, StatusEnum trangThai);
 }
