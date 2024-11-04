@@ -73,4 +73,8 @@ public interface ICounterSalesService {
     public HoaDonChiTietResponse createDetailInvoiceCounterSales(HoaDonChiTietRequest hoaDonChiTietRequest, Long idHoaDon, Long idSPCT);
 
     Boolean updateKHtoHoaDon(Long idHoaDon, Long idKhachHang);
+    /**
+     * Tạo hàm chuyển trạng thái hóa đơn
+     * */
+    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon);
 }

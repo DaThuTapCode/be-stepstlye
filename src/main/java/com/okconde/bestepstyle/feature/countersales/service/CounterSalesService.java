@@ -187,7 +187,6 @@ public class CounterSalesService implements ICounterSalesService {
         return null;
     }
 
-
     /**
      * Tạo hóa đơn chi tiết mới
      * 1. Gán id hóa đơn
@@ -225,6 +224,22 @@ public class CounterSalesService implements ICounterSalesService {
         // Chuyển đổi và trả về đối tượng HoaDonChiTietResponse
         return hoaDonChiTietResponseMapper.toDTO(savedHoaDonChiTiet);
     }
+
+    @Override
+    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon) {
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+                .orElseThrow(() -> new EntityNotFoundException("Hóa Đơn không tồn tại"));
+
+        //Cập nhật trạng thasi hóa đơn
+        hoaDon.setTrangThai(StatusHoaDon.PAID);
+
+        //Lưu hóa đơn được cập nhật
+        hoaDonRepository.save(hoaDon);
+
+        //Chuyển đổi thành HoaDonResponse và trả về
+        return hoaDonResponseMapper.toDTO(hoaDon);
+    }
+
 
     /**
      * Hàm lấy danh sách thuộc tính
