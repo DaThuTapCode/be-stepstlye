@@ -62,18 +62,40 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     @Override
     @Transactional
     public KhachHangResponse create(KhachHangRequest khachHangRequest) {
-//        khachHangRequest.setMaKhachHang(GenerateCodeRandomUtil.generateProductCode("KH", 8));
-        khachHangRequest.getDiaChiKhachHangs().get(0).setMaDiaChiKhachHang(GenerateCodeRandomUtil.generateProductCode("DCKH", 6));
-        if (khachHangRepository.timKHTheoMaKH(khachHangRequest.getMaKhachHang()).isPresent()){
+        // Kiểm tra mã khách hàng trùng
+        if (khachHangRepository.timKHTheoMaKH(khachHangRequest.getMaKhachHang()).isPresent()) {
             throw new CustomerCodeDuplicateException("Mã khách hàng " + khachHangRequest.getMaKhachHang() + " đã tồn tại!");
         }
+
+        // Gán mã cho địa chỉ khách hàng
+        khachHangRequest.getDiaChiKhachHangs().get(0).setMaDiaChiKhachHang(
+                GenerateCodeRandomUtil.generateProductCode("DCKH", 6)
+        );
+
+        // Map KhachHangRequest thành entity KhachHang
         KhachHang khachHangMoi = khachHangRequestMapper.toEntity(khachHangRequest);
         khachHangMoi.setNgayTao(LocalDateTime.now());
         khachHangMoi.setNgayChinhSua(LocalDateTime.now());
-        KhachHang addKH = khachHangRepository.save(khachHangMoi);
-        return khachHangResponseMapper.toDTO(addKH);
 
+        khachHangMoi.getDiaChiKhachHangs().forEach(diaChi -> {
+            diaChi.setMaDiaChiKhachHang(GenerateCodeRandomUtil.generateProductCode("DCKH", 6));
+        });
+        // Lưu khách hàng để lấy ID
+        KhachHang savedKhachHang = khachHangRepository.save(khachHangMoi);
+
+        // Gán ID của khách hàng vào địa chỉ của nó
+        savedKhachHang.getDiaChiKhachHangs().forEach(diaChi -> {
+            diaChi.setKhachHang(KhachHang.builder().idKhachHang(savedKhachHang.getIdKhachHang()).build());
+            diaChi.setMaDiaChiKhachHang(GenerateCodeRandomUtil.generateProductCode("DCKH", 6));
+        });
+
+        // Lưu lại khách hàng với địa chỉ đã có ID khách hàng
+        KhachHang updatedKhachHang = khachHangRepository.save(savedKhachHang);
+
+        // Map entity thành DTO và trả về
+        return khachHangResponseMapper.toDTO(updatedKhachHang);
     }
+
 
     @Override
     @Transactional

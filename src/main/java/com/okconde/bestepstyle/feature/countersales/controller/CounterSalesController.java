@@ -86,7 +86,12 @@ public class CounterSalesController {
                 );
     }
 
-    // Hàm phân trang
+    /**
+     * Tìm kiếm khách hàng theo yêu cầu tìm kiếm và phân trang.
+     *
+     * @param pageable - thông tin phân trang
+     * @return ResponseEntity chứa danh sách kết quả
+     */
     @PostMapping("/list-customer")
     public ResponseEntity<ResponseData<List<KhachHangResponse>>> getPageKH(
             @PageableDefault Pageable pageable,
@@ -181,4 +186,25 @@ public class CounterSalesController {
         );
     }
 
+
+    /**
+     * @apiNote API sửa khách hàng trong hoá đơn
+     * PUT http://localhost:8080/api/bhtq/update-hoa-don/{{idHoaDon}}/{{idKhachHang}}
+     * @param idHoaDon ID của hóa đơn
+     * @param idKhachHang ID của khách hàng
+     * @return sửa khách hàng trong hoá đơn cho ID hoá đơn được chỉ định
+     */
+    @PutMapping("update-hoa-don/{idHoaDon}/{idKhachHang}")
+    public ResponseEntity<ResponseData<Boolean>> updateCustomerToInvoiceCounterSales(
+            @PathVariable Long idHoaDon,
+            @PathVariable Long idKhachHang) {
+
+        counterSalesService.updateKHtoHoaDon(idHoaDon, idKhachHang);
+        // Trả về ResponseData với trạng thái thành công và thông tin chi tiết hóa đơn
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Cập nhật khách hàng cho hoá đơn thành công",
+                        true)
+        );
+    }
 }

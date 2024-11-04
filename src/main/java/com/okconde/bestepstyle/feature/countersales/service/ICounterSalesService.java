@@ -72,4 +72,5 @@ public interface ICounterSalesService {
      * */
     public HoaDonChiTietResponse createDetailInvoiceCounterSales(HoaDonChiTietRequest hoaDonChiTietRequest, Long idHoaDon, Long idSPCT);
 
+    Boolean updateKHtoHoaDon(Long idHoaDon, Long idKhachHang);
 }
