@@ -171,16 +171,43 @@ public class CounterSalesService implements ICounterSalesService {
     @Transactional
     public Boolean cancelPendingInvoiceCounterSales(Long idHoaDon) {
         Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(idHoaDon);
-            if (optionalHoaDon.isPresent()){
-                HoaDon hoaDon = optionalHoaDon.get();
-                hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
-                hoaDonRepository.save(hoaDon);
+
+
+        if (optionalHoaDon.isPresent()) {
+            HoaDon hoaDon = optionalHoaDon.get();
+            // Kiểm tra trạng thái hóa đơn trước khi hủy
+            if (hoaDon.getTrangThai().equals(StatusHoaDon.CANCELLED)){
+                throw new BusinessException("Hoá đơn này đã bị hủy trước đó");
             }
-            else {
-                throw new EntityNotFoundException("Không tìm thấy id: " + idHoaDon);
+
+            // Kiểm tra nếu hóa đơn có sản phẩm
+            if (!hoaDon.getHoaDonChiTiet().isEmpty()) {
+                for (HoaDonChiTiet hoaDonChiTiet : hoaDon.getHoaDonChiTiet()) {
+                    // Lấy sản phẩm chi tiết từ id
+                    Long idSanPhamChiTiet = hoaDonChiTiet.getSanPhamChiTiet().getIdSpct();
+                    Optional<SanPhamChiTiet> optionalSanPhamChiTiet = sanPhamChiTietRepository.findById(idSanPhamChiTiet);
+
+                    if (optionalSanPhamChiTiet.isPresent()) {
+                        SanPhamChiTiet sanPhamChiTiet = optionalSanPhamChiTiet.get();
+                        // Tăng lại số lượng sản phẩm trong SanPhamChiTiet
+                        sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() + hoaDonChiTiet.getSoLuong());
+
+                        // Cập nhật lại số lượng vào kho cho sản phẩm chi tiết
+                        sanPhamChiTietRepository.save(sanPhamChiTiet);
+                    } else {
+                        throw new BusinessException("Không tìm thấy sản phẩm chi tiết với id: " + idSanPhamChiTiet);
+                    }
+                }
             }
-        return null;
+            hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
+            hoaDonRepository.save(hoaDon);
+            return true;
+        } else {
+            throw new BusinessException("Không tìm thấy id: " + idHoaDon);
+        }
     }
+
+
 
     /**
      * Tạo hóa đơn chi tiết mới
