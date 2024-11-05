@@ -1,6 +1,8 @@
 package com.okconde.bestepstyle.core.repository;
 
+import com.okconde.bestepstyle.core.entity.KhachHang;
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by TuanIf on 9/23/2024 22:50:21
@@ -49,4 +52,8 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
             StatusPhieuGiamGia trangThai,
             @Param("today") LocalDate today);
 
+    @Query("""
+                select pgg from PhieuGiamGia pgg where pgg.idPhieuGiamGia = :idPhieuGiamGia and pgg.trangThai = :trangThai
+""")
+    Optional<PhieuGiamGia> searchPGGTheoIDVaTrangThai(Long idPhieuGiamGia, StatusPhieuGiamGia trangThai);
 }

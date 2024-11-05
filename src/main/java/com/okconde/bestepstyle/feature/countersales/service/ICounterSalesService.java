@@ -7,12 +7,15 @@ import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietReque
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaSearchRequest;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Trong Phu on 27/10/2024 22:08
@@ -51,6 +54,13 @@ public interface ICounterSalesService {
     }
 
     /**
+     * Lấy danh sách các thuộc tính cần tìm kiếm
+     * @implNote TuanIF
+     * @return Page chứa danh sách kết quả
+     */
+    public Page<PhieuGiamGiaResponse> getPagePGGCounterSales(Pageable pageable, PhieuGiamGiaSearchRequest phieuGiamGiaSearchRequest);
+
+    /**
      * Hủy hóa đơn chờ theo id
      * @implNote Mô tả:
      * Chia làm 2 trường hợp hủy hóa đơn chờ
@@ -76,8 +86,19 @@ public interface ICounterSalesService {
 
 
     Boolean updateKHtoHoaDon(Long idHoaDon, Long idKhachHang);
+
     /**
      * Tạo hàm chuyển trạng thái hóa đơn
-     * */
+     * @implNote TuanInfinity*/
     public HoaDonResponse markInvoiceAsPaid(Long idHoaDon);
+
+    /**
+     *Tạo hàm thanh toán chuyeern khoan
+     * @implNote TuanInfinity*/
+    public Map<String, String> VnpayBankTransferPayment(Long idHoaDon);
+
+    /**
+     *Tạo hàm sua PGG
+     * @implNote TuanInfinity*/
+    Boolean updatePGGtoHoaDon(Long idHoaDon, Long idPhieuGiamGia);
 }
