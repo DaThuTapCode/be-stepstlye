@@ -7,6 +7,8 @@ import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietReque
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaSearchRequest;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.entity.*;
@@ -16,15 +18,12 @@ import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonShortResponseMapper;
 import com.okconde.bestepstyle.core.mapper.khachhang.response.KhachHangResponseMapper;
 import com.okconde.bestepstyle.core.mapper.hoadonchitiet.response.HoaDonChiTietResponseMapper;
+import com.okconde.bestepstyle.core.mapper.phieugiamgia.response.PhieuGiamGiaResponseMapper;
 import com.okconde.bestepstyle.core.mapper.sanpham.response.SanPhamShortResponseMapper;
 import com.okconde.bestepstyle.core.mapper.sanphamchitiet.response.SPCTResponseMapper;
 import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
-import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
-import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
-import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
-import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
-import org.springframework.data.domain.Page;
+import com.okconde.bestepstyle.core.util.enumutil.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,7 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -64,6 +65,8 @@ public class CounterSalesService implements ICounterSalesService {
     private final KhachHangResponseMapper khachHangResponseMapper;
     private final SPCTResponseMapper sanPhamChiTietResponseMapper;
 
+    private final PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper;
+
 
     /**Constructor*/
     public CounterSalesService(
@@ -81,7 +84,7 @@ public class CounterSalesService implements ICounterSalesService {
             HoaDonRequestMapper hoaDonRequestMapper,
             KhachHangResponseMapper khachHangResponseMapper,
             SPCTResponseMapper sanPhamChiTietResponseMapper,
-            HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper) {
+            HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper, PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper) {
         this.hoaDonRepository = hoaDonRepository;
         this.sanPhamRepository = sanPhamRepository;
         this.sanPhamChiTietRepository = sanPhamChiTietRepository;
@@ -97,6 +100,7 @@ public class CounterSalesService implements ICounterSalesService {
         this.khachHangResponseMapper = khachHangResponseMapper;
         this.sanPhamChiTietResponseMapper = sanPhamChiTietResponseMapper;
         this.hoaDonChiTietResponseMapper = hoaDonChiTietResponseMapper;
+        this.phieuGiamGiaResponseMapper = phieuGiamGiaResponseMapper;
     }
 
     /**Hàm lấy danh sách hóa đơn chờ*/
@@ -156,6 +160,23 @@ public class CounterSalesService implements ICounterSalesService {
         Page<KhachHang> khachHangPage = khachHangRepository.searchPageKHByMaAndTenAndSDT
                 (pageable, khachHangSearchRequest.getMaKhachHang(), khachHangSearchRequest.getTenKhachHang(), khachHangSearchRequest.getSoDienThoai());
         return khachHangPage.map(khachHangResponseMapper::toDTO);
+    }
+
+    /**
+     * Hàm lấy danh sách phếu giảm gia
+     *
+     * @implNote TuanIF thực hiện
+     */
+    @Override
+    public Page<PhieuGiamGiaResponse> getPagePGGCounterSales(Pageable pageable, PhieuGiamGiaSearchRequest phieuGiamGiaSearchRequest) {
+        Page<PhieuGiamGia> phieuGiamGiaPage = phieuGiamGiaRepository.searchPagePhieuGiamGia
+                (pageable, phieuGiamGiaSearchRequest.getMaPhieuGiamGia(),
+                            phieuGiamGiaSearchRequest.getTenPhieuGiamGia(),
+                        phieuGiamGiaSearchRequest.getNgayBatDau(),
+                        phieuGiamGiaSearchRequest.getNgayKetThuc(),
+                        phieuGiamGiaSearchRequest.getLoaiGiam(),
+                        phieuGiamGiaSearchRequest.getTrangThai());
+        return phieuGiamGiaPage.map(phieuGiamGiaResponseMapper::toDTO);
     }
 
     /**
@@ -348,6 +369,41 @@ public class CounterSalesService implements ICounterSalesService {
         KhachHang khachHang = khachHangRepository.timKHTheoIDVaTrangThai(idKhachHang, StatusEnum.ACTIVE)
                 .orElseThrow(() -> new BusinessException("Khách hàng không tồn tại"));
         hoaDon.setKhachHang(khachHang);
+        return true;
+    }
+
+    /**
+     * Hàm thanh toán VNPAY
+     *
+     * @implNote TuanIF
+     */
+    public Map<String, String> VnpayBankTransferPayment(Long idHoaDon) {
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+                .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
+
+        BigDecimal totalAmount = hoaDon.getTongTien();
+        //Đuờng dẫn thanh toán
+        String paymentUrl = "https://img.vietqr.io/image/TPB-55820092000-print.png?amount=" + totalAmount;
+
+        Map<String, String> map = new HashMap<>();
+        map.put("paymentUrl", paymentUrl);
+
+        return  map;
+    }
+
+    /**
+     * Hàm chọn PGG
+     *
+     * @implNote TuanIF
+     */
+    @Override
+    @Transactional
+    public Boolean updatePGGtoHoaDon(Long idHoaDon, Long idPhieuGiamGia) {
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+                .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
+        PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.searchPGGTheoIDVaTrangThai(idPhieuGiamGia, StatusPhieuGiamGia.ACTIVE)
+                .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại"));
+        hoaDon.setPhieuGiamGia(phieuGiamGia);
         return true;
     }
 

@@ -122,6 +122,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
     public Map<String, Integer> getHoaDonByStatus() {
             int pendingCount = hoaDonRepository.countByStatus(StatusHoaDon.PENDING);
+            int shippingCount = hoaDonRepository.countByStatus(StatusHoaDon.SHIPPING);
             int paidCount = hoaDonRepository.countByStatus(StatusHoaDon.PAID);
             int cancelledCount = hoaDonRepository.countByStatus(StatusHoaDon.CANCELLED);
             int refundedCount = hoaDonRepository.countByStatus(StatusHoaDon.REFUNDED);
@@ -129,6 +130,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
             Map<String, Integer> counts = new HashMap<>();
             counts.put("PENDING", pendingCount);
+            counts.put("SHIPPING", shippingCount);
             counts.put("PAID", paidCount);
             counts.put("CANCELLED", cancelledCount);
             counts.put("REFUNDED", refundedCount);

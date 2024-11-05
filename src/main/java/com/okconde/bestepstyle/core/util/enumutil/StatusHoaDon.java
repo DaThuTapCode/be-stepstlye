@@ -7,6 +7,7 @@ package com.okconde.bestepstyle.core.util.enumutil;
  */
 public enum StatusHoaDon {
     PENDING,        // Đang chờ xử lý
+    SHIPPING,       // Đang vận chuyên
     PAID,           // Đã thanh toán
     CANCELLED,      // Đã hủy
     REFUNDED,       // Đã hoàn tiền

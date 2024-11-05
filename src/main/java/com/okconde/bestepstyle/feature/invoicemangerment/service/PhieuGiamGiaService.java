@@ -65,11 +65,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
     @Override
     @Transactional
     public PhieuGiamGiaResponse create(PhieuGiamGiaRequest phieuGiamGiaRequest) {
-        // Tạo mã phiếu giảm giá
         phieuGiamGiaRequest.setMaPhieuGiamGia(GenerateCodeRandomUtil.generateProductCode("PGG", 7));;
-        // Đặt trạng thái phiếu giảm giá là ACTIVE
-        phieuGiamGiaRequest.setTrangThai(StatusPhieuGiamGia.ACTIVE);
-        // Luu va chuyen doi doi tuong thanh DTO
         return phieuGiamGiaResponseMapper.toDTO(phieuGiamGiaRepository.save(phieuGiamGiaRequestMapper.toEntity(phieuGiamGiaRequest)));
     }
 

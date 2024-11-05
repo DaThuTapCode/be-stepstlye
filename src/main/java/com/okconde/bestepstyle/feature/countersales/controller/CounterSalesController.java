@@ -15,6 +15,8 @@ import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiaySearchRequest;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaSearchRequest;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
@@ -40,6 +42,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Trong Phu on 27/10/2024 22:06
@@ -84,6 +87,25 @@ public class CounterSalesController {
                             counterSalesService.createNewPendingInvoiceCounterSales(hoaDonRequest)
                     )
                 );
+    }
+
+    /**
+     * Tìm kiếm PGG theo yêu cầu tìm kiếm và phân trang.
+     *
+     * @param pageable - thông tin phân trang
+     * @return ResponseEntity chứa danh sách kết quả
+     */
+    @PostMapping("list-coupons")
+    public ResponseEntity<ResponseData<List<PhieuGiamGiaResponse>>> getPagePGG(
+            @PageableDefault Pageable pageable,
+            @RequestBody PhieuGiamGiaSearchRequest phieuGiamGiaSearchRequest
+
+    ){
+
+        Page<PhieuGiamGiaResponse> page = counterSalesService.getPagePGGCounterSales(pageable, phieuGiamGiaSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang phiếu giảm giá thành công", page));
+
     }
 
     /**
@@ -222,6 +244,26 @@ public class CounterSalesController {
                         true)
         );
     }
+
+    /**
+     * @apiNote API sửa pgg trong hoá đơn
+     * @param idHoaDon ID của hóa đơn
+     * @param idPhieuGiamGia ID của phiếu giảm giá
+     * @return sửa phiếu giảm giá trong hoá đơn cho ID hoá đơn được chỉ định
+     */
+    @PutMapping("update-coupons/{idHoaDon}/{idPhieuGiamGia}")
+    public ResponseEntity<ResponseData<Boolean>> updateCouponsToInvoiceCounterSales(
+            @PathVariable Long idHoaDon,
+            @PathVariable Long idPhieuGiamGia) {
+
+        counterSalesService.updatePGGtoHoaDon(idHoaDon, idPhieuGiamGia);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Cập nhật PGG cho hoá đơn thành công",
+                        true)
+        );
+    }
+
     /**
      * @apiNote API chuyển trạng thái hóa đơn sau khi thanh toán
      * @param idHoaDon ID của hóa đơn
@@ -237,6 +279,24 @@ public class CounterSalesController {
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Hóa đơn được thanh toán thành công",
                         paidInvoice)
+        );
+    }
+
+    /**
+     * @apiNote API thanh toán bằng VNPAY
+     * @param idHoaDon ID của hóa đơn
+     * @return Đối tượng ResponseData chứa thông tin hóa đơn
+     */
+    @PostMapping("vnpay-bank-transfer/{idHoaDon}")
+    public ResponseEntity<ResponseData<Map<String, String>>> vnpayBankTransfer(
+        @PathVariable Long idHoaDon
+    ){
+        Map<String, String> map = counterSalesService.VnpayBankTransferPayment(idHoaDon);
+
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Thanh toán chuyển khoản thành công",
+                        map)
         );
     }
 
