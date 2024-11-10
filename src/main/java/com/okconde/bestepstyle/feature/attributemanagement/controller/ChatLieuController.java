@@ -38,7 +38,7 @@ public class ChatLieuController {
 
     @GetMapping("get-all")
     public ResponseEntity<ResponseData<List<ChatLieuResponse>>> getAllChatLieu(){
-        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),"Lấy thành công chất liệu!", chatLieuService.getAll()));
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công chất liệu", chatLieuService.getAll()));
     }
 
     // phân trang chất liệu
