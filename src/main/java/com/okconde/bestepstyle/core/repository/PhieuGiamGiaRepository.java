@@ -55,5 +55,7 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
     @Query("""
                 select pgg from PhieuGiamGia pgg where pgg.idPhieuGiamGia = :idPhieuGiamGia and pgg.trangThai = :trangThai
 """)
-    Optional<PhieuGiamGia> searchPGGTheoIDVaTrangThai(Long idPhieuGiamGia, StatusPhieuGiamGia trangThai);
+    Optional<PhieuGiamGia> findByPhieuGiamGiaAndTrangThai(Long idPhieuGiamGia, StatusPhieuGiamGia trangThai);
+
+
 }

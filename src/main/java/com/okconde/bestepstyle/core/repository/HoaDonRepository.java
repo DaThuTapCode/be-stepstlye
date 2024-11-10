@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.HoaDon;
+import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,4 +65,9 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
         SELECT hd FROM HoaDon hd WHERE hd.idHoaDon = :idHoaDon AND hd.trangThai = :trangThai
     """)
     Optional<HoaDon> findByIdHoaDonAndTrangThai(Long idHoaDon, StatusHoaDon trangThai);
+
+    @Query("SELECT h FROM HoaDon h WHERE h.phieuGiamGia = :phieuGiamGia AND h.trangThai = :trangThai")
+    List<HoaDon> findByPhieuGiamGiaAndTrangThai(@Param("phieuGiamGia") PhieuGiamGia phieuGiamGia,
+                                                         @Param("trangThai") StatusHoaDon trangThai);
+
 }

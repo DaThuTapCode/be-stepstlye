@@ -305,4 +305,23 @@ public class CounterSalesController {
                         null)
         );
     }
+    /**
+     * @apiNote API hủy phiêu giảm giá
+     * @param idPhieuGiamGia
+     */
+    @PostMapping("/cancel-coupons/{idPhieuGiamGia}")
+    public ResponseEntity<ResponseData<PhieuGiamGiaResponse>> cancelCoupons(
+            @PathVariable Long idPhieuGiamGia
+    ) {
+        // Gọi service để hủy PGG
+        PhieuGiamGiaResponse phieuGiamGiaResponse = counterSalesService.cancelCouponsCounterSales(idPhieuGiamGia);
+
+        // Trả về ResponseData với trạng thái thành công và thông tin phiếu giảm giá
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Thành công",
+                        phieuGiamGiaResponse)
+        );
+    }
+
 }

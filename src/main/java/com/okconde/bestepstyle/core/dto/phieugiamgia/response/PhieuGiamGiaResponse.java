@@ -41,7 +41,7 @@ public class PhieuGiamGiaResponse {
 
     private BigDecimal giaTriGiamToiDa;
 
-    private BigDecimal giaTriGiamToiThieu;
+    private BigDecimal giaTriDonHangToiThieu;
 
     private BigDecimal giaTriGiam;
 

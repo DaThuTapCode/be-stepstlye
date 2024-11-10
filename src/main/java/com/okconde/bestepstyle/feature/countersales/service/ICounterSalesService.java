@@ -106,4 +106,10 @@ public interface ICounterSalesService {
      * Hàm sửa số lượng SPCT trong HDCT
      *  */
     HoaDonChiTietResponse updateSoLuongSanPhamTrongHDCT(Long idHDCT, int soLuongThayDoi);
+
+    /**
+     * Hủy phiếu giảm giá theo idPhieuGiamGia
+     * @implNote TuanIF
+     * */
+    public PhieuGiamGiaResponse cancelCouponsCounterSales(Long idPhieuGiamGia);
 }
