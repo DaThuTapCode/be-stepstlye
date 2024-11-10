@@ -275,6 +275,9 @@ public class CounterSalesService implements ICounterSalesService {
 
             // Set lại tổng tiền cho hóa đơn = tổng tiền hiện tại + (đơn giá *  số lượng mới được thêm)
             hoaDon.setTongTien(hoaDon.getTongTien().add(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hoaDonChiTietRequest.getSoLuong()))));
+
+            // Set tổng tiền sau giảm
+
         }
         //Chưa thì thêm mới hóa đơn chi tiết
         else {
@@ -306,17 +309,42 @@ public class CounterSalesService implements ICounterSalesService {
     }
 
     @Override
+    @Transactional
     public HoaDonResponse markInvoiceAsPaid(Long idHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
-                .orElseThrow(() -> new EntityNotFoundException("Hóa Đơn không tồn tại"));
+                .orElseThrow(() -> new EntityNotFoundException("Hóa Đơn không tồn tại."));
 
-        //Cập nhật trạng thasi hóa đơn
+        //Kiểm tra điều kiệm thêm sản phẩm trước khi ấn thanh toán
+        if(hoaDon.getHoaDonChiTiet().isEmpty()) {
+            throw new BusinessException("Thêm sản phẩm vào hóa đơn trước khi thanh toán.");
+        }
+
+
+        //Kểm tra điều kiện thanh toán
+//        if (hoaDon.getThanhToan() == null || hoaDon.getThanhToan().getPhuongThucThanhToan().trim().isEmpty()) {
+//            throw new BusinessException("Hãy chọn phương thức thanh toán.");
+//        }
+
+
+        //Kiểm tra điều kiện phiếu giảm giá trước khi thanh toan
+        if (hoaDon.getPhieuGiamGia() != null) {
+            if(hoaDon.getPhieuGiamGia().getGiaTriDonHangToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
+                throw new BusinessException(("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + hoaDon.getPhieuGiamGia().getGiaTriDonHangToiThieu()) +
+                        ("\n Vui lòng chọn lại phiếu giảm giá phù hợp"));
+            }
+        }
+
+        //Kiểm tra điều kiện hóa đơn đã thanh toán chưa
+        if (hoaDon.getTrangThai().equals(StatusHoaDon.PAID)) {
+            throw new BusinessException("Hóa đơn này đã được thanh toán, không thể thanh toán lại.");
+        }
+
+
+
+
         hoaDon.setTrangThai(StatusHoaDon.PAID);
-
-        //Lưu hóa đơn được cập nhật
         hoaDonRepository.save(hoaDon);
 
-        //Chuyển đổi thành HoaDonResponse và trả về
         return hoaDonResponseMapper.toDTO(hoaDon);
     }
 
@@ -428,10 +456,33 @@ public class CounterSalesService implements ICounterSalesService {
     public Boolean updatePGGtoHoaDon(Long idHoaDon, Long idPhieuGiamGia) {
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
-        PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.searchPGGTheoIDVaTrangThai(idPhieuGiamGia, StatusPhieuGiamGia.ACTIVE)
+        PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findByPhieuGiamGiaAndTrangThai(idPhieuGiamGia, StatusPhieuGiamGia.ACTIVE)
                 .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại"));
+        if(phieuGiamGia.getGiaTriDonHangToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
+                throw new BusinessException("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + phieuGiamGia.getGiaTriDonHangToiThieu());
+        }
         hoaDon.setPhieuGiamGia(phieuGiamGia);
         return true;
+    }
+
+    @Override
+    @Transactional
+    public PhieuGiamGiaResponse cancelCouponsCounterSales(Long idPhieuGiamGia) {
+        // Lấy phiếu giảm giá theo id
+        PhieuGiamGia phieuGiamGiaExisting = phieuGiamGiaRepository.findById(idPhieuGiamGia)
+                .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại hoặc không khả dụng"));
+
+        // Lấy danh sách các hóa đơn chờ sử dụng phiếu giảm giá này
+        List<HoaDon> hoaDonsToUpdate = hoaDonRepository.findByPhieuGiamGiaAndTrangThai(phieuGiamGiaExisting, StatusHoaDon.PENDING);
+
+        // Cập nhật phiếu giảm giá của các hóa đơn chờ về null
+        hoaDonsToUpdate.forEach(hoaDon -> {
+            hoaDon.setPhieuGiamGia(null);
+            hoaDonRepository.save(hoaDon);
+        });
+
+        // Trả về phản hồi
+        return new PhieuGiamGiaResponse();
     }
 
 }

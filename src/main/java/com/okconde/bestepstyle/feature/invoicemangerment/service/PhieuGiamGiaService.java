@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaRequest
 import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaSearchRequest;
 import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
+import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.phieugiamgia.request.PhieuGiamGiaRequestMapper;
 import com.okconde.bestepstyle.core.mapper.phieugiamgia.response.PhieuGiamGiaResponseMapper;
@@ -65,7 +66,31 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
     @Override
     @Transactional
     public PhieuGiamGiaResponse create(PhieuGiamGiaRequest phieuGiamGiaRequest) {
-        phieuGiamGiaRequest.setMaPhieuGiamGia(GenerateCodeRandomUtil.generateProductCode("PGG", 7));;
+        // Kiểm tra ngày bắt đầu và ngày kết thúc có tồn tại
+        if (phieuGiamGiaRequest.getNgayBatDau() == null || phieuGiamGiaRequest.getNgayKetThuc() == null) {
+            throw new BusinessException("Ngày bắt đầu và ngày kết thúc không được để trống.");
+        }
+
+        // Chuyển đổi ngày bắt đầu và ngày kết thúc thành LocalDate để dễ dàng so sánh
+        LocalDate ngayBatDau = phieuGiamGiaRequest.getNgayBatDau();
+        LocalDate ngayKetThuc = phieuGiamGiaRequest.getNgayKetThuc();
+        LocalDate today = LocalDate.now();
+
+        // Kiểm tra ngày bắt đầu phải nhỏ hơn ngày kết thúc
+        if (ngayBatDau.isAfter(ngayKetThuc)) {
+            throw new BusinessException("Ngày bắt đầu phải nhỏ hơn ngày kết thúc.");
+        }
+
+        // Tự động đặt trạng thái dựa trên ngày bắt đầu
+        if (ngayBatDau.isAfter(today)) {
+            phieuGiamGiaRequest.setTrangThai(StatusPhieuGiamGia.COMINGSOON);
+        } else if (ngayBatDau.isEqual(today)) {
+            phieuGiamGiaRequest.setTrangThai(StatusPhieuGiamGia.ACTIVE);
+        }
+
+
+        phieuGiamGiaRequest.setMaPhieuGiamGia(GenerateCodeRandomUtil.generateProductCode("PGG", 7));
+
         return phieuGiamGiaResponseMapper.toDTO(phieuGiamGiaRepository.save(phieuGiamGiaRequestMapper.toEntity(phieuGiamGiaRequest)));
     }
 
@@ -74,6 +99,12 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
     public PhieuGiamGiaResponse update(Long id, PhieuGiamGiaRequest phieuGiamGiaRequest) {
         PhieuGiamGia phieuGiamGiaExisting = phieuGiamGiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy với id: " + id));
+        // Kiểm tra ngày kết thúc phải lớn hơn ngày bắt đầu
+        if ((phieuGiamGiaRequest.getTrangThai() == StatusPhieuGiamGia.COMINGSOON ||
+                phieuGiamGiaRequest.getTrangThai() == StatusPhieuGiamGia.ACTIVE) &&
+                !phieuGiamGiaRequest.getNgayKetThuc().isAfter(phieuGiamGiaRequest.getNgayBatDau())) {
+            throw new BusinessException("Ngày kết thúc phải lớn hơn ngày bắt đầu khi phiếu giảm giá đang ở trạng thái sắp diễn ra hoặc đang hoạt động.");
+        }
 
         phieuGiamGiaExisting.setTenPhieuGiamGia(phieuGiamGiaRequest.getTenPhieuGiamGia());
         phieuGiamGiaExisting.setMoTa(phieuGiamGiaRequest.getMoTa());
@@ -82,7 +113,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
         phieuGiamGiaExisting.setNgayKetThuc(phieuGiamGiaRequest.getNgayKetThuc());
         phieuGiamGiaExisting.setGiaTriGiamToiDa(phieuGiamGiaRequest.getGiaTriGiamToiDa());
         phieuGiamGiaExisting.setGiaTriGiam(phieuGiamGiaRequest.getGiaTriGiam());
-        phieuGiamGiaExisting.setGiaTriGiamToiThieu(phieuGiamGiaRequest.getGiaTriGiamToiThieu());
+        phieuGiamGiaExisting.setGiaTriDonHangToiThieu(phieuGiamGiaRequest.getGiaTriDonHangToiThieu());
         phieuGiamGiaExisting.setTrangThai(phieuGiamGiaRequest.getTrangThai());
 
         PhieuGiamGia phieuGiamGiaUpdated = phieuGiamGiaRepository.save(phieuGiamGiaExisting);
@@ -163,7 +194,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
             response.setNgayBatDau(coupon.getNgayBatDau());
             response.setNgayKetThuc(coupon.getNgayKetThuc());
             response.setGiaTriGiamToiDa(coupon.getGiaTriGiamToiDa());
-            response.setGiaTriGiamToiThieu(coupon.getGiaTriGiamToiThieu());
+            response.setGiaTriDonHangToiThieu(coupon.getGiaTriDonHangToiThieu());
             response.setGiaTriGiam(coupon.getGiaTriGiam());
             response.setTrangThai(coupon.getTrangThai());
 
@@ -180,7 +211,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
 
         // Kiểm tra trạng thái phiếu giảm giá hiện tại
         if (!phieuGiamGia.getTrangThai().equals(StatusPhieuGiamGia.ACTIVE)) {
-            throw new IllegalStateException("Chỉ có thể kết thúc chương trình khuyến mãi đang hoạt động");
+            throw new BusinessException("Chỉ có thể kết thúc chương trình khuyến mãi đang hoạt động");
         }
 
         // Cập nhật trạng thái phiếu giảm giá thành "CANCELLED"

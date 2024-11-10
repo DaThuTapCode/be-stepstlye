@@ -48,15 +48,15 @@ public class PhieuGiamGiaRequest {
     private LocalDate ngayKetThuc;
 
     @NotNull(message = "Gia tri giảm tối đa không được để trống!")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm tối đa > 0!")
-    private BigDecimal giaTriGiamToiDa;
+//    @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm tối đa phải lớn hơn 0!")
+    private BigDecimal giaTriGiamToiDa; // sửa về int
 
     @NotNull(message = "Gia tri giảm tối thiểu không được để trống!")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm tối thiểu > 0!")
-    private BigDecimal giaTriGiamToiThieu;
+    @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm tối thiểu phải lớn hơn 0!")
+    private BigDecimal giaTriDonHangToiThieu;
 
     @NotNull(message = "Gia tri giảm không được để trống!")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm > 0!")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm phải lớn hơn 0!")
     private BigDecimal giaTriGiam;
 
     @Enumerated(EnumType.STRING)

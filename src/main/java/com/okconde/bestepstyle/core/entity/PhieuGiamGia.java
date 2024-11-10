@@ -40,10 +40,9 @@ public class PhieuGiamGia {
 
     private BigDecimal giaTriGiamToiDa;
 
-    private BigDecimal giaTriGiamToiThieu;
+    private BigDecimal giaTriDonHangToiThieu;
 
     private BigDecimal giaTriGiam;
-
 
     @Enumerated(EnumType.STRING)
     private StatusPhieuGiamGia trangThai;

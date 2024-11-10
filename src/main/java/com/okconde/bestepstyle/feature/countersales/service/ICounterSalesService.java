@@ -101,4 +101,10 @@ public interface ICounterSalesService {
      *Tạo hàm sua PGG
      * @implNote TuanInfinity*/
     Boolean updatePGGtoHoaDon(Long idHoaDon, Long idPhieuGiamGia);
+
+    /**
+     * Hủy phiếu giảm giá theo idPhieuGiamGia
+     * @implNote TuanIF
+     * */
+    public PhieuGiamGiaResponse cancelCouponsCounterSales(Long idPhieuGiamGia);
 }
