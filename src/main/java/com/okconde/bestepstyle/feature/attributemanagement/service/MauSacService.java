@@ -57,7 +57,7 @@ public class MauSacService implements IBaseService <MauSac, Long, MauSacRequest,
     @Override
     @Transactional
     public MauSacResponse create(MauSacRequest mauSacRequest) {
-        mauSacRequest.setMaMauSac(GenerateCodeRandomUtil.generateProductCode("MS", 8));
+        //mauSacRequest.setMaMauSac(GenerateCodeRandomUtil.generateProductCode("MS", 8));
         if (mauSacRepository.getMauSacByMaMau(mauSacRequest.getMaMauSac()).isPresent()){
             throw new AttributeCodeDuplicateException("Mã màu sắc " + mauSacRequest.getMaMauSac() + " đã tồn tại");
         }
