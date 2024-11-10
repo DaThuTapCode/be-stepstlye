@@ -40,6 +40,8 @@ public class SPCTResponse {
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayChinhSua;
 
+    private String anh;
+
     private StatusSPCT trangThai;
 
     private SanPhamShortResponse sanPham;
@@ -56,5 +58,4 @@ public class SPCTResponse {
 
     private KichCo kichCo;
 
-    private List<AnhShortResponse> anhs;
 }

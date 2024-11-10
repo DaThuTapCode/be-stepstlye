@@ -4,7 +4,12 @@ import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.entity.SanPhamChiTiet;
 import com.okconde.bestepstyle.core.mapper.IBaseMapper;
 import com.okconde.bestepstyle.core.mapper.anh.response.AnhShortResponseMapper;
+import com.okconde.bestepstyle.core.util.variabletp.VariableHehe;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+
+import java.util.List;
 
 
 /**
@@ -13,7 +18,21 @@ import org.mapstruct.Mapper;
  * @author Trong Phu
  */
 
-@Mapper(componentModel = "spring", uses = {AnhShortResponseMapper.class})
-
+@Mapper(componentModel = "spring")
 public interface SPCTResponseMapper extends IBaseMapper<SanPhamChiTiet, SPCTResponse> {
+
+    @Override
+    @Mapping(target = "anh", source = "anh", qualifiedByName = "anh")
+    SPCTResponse toDTO(SanPhamChiTiet sanPhamChiTiet);
+
+    @Override
+    List<SPCTResponse> listToDTO(List<SanPhamChiTiet> listE);
+
+    @Named(value = "anh")
+    default String mapServerForImage(String anh) {
+        if(anh != null){
+            return VariableHehe.SERVER_PORT + "/images/" + anh;
+        }
+        return null;
+    }
 }

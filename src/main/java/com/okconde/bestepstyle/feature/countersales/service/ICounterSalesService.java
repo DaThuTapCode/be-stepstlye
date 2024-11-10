@@ -24,13 +24,13 @@ import java.util.Map;
  */
 public interface ICounterSalesService {
     /**Hàm lấy danh sách hóa đơn chờ*/
-    public List<HoaDonResponse> geListPendingInvoiceCounterSales();
+    List<HoaDonResponse> geListPendingInvoiceCounterSales();
 
     /**
      * Hàm tạo hóa đơn chờ cho bán hàng tại quầy
      * @param hoaDonRequest đối tượng {@link HoaDonRequest} hứng dữ liệu
      * */
-    public HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest);
+    HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest);
 
 
     /**
@@ -101,4 +101,9 @@ public interface ICounterSalesService {
      *Tạo hàm sua PGG
      * @implNote TuanInfinity*/
     Boolean updatePGGtoHoaDon(Long idHoaDon, Long idPhieuGiamGia);
+
+    /**
+     * Hàm sửa số lượng SPCT trong HDCT
+     *  */
+    HoaDonChiTietResponse updateSoLuongSanPhamTrongHDCT(Long idHDCT, int soLuongThayDoi);
 }

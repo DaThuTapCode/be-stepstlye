@@ -19,7 +19,6 @@ import java.util.Optional;
 public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, Long> {
     @Query("""
                             select distinct spct from SanPhamChiTiet spct
-                            left join fetch spct.anhs
                             where 
                             (:maSpct is null or spct.maSpct = :maSpct)
                             and

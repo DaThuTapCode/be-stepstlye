@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Created by Trong Phu on 23/09/2024 21:28
@@ -34,6 +33,8 @@ public class SanPhamChiTiet {
     private LocalDateTime ngayTao;
 
     private LocalDateTime ngayChinhSua;
+
+    private String anh;
 
     @Enumerated(EnumType.STRING)
     private StatusSPCT trangThai;
@@ -65,9 +66,5 @@ public class SanPhamChiTiet {
     @ManyToOne
     @JoinColumn(name = "id_kich_co")
     private KichCo kichCo;
-
-    @OneToMany(mappedBy = "sanPhamChiTiet")
-    private List<Anh> anhs;
-
 
 }

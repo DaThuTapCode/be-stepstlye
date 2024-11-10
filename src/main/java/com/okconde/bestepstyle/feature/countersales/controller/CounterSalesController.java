@@ -1,41 +1,28 @@
 package com.okconde.bestepstyle.feature.countersales.controller;
 
-import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuSearchRequest;
-import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
-import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiaySearchRequest;
-import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
+
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
 import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
-import com.okconde.bestepstyle.core.dto.kichco.reponse.KichCoResponse;
-import com.okconde.bestepstyle.core.dto.kichco.request.KichCoSearchRequest;
-import com.okconde.bestepstyle.core.dto.kieudegiay.reponse.KieuDeGiayResponse;
-import com.okconde.bestepstyle.core.dto.kieudegiay.request.KieuDeGiaySearchRequest;
-import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
-import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
+
 import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaSearchRequest;
 import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
-import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
-import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongSearchRequest;
+
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietRequest;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
-import com.okconde.bestepstyle.core.util.groupsvalidation.Create;
-import com.okconde.bestepstyle.core.util.groupsvalidation.Update;
-import com.okconde.bestepstyle.feature.countersales.service.CounterSalesService;
+
 import com.okconde.bestepstyle.feature.countersales.service.ICounterSalesService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -305,4 +292,17 @@ public class CounterSalesController {
         );
     }
 
+    /**
+     * @apiNote API sửa số lượng spct trong hdct*/
+    @PostMapping("update-quantity-product-detail-in-detail-invoice/{idHdct}/{soLuongThayDoi}")
+    public ResponseEntity<ResponseData<HoaDonChiTietResponse>> thayDoiSoLuongSPCTTrongHDCT(
+            @PathVariable Long idHdct,
+            @PathVariable int soLuongThayDoi) {
+        counterSalesService.updateSoLuongSanPhamTrongHDCT(idHdct, soLuongThayDoi);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Sửa số lượng sản phẩm trong hóa đơn chi tiết thành công",
+                        null)
+        );
+    }
 }

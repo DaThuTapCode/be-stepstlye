@@ -39,6 +39,8 @@ public class SPCTShortResponse {
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayChinhSua;
 
+    private String anh;
+
     @Enumerated(EnumType.STRING)
     private StatusSPCT trangThai;
 
@@ -53,7 +55,4 @@ public class SPCTShortResponse {
     private MauSac mauSac;
 
     private KichCo kichCo;
-
-    private List<AnhShortResponse> anhs;
-
 }

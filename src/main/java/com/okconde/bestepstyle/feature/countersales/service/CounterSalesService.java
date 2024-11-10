@@ -293,7 +293,7 @@ public class CounterSalesService implements ICounterSalesService {
             // Set lại số lượng cho sản phẩm chi tiết  = số lượng hiện tại - số lượng thêm vào hóa đơn chi tiết
             sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - hoaDonChiTietRequest.getSoLuong());
 
-            // Set lại tổng tiền cho hóa đơn = tổng tiền hiện tại + (số lượng * đơn giá)
+            // Set lại tổng tiền cho hóa đơn = tổng tiền hiện tại + tổng tiền HDCT
             hoaDon.setTongTien(hoaDon.getTongTien().add(hoaDonChiTiet.getTongTien()));
 
             // Lưu hóa đơn chi tiết vào repository
@@ -434,6 +434,67 @@ public class CounterSalesService implements ICounterSalesService {
         return true;
     }
 
+    /**
+     * Hàm sửa số lượng SPCT trong HDCT
+     *
+     * @param idHDCT cần sửa số lượng
+     * @param soLuongThayDoi số lượng cần sửa
+     */
+    @Override
+    @Transactional
+    public HoaDonChiTietResponse updateSoLuongSanPhamTrongHDCT(Long idHDCT, int soLuongThayDoi) {
+
+        // Kiểm tra HDCT có tồn tại hay không
+        HoaDonChiTiet hoaDonChiTietExisting = hoaDonChiTietRepository.getHDCTByIdAndStatus(idHDCT, StatusHoaDonChiTiet.PENDING)
+                .orElseThrow(() -> new BusinessException("Hóa đơn chi tiết này không tồn tại hoặc đã được thanh toán"));
+
+        // Kiểm tra tồn tại hóa đơn
+        HoaDon hoaDonExisting = hoaDonRepository.findByIdHoaDonAndTrangThai(
+                hoaDonChiTietExisting.getHoaDon().getIdHoaDon(), StatusHoaDon.PENDING)
+                .orElseThrow(() -> new BusinessException("Hóa đơn này không tồn tại hoặc đã được thanh toán"));
+
+        // Kiểm tra tồn tại SPCT
+        SanPhamChiTiet sanPhamChiTietExisting = sanPhamChiTietRepository.
+                getSPCTByIdSPCTAndTrangThai(hoaDonChiTietExisting.getSanPhamChiTiet().getIdSpct(), StatusSPCT.ACTIVE)
+                .orElseThrow(() -> new BusinessException("Sản phẩm chi tiết không tồn tại hoặc đã hết hàng"));
+
+        // Kiểm tra số lượng sản phẩm thay đổi nhỏ hơn 0
+        if(soLuongThayDoi <= 0){
+            throw new BusinessException("Số lượng thay đổ phải lớn hơn 0");
+        }
+
+        // Set lại thông tin cho sản phẩm chi tiết
+
+
+        // So luong = (soLuongTrongKho + soLuong trong hdct) - soLuongThayDoi
+        Integer soLuongTrongKho = sanPhamChiTietExisting.getSoLuong();
+        Integer soLuongTrongHDCT = hoaDonChiTietExisting.getSoLuong();
+        int soLuongNew = (soLuongTrongKho + soLuongTrongHDCT) - soLuongThayDoi;
+
+        // Kiểm tra số lượng sản phẩm trong kho có đủ hay không
+        if(soLuongTrongKho + soLuongTrongHDCT < soLuongThayDoi){
+            throw new BusinessException("Số lượng sản phẩm trong kho không đủ");
+        }
+
+        sanPhamChiTietExisting.setSoLuong(soLuongNew);
+
+
+        // Set lại thông tin cho hóa đơn chi tiết
+        hoaDonChiTietExisting.setSoLuong(soLuongThayDoi); // set số lượng thay đổi
+        hoaDonChiTietExisting.setDonGia(sanPhamChiTietExisting.getGia()); // set đơn giá
+
+        // Set tổng tiền cho hdct = đơn giá spct * với số lượng thay đổi
+        BigDecimal tongTienHDCTTruocKhiThayDoiSoLuong = hoaDonChiTietExisting.getTongTien();
+        BigDecimal tongTienHDCTSauKhiThayDoiSoLuong = sanPhamChiTietExisting.getGia().multiply(BigDecimal.valueOf(soLuongThayDoi));
+        hoaDonChiTietExisting.setTongTien(tongTienHDCTSauKhiThayDoiSoLuong);
+
+        // Set lại thông tin cho hóa đơn
+        // Set lại tổng tiền cho hóa đơn(tổng tiền = (tổng tiền hiện tại - tổng tền hdct trước khi đổi số lượng) + tổng tiền của hóa đơn chi tiết sau khi đổi số lượng)
+        BigDecimal tongTienHienTaiCuaHoaDon = hoaDonExisting.getTongTien();
+        BigDecimal tongTienHDNew = (tongTienHienTaiCuaHoaDon.subtract(tongTienHDCTTruocKhiThayDoiSoLuong)).add(tongTienHDCTSauKhiThayDoiSoLuong);
+        hoaDonExisting.setTongTien(tongTienHDNew);
+        return null;
+    }
 }
 
 
