@@ -325,8 +325,8 @@ public class CounterSalesService implements ICounterSalesService {
 
         //Kiểm tra điều kiện phiếu giảm giá trước khi thanh toan
         if (hoaDon.getPhieuGiamGia() != null) {
-            if(hoaDon.getPhieuGiamGia().getGiaTriDonHangToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
-                throw new BusinessException(("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + hoaDon.getPhieuGiamGia().getGiaTriDonHangToiThieu()) +
+            if(hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
+                throw new BusinessException(("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu()) +
                         ("\n Vui lòng chọn lại phiếu giảm giá phù hợp"));
             }
         }
@@ -455,8 +455,8 @@ public class CounterSalesService implements ICounterSalesService {
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
         PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findByPhieuGiamGiaAndTrangThai(idPhieuGiamGia, StatusPhieuGiamGia.ACTIVE)
                 .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại"));
-        if(phieuGiamGia.getGiaTriDonHangToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
-                throw new BusinessException("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + phieuGiamGia.getGiaTriDonHangToiThieu());
+        if(phieuGiamGia.getGiaTriHoaDonToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
+                throw new BusinessException("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + phieuGiamGia.getGiaTriHoaDonToiThieu());
         }
         hoaDon.setPhieuGiamGia(phieuGiamGia);
         return true;

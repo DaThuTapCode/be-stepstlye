@@ -113,7 +113,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
         phieuGiamGiaExisting.setNgayKetThuc(phieuGiamGiaRequest.getNgayKetThuc());
         phieuGiamGiaExisting.setGiaTriGiamToiDa(phieuGiamGiaRequest.getGiaTriGiamToiDa());
         phieuGiamGiaExisting.setGiaTriGiam(phieuGiamGiaRequest.getGiaTriGiam());
-        phieuGiamGiaExisting.setGiaTriDonHangToiThieu(phieuGiamGiaRequest.getGiaTriDonHangToiThieu());
+        phieuGiamGiaExisting.setGiaTriHoaDonToiThieu(phieuGiamGiaRequest.getGiaTriHoaDonToiThieu());
         phieuGiamGiaExisting.setTrangThai(phieuGiamGiaRequest.getTrangThai());
 
         PhieuGiamGia phieuGiamGiaUpdated = phieuGiamGiaRepository.save(phieuGiamGiaExisting);
@@ -194,7 +194,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
             response.setNgayBatDau(coupon.getNgayBatDau());
             response.setNgayKetThuc(coupon.getNgayKetThuc());
             response.setGiaTriGiamToiDa(coupon.getGiaTriGiamToiDa());
-            response.setGiaTriDonHangToiThieu(coupon.getGiaTriDonHangToiThieu());
+            response.setGiaTriHoaDonToiThieu(coupon.getGiaTriHoaDonToiThieu());
             response.setGiaTriGiam(coupon.getGiaTriGiam());
             response.setTrangThai(coupon.getTrangThai());
 

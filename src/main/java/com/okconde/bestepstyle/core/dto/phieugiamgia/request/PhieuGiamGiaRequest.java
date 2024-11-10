@@ -53,7 +53,7 @@ public class PhieuGiamGiaRequest {
 
     @NotNull(message = "Gia tri giảm tối thiểu không được để trống!")
     @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm tối thiểu phải lớn hơn 0!")
-    private BigDecimal giaTriDonHangToiThieu;
+    private BigDecimal giaTriHoaDonToiThieu;
 
     @NotNull(message = "Gia tri giảm không được để trống!")
     @DecimalMin(value = "0.0", inclusive = false, message = "Gia tri giảm phải lớn hơn 0!")

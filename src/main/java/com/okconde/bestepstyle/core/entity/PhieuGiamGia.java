@@ -40,7 +40,7 @@ public class PhieuGiamGia {
 
     private BigDecimal giaTriGiamToiDa;
 
-    private BigDecimal giaTriDonHangToiThieu;
+    private BigDecimal giaTriHoaDonToiThieu;
 
     private BigDecimal giaTriGiam;
 
