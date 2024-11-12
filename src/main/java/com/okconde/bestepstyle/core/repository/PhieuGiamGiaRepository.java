@@ -21,6 +21,7 @@ import java.util.Optional;
  * @author TuanIf
  */
 public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long> {
+    // Phân trang và tìm kiếm phiếu giảm giá với các điều kiện khác nhau
     @Query("""
                 select distinct pgg from PhieuGiamGia pgg where
                  (:maPhieuGiamGia is null or pgg.maPhieuGiamGia = :maPhieuGiamGia)
@@ -44,14 +45,23 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
                                               @Param(value = "loaiGiam") String loaiGiam,
                                               StatusPhieuGiamGia trangThai);
 
+    // Đếm số lượng phiếu giảm giá theo trạng thái
     @Query("SELECT COUNT(pgg) FROM PhieuGiamGia pgg WHERE pgg.trangThai = :trangThai")
     int countByStatus(StatusPhieuGiamGia trangThai);
 
+    // Tìm phiếu giảm giá có trạng thái ACTIVE với ngày kết thúc trước ngày hiện tại
     @Query("SELECT pgg FROM PhieuGiamGia pgg WHERE pgg.trangThai = :trangThai AND pgg.ngayKetThuc < :today")
     List<PhieuGiamGia> findByTrangThaiAndNgayKetThucBefore(
             StatusPhieuGiamGia trangThai,
             @Param("today") LocalDate today);
 
+    // Tìm phiếu giảm giá có trạng thái COMINGSOON và ngày bắt đầu bằng ngày hiện tại
+    @Query("SELECT pgg FROM PhieuGiamGia pgg WHERE pgg.trangThai = :trangThai AND pgg.ngayBatDau = :today")
+    List<PhieuGiamGia> findByTrangThaiAndNgayBatDau(
+            StatusPhieuGiamGia trangThai,
+            @Param("today") LocalDate today);
+
+    // Tìm phiếu giảm giá theo ID và trạng thái
     @Query("""
                 select pgg from PhieuGiamGia pgg where pgg.idPhieuGiamGia = :idPhieuGiamGia and pgg.trangThai = :trangThai
 """)

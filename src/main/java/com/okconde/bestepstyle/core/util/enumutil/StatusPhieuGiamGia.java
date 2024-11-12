@@ -6,6 +6,7 @@ package com.okconde.bestepstyle.core.util.enumutil;
  * @author TuanIf
  */
 public enum StatusPhieuGiamGia {
+    TOTAL,          // All PGG
     ACTIVE,         // Phiếu giảm giá đang hoạt động
     COMINGSOON,     // Phiếu giảm giá sắp diễn ra
     EXPIRED,        // Phiếu giảm giá đã kết thúc

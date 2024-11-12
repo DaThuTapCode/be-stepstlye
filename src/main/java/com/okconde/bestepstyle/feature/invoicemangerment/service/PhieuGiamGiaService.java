@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by TuanIf on 9/25/2024 20:28:25
@@ -150,14 +149,16 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
     public Map<String, Integer> getPhieuGiamGiaByStatus() {
         int activeCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.ACTIVE);
         int comingsoonCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.COMINGSOON);
-        int usedCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.USED);
         int expiredCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.EXPIRED);
         int cancelledCount = phieuGiamGiaRepository.countByStatus(StatusPhieuGiamGia.CANCELLED);
 
+        //Tất cả PGG
+        int totalCount = activeCount + comingsoonCount + expiredCount + cancelledCount;
+
         Map<String, Integer> counts = new HashMap<>();
+        counts.put("TOTAL", totalCount);
         counts.put("ACTIVE", activeCount);
         counts.put("COMINGSOON", comingsoonCount);
-        counts.put("USED", usedCount);
         counts.put("EXPIRED", expiredCount);
         counts.put("CANCELLED", cancelledCount);
 
@@ -165,7 +166,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
     }
 
     // Chạy mỗi ngày lúc 00:00 để kiểm tra và cập nhật trạng thái phiếu giảm giá
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public List<PhieuGiamGiaResponse> expireCouponsIfNeeded() {
         LocalDate today = LocalDate.now();
@@ -175,10 +176,21 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
 
         // Cập nhật trạng thái của các phiếu giảm giá này thành EXPIRED
         expiringCoupons.forEach(coupon -> coupon.setTrangThai(StatusPhieuGiamGia.EXPIRED));
-        phieuGiamGiaRepository.saveAll(expiringCoupons);
 
-        // Chuyển đổi danh sách phiếu giảm giá sang danh sách phản hồi
-        return convertToResponseList(expiringCoupons);
+        // Lấy danh sách phiếu giảm giá có trạng thái COMINGSOON và ngày bắt đầu là ngày hiện taji
+        List<PhieuGiamGia> activatingCoupons = phieuGiamGiaRepository.findByTrangThaiAndNgayBatDau(StatusPhieuGiamGia.COMINGSOON, today);
+
+        // Cập nhật trạng thái của các phiếu giảm giá này thành ACTIVE
+        activatingCoupons.forEach(coupon -> coupon.setTrangThai(StatusPhieuGiamGia.ACTIVE));
+
+        // Lưu tất cả các phiếu giảm giá đã được cập nhật
+        List<PhieuGiamGia> updatedCoupons = new ArrayList<>();
+        updatedCoupons.addAll(expiringCoupons);
+        updatedCoupons.addAll(activatingCoupons);
+        phieuGiamGiaRepository.saveAll(updatedCoupons);
+
+        // Chuyển đổi danh sách phiếu giảm giá đã cập nhật sang danh sách phản hồi
+        return convertToResponseList(updatedCoupons);
     }
 
     // Phương thức chuyển đổi từ List<PhieuGiamGia> sang List<PhieuGiamGiaResponse>
@@ -210,14 +222,17 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phiếu giảm giá với id: " + id));
 
         // Kiểm tra trạng thái phiếu giảm giá hiện tại
-        if (!phieuGiamGia.getTrangThai().equals(StatusPhieuGiamGia.ACTIVE)) {
-            throw new BusinessException("Chỉ có thể kết thúc chương trình khuyến mãi đang hoạt động");
+        if (phieuGiamGia.getTrangThai().equals(StatusPhieuGiamGia.ACTIVE)) {
+            // Cập nhật trạng thái phiếu giảm giá thành "EXPIRED"
+            phieuGiamGia.setTrangThai(StatusPhieuGiamGia.EXPIRED);
+        } else if (phieuGiamGia.getTrangThai().equals(StatusPhieuGiamGia.COMINGSOON)) {
+            // Cập nhật trạng thái phiếu giảm giá thành "CANCELLED"
+            phieuGiamGia.setTrangThai(StatusPhieuGiamGia.CANCELLED);
+        } else {
+            throw new BusinessException("Chỉ kết thúc ở trạng thái ACTIVE và hủy ở trạng thái COMINGSOON");
         }
 
-        // Cập nhật trạng thái phiếu giảm giá thành "CANCELLED"
-        phieuGiamGia.setTrangThai(StatusPhieuGiamGia.EXPIRED);
         PhieuGiamGia updatedPhieuGiamGia = phieuGiamGiaRepository.save(phieuGiamGia);
-
         return phieuGiamGiaResponseMapper.toDTO(updatedPhieuGiamGia);
     }
 

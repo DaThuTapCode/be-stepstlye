@@ -128,7 +128,11 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
             int refundedCount = hoaDonRepository.countByStatus(StatusHoaDon.REFUNDED);
             int overdueCount = hoaDonRepository.countByStatus(StatusHoaDon.OVERDUE);
 
+            //Tất cả hóa đơn
+            int totalCount = pendingCount + shippingCount + paidCount + cancelledCount + refundedCount + overdueCount;
+
             Map<String, Integer> counts = new HashMap<>();
+            counts.put("TOTAL", totalCount);
             counts.put("PENDING", pendingCount);
             counts.put("SHIPPING", shippingCount);
             counts.put("PAID", paidCount);
