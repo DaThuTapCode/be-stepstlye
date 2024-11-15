@@ -56,4 +56,15 @@ public class SanPhamChiTietController {
                        true)
         );
     }
+
+    @PostMapping(value = "/get-by-list-id")
+    public ResponseEntity<ResponseData<List<SPCTResponse>>> getByListId(
+            @RequestBody List<Long> listIdSpct
+    ){
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Lấy chi tiết sản phẩm lên giỏ hàng thành công",
+                        sanPhamChiTietService.getSPCTByListId(listIdSpct))
+        );
+    }
 }

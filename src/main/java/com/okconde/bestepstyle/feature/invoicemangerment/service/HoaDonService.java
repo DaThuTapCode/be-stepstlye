@@ -10,9 +10,9 @@ import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
+import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by TuanIf on 9/25/2024 20:27:52
@@ -57,6 +56,9 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         List<HoaDon> hoaDonList = hoaDonRepository.findAll();
         return hoaDonResponseMapper.listToDTO(hoaDonList);
     }
+
+
+
 
     @Override
     @Transactional
@@ -142,4 +144,13 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
             return counts;
     }
+
+    public List<HoaDonResponse> getHoaDonByLoaiHoaDon(LoaiHoaDon loaiHoaDon) {
+        List<HoaDon> hoaDonList = hoaDonRepository.getHoaDon(loaiHoaDon);
+        return hoaDonResponseMapper.listToDTO(hoaDonList);
+    }
+
+
+
+
 }
