@@ -12,6 +12,7 @@ import com.okconde.bestepstyle.core.repository.SanPhamChiTietRepository;
 import com.okconde.bestepstyle.core.repository.SanPhamRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
+import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -121,5 +122,10 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
         List<SanPhamChiTiet> listSPCTsByIdSanPham = sanPhamChiTietRepository.getSPCTByIdSP(sanPhamExisting.getIdSanPham());
 
         sanPhamChiTietRepository.saveAll(listSPCTNew);
+    }
+
+    public List<SPCTResponse> getSPCTByListId(List<Long> listIdSpct) {
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.getSPCTByListIdAndTrangThai(listIdSpct, StatusSPCT.ACTIVE);
+        return spctResponseMapper.listToDTO(sanPhamChiTietList);
     }
 }

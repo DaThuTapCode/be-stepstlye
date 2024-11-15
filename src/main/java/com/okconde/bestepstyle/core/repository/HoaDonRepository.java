@@ -3,13 +3,13 @@ package com.okconde.bestepstyle.core.repository;
 import com.okconde.bestepstyle.core.entity.HoaDon;
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -70,4 +70,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     List<HoaDon> findByPhieuGiamGiaAndTrangThai(@Param("phieuGiamGia") PhieuGiamGia phieuGiamGia,
                                                          @Param("trangThai") StatusHoaDon trangThai);
 
+    @Query("""
+SELECT h FROM HoaDon h WHERE h.loaiHoaDon = :loaiHoaDon
+""")
+    List<HoaDon> getHoaDon(LoaiHoaDon loaiHoaDon);
 }

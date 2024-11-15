@@ -86,6 +86,10 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
             Long idTrongLuong
     );
 
+    @Query("""
+        select spct from SanPhamChiTiet spct where spct.idSpct in :listIdSpct and spct.trangThai = :trangThai
+    """)
+    List<SanPhamChiTiet> getSPCTByListIdAndTrangThai(List<Long> listIdSpct, StatusSPCT trangThai);
 
 
 }

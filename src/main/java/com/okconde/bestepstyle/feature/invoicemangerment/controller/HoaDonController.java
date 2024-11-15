@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
+import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.HoaDonService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -120,5 +121,18 @@ public class HoaDonController {
     public ResponseEntity<Map<String, Integer>> getHoaDonByStatus() {
         Map<String, Integer> counts = hoaDonService.getHoaDonByStatus();
         return ResponseEntity.ok(counts);
+    }
+
+    /**
+     * @apiNote Api lấy .... */
+    @GetMapping("invoice-by-invoice-type")
+    public ResponseEntity<ResponseData<List<HoaDonResponse>>> getHoaDonByLoaiHoaDon(
+            @RequestParam LoaiHoaDon loaiHoaDon
+            ) {
+        List<HoaDonResponse> list = hoaDonService.getHoaDonByLoaiHoaDon(loaiHoaDon);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Lấy thành công hóa đơn theo loại hóa đơn",
+                        list));
     }
 }
