@@ -40,7 +40,9 @@ public class TrongLuongController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),"Lấy thành công trọng lượng!",trongLuongService.getAll()));
     }
 
-    // phân trang trọng lượng
+    /**
+     * @apiNote: api phân trang trọng lượng
+     */
     @GetMapping("get-page")
     public ResponseEntity<ResponseData<List<TrongLuongResponse>>> getPageTrongLuong(
             @RequestParam(value = "currentPage", defaultValue = "0") Integer current
@@ -52,14 +54,18 @@ public class TrongLuongController {
 
     }
 
-    // thêm trong lượng
+    /**
+     * @apiNote: api thêm trong lượng
+     */
     @PostMapping("create-trong-luong")
     public ResponseEntity<ResponseData<TrongLuongResponse>> createTrongLuong(@RequestBody @Valid TrongLuongRequest trongLuongRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm trọng lượng thành công", trongLuongService.create(trongLuongRequest)));
     }
 
-    // update trọng lượng
+    /**
+     * @apiNote: api update trọng lượng
+     */
     @PutMapping("update-trong-luong/{id}")
     public ResponseEntity<ResponseData<TrongLuongResponse>> updateTrongLuong(
             @PathVariable Long id,
@@ -73,7 +79,9 @@ public class TrongLuongController {
         );
     }
 
-    // get by id trọng lượng
+    /**
+     * @apiNote: api get by id trọng lượng
+     */
     @GetMapping("{id}")
     public ResponseEntity<ResponseData<?>> getTrongLuongById(
             @PathVariable Long id
@@ -84,7 +92,9 @@ public class TrongLuongController {
                 trongLuongService.getById(id)));
     }
 
-    // delete trong lượng
+    /**
+     * @apiNote: api delete trọng lượng
+     */
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseData<String>> deleteTrongLuong(@PathVariable Long id){
         try {
@@ -95,7 +105,9 @@ public class TrongLuongController {
         }
     }
 
-    // Hàm phân trang
+    /**
+     * @apiNote: api phân trang & search trọng lượng
+     */
     @PostMapping("search")
     public ResponseEntity<ResponseData<Page<TrongLuongResponse>>> getPageTrongLuong(
             @PageableDefault Pageable pageable,

@@ -40,7 +40,9 @@ public class KichCoController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công kích cỡ!",kichCoService.getAll()));
     }
 
-    // phân trang kích cỡ
+    /**
+     * @apiNote: api phân trang kích cỡ
+     */
     @GetMapping("get-page")
     public ResponseEntity<ResponseData<List<KichCoResponse>>> getPageKichCo(
             @RequestParam(value = "currentPage", defaultValue = "0") Integer current
@@ -52,14 +54,18 @@ public class KichCoController {
 
     }
 
-    // thêm kích cỡ
+    /**
+     * @apiNote: api thêm kích cỡ
+     */
     @PostMapping("create-kich-co")
     public ResponseEntity<ResponseData<KichCoResponse>> createKichCo(@RequestBody KichCoRequest kichCoRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm kích cỡ thành công", kichCoService.create(kichCoRequest)));
     }
 
-    // update kích cỡ
+    /**
+     * @apiNote: api update kích cỡ
+     */
     @PutMapping("update-kich-co/{id}")
     public ResponseEntity<ResponseData<KichCoResponse>> updateKichCo(
             @PathVariable Long id,
@@ -73,7 +79,9 @@ public class KichCoController {
         );
     }
 
-    // get by id kích cỡ
+    /**
+     * @apiNote: api get by id kích cỡ
+     */
     @GetMapping("{id}")
     public ResponseEntity<ResponseData<?>> getKichCoById(
             @PathVariable Long id
@@ -84,7 +92,9 @@ public class KichCoController {
                 kichCoService.getById(id)));
     }
 
-    // delete kich co
+    /**
+     * @apiNote: api delete kích cỡ
+     */
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseData<String>> deleteKichCo(@PathVariable Long id){
         try {
@@ -95,7 +105,9 @@ public class KichCoController {
         }
     }
 
-    // Hàm phân trang
+    /**
+     * @apiNote: api tìm kiếm & phân trang
+     */
     @PostMapping("search")
     public ResponseEntity<ResponseData<Page<KichCoResponse>>> getPageKichCo(
             @PageableDefault Pageable pageable,

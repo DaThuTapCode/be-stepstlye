@@ -41,25 +41,18 @@ public class MauSacController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công màu sắc", mauSacService.getAll()));
     }
 
-    // phân trang màu sắc
-//    @PostMapping("get-page")
-//    public ResponseEntity<ResponseData<List<MauSacResponse>>> getPageMS(
-//            @PageableDefault Pageable pageable
-//    ){
-//        Page<MauSacResponse> page = mauSacService.searchPageMS(pageable);
-//        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
-//                "Lấy trang khách hàng thành công", page));
-//
-//    }
-
-    // thêm màu sắc
+    /**
+     * @apiNote: api thêm màu sắc
+     */
     @PostMapping("create-mau-sac")
     public ResponseEntity<ResponseData<MauSacResponse>> createMauSac(@RequestBody @Valid MauSacRequest mauSacRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm màu sắc thành công", mauSacService.create(mauSacRequest)));
     }
 
-    // update màu sắc
+    /**
+     * @apiNote: api update màu sắc
+     */
     @PutMapping("update-mau-sac/{id}")
     public ResponseEntity<ResponseData<MauSacResponse>> updateMauSac(
             @PathVariable Long id,
@@ -73,7 +66,9 @@ public class MauSacController {
         );
     }
 
-    // xóa màu sắc
+    /**
+     * @apiNote: api delete màu sắc
+     */
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseData<String>> deleteMauSac(@PathVariable Long id){
         try {
@@ -84,6 +79,9 @@ public class MauSacController {
         }
     }
 
+    /**
+     * @apiNote: api get by id màu sắc
+     */
     @GetMapping("{id}")
     public ResponseEntity<ResponseData<?>> getMauSacById(
             @PathVariable Long id
@@ -94,7 +92,9 @@ public class MauSacController {
                 mauSacService.getById(id)));
     }
 
-    // Hàm phân trang
+    /**
+     * @apiNote: api phân trang & search màu sắc
+     */
     @PostMapping("search")
     public ResponseEntity<ResponseData<Page<MauSacResponse>>> getPageMauSac(
             @PageableDefault Pageable pageable,

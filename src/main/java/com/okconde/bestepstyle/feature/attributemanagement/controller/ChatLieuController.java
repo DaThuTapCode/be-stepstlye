@@ -7,6 +7,7 @@ import com.okconde.bestepstyle.core.dto.chatlieudegiay.request.ChatLieuDeGiaySea
 import com.okconde.bestepstyle.core.dto.chatlieudegiay.response.ChatLieuDeGiayResponse;
 import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
 import com.okconde.bestepstyle.core.dto.mausac.request.MauSacRequest;
+import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.attributemanagement.service.ChatLieuService;
 import jakarta.persistence.EntityNotFoundException;
@@ -41,7 +42,9 @@ public class ChatLieuController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy thành công chất liệu", chatLieuService.getAll()));
     }
 
-    // phân trang chất liệu
+    /**
+     * @apiNote: api phân trang chất liệu
+     */
     @GetMapping("get-page")
     public ResponseEntity<ResponseData<List<ChatLieuResponse>>> getPageChatLieu(
             @RequestParam(value = "currentPage", defaultValue = "0") Integer current
@@ -52,14 +55,18 @@ public class ChatLieuController {
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(), "Lấy trang thành công",list));
     }
 
-    // thêm chất liệu
+    /**
+     * @apiNote: api thêm chất liệu
+     */
     @PostMapping("create-chat-lieu")
     public ResponseEntity<ResponseData<ChatLieuResponse>> createChatLieu(@RequestBody @Valid ChatLieuRequest chatLieuRequest){
         return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
                 "Thêm chất liệu thành công", chatLieuService.create(chatLieuRequest)));
     }
 
-    // update chất liệu
+    /**
+     * @apiNote: api update chất liệu
+     */
     @PutMapping("update-chat-lieu/{id}")
     public ResponseEntity<ResponseData<ChatLieuResponse>> updateChatLieu(
             @PathVariable Long id,
@@ -73,7 +80,9 @@ public class ChatLieuController {
         );
     }
 
-    // delete chất liệu
+    /**
+     * @apiNote: api delete chất liệu
+     */
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseData<String>> deleteChatLieu (@PathVariable Long id){
         try {
@@ -84,7 +93,9 @@ public class ChatLieuController {
         }
     }
 
-    // get by id chất liệu
+    /**
+     * @apiNote: api get by id chất liệu
+     */
     @GetMapping("{id}")
     public ResponseEntity<ResponseData<?>> getChatLieuById(
             @PathVariable Long id
@@ -95,7 +106,9 @@ public class ChatLieuController {
                 chatLieuService.getById(id)));
     }
 
-    // Hàm phân trang
+    /**
+     * @apiNote: api Hàm phân trang
+     */
     @PostMapping("search")
     public ResponseEntity<ResponseData<Page<ChatLieuResponse>>> getPageChatLieu(
             @PageableDefault Pageable pageable,
