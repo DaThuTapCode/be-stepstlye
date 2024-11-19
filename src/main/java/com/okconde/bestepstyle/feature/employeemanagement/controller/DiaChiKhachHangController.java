@@ -69,7 +69,19 @@ public class DiaChiKhachHangController {
 
     }
 
-    // Hàm thêm 1 dữ liệu mới
+    // thêm 1 dữ liệu mới
+    @PostMapping("create-dckh-by-idKH/{idKH}")
+    public ResponseEntity<ResponseData<DiaChiKhachHangResponse>> createDiaChiKHByIdKH(
+            @PathVariable Long idKH,
+            @RequestBody @Valid DiaChiKhachHangRequest request
+    ){
+
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Thêm địa chỉ khách hàng thành công", diaChiKhachHangService.createDCKHByIdKH(idKH ,request)));
+
+    }
+
+    // thêm 1 dữ liệu mới
     @PostMapping("create")
     public ResponseEntity<ResponseData<DiaChiKhachHangResponse>> createDiaChiKH(
             @RequestBody @Valid DiaChiKhachHangRequest request
