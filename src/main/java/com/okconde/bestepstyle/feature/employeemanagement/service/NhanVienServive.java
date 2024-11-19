@@ -5,6 +5,7 @@ import com.okconde.bestepstyle.core.dto.nhanvien.request.NhanVienSearchRequest;
 import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienResponse;
 import com.okconde.bestepstyle.core.entity.ChucVu;
 import com.okconde.bestepstyle.core.entity.NhanVien;
+import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.CustomerCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.nhanvien.request.NhanVienRequestMapper;
@@ -83,7 +84,7 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
 
         // Tìm kiếm nhân viên dựa trên id, nếu không tồn tại, ném ngoại lệ
         NhanVien existingNhanVien = nhanVienRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Nhân viên không tồn tại"));
 
         // Cập nhật các trường từ request
         if (nhanVienRequest.getHoTen() != null) {
@@ -138,7 +139,7 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     public void delete(Long aLong) {
 
         NhanVien nv = nhanVienRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Nhân viên không tồn tại"));
         nv.setTrangThai(StatusEnum.INACTIVE);
         nhanVienRepository.save(nv);
 
@@ -148,7 +149,7 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     public NhanVienResponse getById(Long aLong) {
 
         NhanVien nv = nhanVienRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Nhân viên không tồn tại"));
         return nhanVienResponseMapper.toDTO(nv);
 
     }

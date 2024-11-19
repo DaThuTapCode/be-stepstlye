@@ -3,11 +3,15 @@ package com.okconde.bestepstyle.feature.employeemanagement.service;
 import com.okconde.bestepstyle.core.dto.diachikhachhang.request.DiaChiKhachHangRequest;
 import com.okconde.bestepstyle.core.dto.diachikhachhang.response.DiaChiKhachHangResponse;
 import com.okconde.bestepstyle.core.entity.DiaChiKhachHang;
+import com.okconde.bestepstyle.core.entity.KhachHang;
+import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.diachikhachhang.request.DiaChiKhachHangRequestMapper;
 import com.okconde.bestepstyle.core.mapper.diachikhachhang.response.DiaChiKhachHangResponseMapper;
 import com.okconde.bestepstyle.core.repository.DiaChiKhachHangRepository;
+import com.okconde.bestepstyle.core.repository.KhachHangRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,14 +30,17 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
 
     private final DiaChiKhachHangRepository diaChiKhachHangRepository;
 
+    private final KhachHangRepository khachHangRepository;
+
     private final DiaChiKhachHangResponseMapper diaChiKhachHangResponseMapper;
 
     private final DiaChiKhachHangRequestMapper diaChiKhachHangRequestMapper;
 
-    public DiaChiKhachHangService(DiaChiKhachHangRepository diaChiKhachHangRepository,
+    public DiaChiKhachHangService(DiaChiKhachHangRepository diaChiKhachHangRepository, KhachHangRepository khachHangRepository,
                                   DiaChiKhachHangResponseMapper diaChiKhachHangResponseMapper,
                                   DiaChiKhachHangRequestMapper diaChiKhachHangRequestMapper) {
         this.diaChiKhachHangRepository = diaChiKhachHangRepository;
+        this.khachHangRepository = khachHangRepository;
         this.diaChiKhachHangResponseMapper = diaChiKhachHangResponseMapper;
         this.diaChiKhachHangRequestMapper = diaChiKhachHangRequestMapper;
     }
@@ -68,7 +75,7 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
     public DiaChiKhachHangResponse update(Long aLong, DiaChiKhachHangRequest diaChiKhachHangRequest) {
         // Tìm địa chỉ khách hàng theo id, nếu không tồn tại thì ném ngoại lệ
         DiaChiKhachHang existingDCKH = diaChiKhachHangRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Địa chỉ khách hàng không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Địa chỉ khách hàng không tồn tại"));
 
         // Cập nhật các trường từ request vào đối tượng địa chỉ khách hàng đã tìm thấy
         if (diaChiKhachHangRequest.getKhachHang() != null) {
@@ -88,7 +95,7 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
     public void delete(Long aLong) {
 
         DiaChiKhachHang dckh = diaChiKhachHangRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Địa chi khách hàng không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Địa chi khách hàng không tồn tại"));
         dckh.setTrangThai(StatusEnum.INACTIVE);
         diaChiKhachHangRepository.save(dckh);
 
@@ -98,8 +105,21 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
     public DiaChiKhachHangResponse getById(Long aLong) {
 
         DiaChiKhachHang dckh = diaChiKhachHangRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Địa chi khách hàng không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Địa chi khách hàng không tồn tại"));
         return diaChiKhachHangResponseMapper.toDTO(dckh);
 
+    }
+
+    @Transactional
+    public DiaChiKhachHangResponse createDCKHByIdKH(Long idKH, DiaChiKhachHangRequest diaChiKhachHangRequest){
+
+        KhachHang kh = khachHangRepository.timKHTheoIDVaTrangThai(idKH, StatusEnum.ACTIVE)
+                .orElseThrow(() -> new BusinessException("Khách hàng không tồn tại"));
+        DiaChiKhachHang dckh = diaChiKhachHangRequestMapper.toEntity(diaChiKhachHangRequest);
+        dckh.setMaDiaChiKhachHang(GenerateCodeRandomUtil.generateProductCode("DCKH", 6));
+        dckh.setKhachHang(kh);
+        List<DiaChiKhachHang> diaChiKhachHangList = kh.getDiaChiKhachHangs();
+        diaChiKhachHangList.add(diaChiKhachHangRepository.save(dckh));
+        return null;
     }
 }

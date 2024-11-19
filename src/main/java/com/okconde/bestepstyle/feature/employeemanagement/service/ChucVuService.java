@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.feature.employeemanagement.service;
 import com.okconde.bestepstyle.core.dto.chucvu.request.ChucVuRequest;
 import com.okconde.bestepstyle.core.dto.chucvu.response.ChucVuResponse;
 import com.okconde.bestepstyle.core.entity.ChucVu;
+import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.chucvu.request.ChucVuRequestMapper;
 import com.okconde.bestepstyle.core.mapper.chucvu.response.ChucVuResponseMapper;
@@ -75,7 +76,7 @@ public class ChucVuService implements IBaseService<ChucVu, Long, ChucVuRequest, 
     public ChucVuResponse getById(Long aLong) {
 
         ChucVu cv = chucVuRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Chức vụ không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Chức vụ không tồn tại"));
         return chucVuResponseMapper.toDTO(cv);
 
     }
