@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.dto.hoadon.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,6 +38,9 @@ public class HoaDonSearchRequest {
 
     @Enumerated(EnumType.STRING)
     private StatusHoaDon trangThai;
+
+    @Enumerated(EnumType.STRING)
+    private LoaiHoaDon loaiHoaDon;
 
 
 }

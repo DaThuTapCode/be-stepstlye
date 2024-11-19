@@ -106,7 +106,7 @@ public class CounterSalesService implements ICounterSalesService {
     /**Hàm lấy danh sách hóa đơn chờ*/
     @Override
     public List<HoaDonResponse> geListPendingInvoiceCounterSales() {
-        List<HoaDon> listPendingInvoice = hoaDonRepository.getHoaDonByStatus(StatusHoaDon.PENDING, "COUNTERSALES");
+        List<HoaDon> listPendingInvoice = hoaDonRepository.getHoaDonByStatus(StatusHoaDon.PENDING, LoaiHoaDon.COUNTERSALES);
         return hoaDonResponseMapper.listToDTO(listPendingInvoice);
     }
 
@@ -119,7 +119,7 @@ public class CounterSalesService implements ICounterSalesService {
     @Transactional
     public HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest) {
         //Kiểm tra số lượng hóa đơn chờ thanh toán tại quầy
-        List<HoaDon> listPendingInvoice = hoaDonRepository.getHoaDonByStatus(StatusHoaDon.PENDING, "COUNTERSALES");
+        List<HoaDon> listPendingInvoice = hoaDonRepository.getHoaDonByStatus(StatusHoaDon.PENDING, LoaiHoaDon.COUNTERSALES);
         if(listPendingInvoice.size() >= 5) {
             throw new BusinessException("Số lượng hóa đơn chờ thanh toán được tạo dưới 5");
         }
@@ -130,7 +130,7 @@ public class CounterSalesService implements ICounterSalesService {
         hoaDonNew.setNhanVien(NhanVien.builder().idNhanVien(1l).build());
         hoaDonNew.setKhachHang(KhachHang.builder().idKhachHang(1l).build());
         hoaDonNew.setTrangThai(StatusHoaDon.PENDING);
-        hoaDonNew.setLoaiHoaDon("COUNTERSALES");
+        hoaDonNew.setLoaiHoaDon(LoaiHoaDon.COUNTERSALES);
         hoaDonNew.setTongTien(BigDecimal.ZERO);
         hoaDonNew.setTongTienSauGiam(BigDecimal.ZERO);
         HoaDon hoaDonSaved = hoaDonRepository.save(hoaDonNew);
@@ -307,20 +307,14 @@ public class CounterSalesService implements ICounterSalesService {
 
     @Override
     @Transactional
-    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon) {
-        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon, StatusPTTT phuongThucThanhToan) {
+        HoaDon hoaDon = hoaDonRepository.findByIdHoaDonAndTrangThai(idHoaDon, StatusHoaDon.PENDING)
                 .orElseThrow(() -> new EntityNotFoundException("Hóa Đơn không tồn tại."));
 
         //Kiểm tra điều kiệm thêm sản phẩm trước khi ấn thanh toán
         if(hoaDon.getHoaDonChiTiet().isEmpty()) {
             throw new BusinessException("Thêm sản phẩm vào hóa đơn trước khi thanh toán.");
         }
-
-
-        //Kểm tra điều kiện thanh toán
-//        if (hoaDon.getThanhToan() == null || hoaDon.getThanhToan().getPhuongThucThanhToan().trim().isEmpty()) {
-//            throw new BusinessException("Hãy chọn phương thức thanh toán.");
-//        }
 
 
         //Kiểm tra điều kiện phiếu giảm giá trước khi thanh toan
@@ -336,9 +330,8 @@ public class CounterSalesService implements ICounterSalesService {
             throw new BusinessException("Hóa đơn này đã được thanh toán, không thể thanh toán lại.");
         }
 
-
-
-
+        Optional<ThanhToan> thanhToan = thanhToanRepository.findThanhToanByPhuongThucThanhToan(phuongThucThanhToan);
+        hoaDon.setThanhToan(thanhToan.get());
         hoaDon.setTrangThai(StatusHoaDon.PAID);
         hoaDonRepository.save(hoaDon);
 

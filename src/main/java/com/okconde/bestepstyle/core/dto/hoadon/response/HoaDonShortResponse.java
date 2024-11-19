@@ -9,6 +9,7 @@ import com.okconde.bestepstyle.core.entity.KhachHang;
 import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
 import com.okconde.bestepstyle.core.entity.ThanhToan;
+import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -49,7 +50,8 @@ public class HoaDonShortResponse {
 
     private LocalDateTime ngayNhanHang;
 
-    private String loaiHoaDon;
+    @Enumerated(EnumType.STRING)
+    private LoaiHoaDon loaiHoaDon;
 
     private String tenKhachHang;
 

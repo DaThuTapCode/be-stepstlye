@@ -34,6 +34,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
                             (:soDienThoai is null or hd.khachHang.soDienThoai = :soDienThoai)
                             and
                             (:trangThai is null or hd.trangThai = :trangThai)
+                            and
+                            (:loaiHoaDon is null or hd.loaiHoaDon = :loaiHoaDon)
             """)
     Page<HoaDon> searchPageHoaDon(Pageable pageable,
                                   @Param(value = "maHoaDon") String maHoaDon,
@@ -41,8 +43,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
                                   @Param(value = "ngayTaoEnd") Date ngayTaoEnd,
                                   @Param(value = "tenKhachHang") String tenKhachHang,
                                   @Param(value = "soDienThoai") String soDienThoai,
-                                  StatusHoaDon trangThai
-    );
+                                  StatusHoaDon trangThai,
+                                  LoaiHoaDon loaiHoaDon);
 
     /**
      * Query select lấy hóa đơn theo trạng thái và loại hóa đơn
@@ -52,7 +54,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     @Query("""
         SELECT hd FROM HoaDon hd WHERE hd.trangThai = :trangThai AND hd.loaiHoaDon = :loaiHoaDon
     """)
-    List<HoaDon> getHoaDonByStatus(StatusHoaDon trangThai, String loaiHoaDon);
+    List<HoaDon> getHoaDonByStatus(StatusHoaDon trangThai, LoaiHoaDon loaiHoaDon);
 
 
 

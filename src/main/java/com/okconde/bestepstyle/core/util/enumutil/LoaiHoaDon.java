@@ -7,5 +7,5 @@ package com.okconde.bestepstyle.core.util.enumutil;
  */
 public enum LoaiHoaDon {
     COUNTERSALES, // hóa đơn tại quầy
-    ONLINE        // hóa đơn online
+    ONLINESALES       // hóa đơn online
 }

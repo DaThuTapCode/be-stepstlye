@@ -11,6 +11,5 @@ public enum StatusHoaDon {
     PENDINGPROCESSING, // Trạng thái chờ xử lý
     SHIPPING,       // Đang vận chuyên
     PAID,           // Đã thanh toán
-    CANCELLED,      // Đã hủy
-    REFUNDED       // Đã hoàn tiền     // Quá hạn
+    CANCELLED     // Đã hủy
 }

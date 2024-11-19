@@ -5,6 +5,7 @@ import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangShortRespons
 import com.okconde.bestepstyle.core.dto.nhanvien.response.NhanVienShortResponse;
 import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.dto.thanhtoan.response.ThanhToanResponse;
+import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -50,10 +51,8 @@ public class HoaDonRequest {
     @DecimalMin(value = "0.0", inclusive = false, message = "Tong tiền sau giảm phải lớn hơn 0!")
     private BigDecimal tongTienSauGiam;
 
-    @NotBlank(message = "Loại Hóa Đơn không được để trống!")
-    @Length(min = 5, message = "Loại Hóa Đơn phải lớn hơn 5 ký tự!")
-    @Length(max = 20, message = "Loại Hóa Đơn không được vượt quá 20 ký tự!")
-    private String loaiHoaDon;
+    @Enumerated(EnumType.STRING)
+    private LoaiHoaDon loaiHoaDon;
 
     private String tenKhachHang;
 

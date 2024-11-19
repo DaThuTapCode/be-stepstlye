@@ -2,6 +2,7 @@ package com.okconde.bestepstyle.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,7 +45,8 @@ public class HoaDon {
 
     private LocalDateTime ngayNhanHang;
 
-    private String loaiHoaDon;
+    @Enumerated(EnumType.STRING)
+    private LoaiHoaDon loaiHoaDon;
 
     private String tenKhachHang;
 

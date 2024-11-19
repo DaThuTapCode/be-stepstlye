@@ -10,6 +10,7 @@ import com.okconde.bestepstyle.core.entity.KhachHang;
 import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.entity.ThanhToan;
 import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
+import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDonChiTiet;
 import jakarta.persistence.EnumType;
@@ -57,8 +58,8 @@ public class HoaDonResponse {
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime ngayNhanHang;
 
-
-    private String loaiHoaDon;
+    @Enumerated(EnumType.STRING)
+    private LoaiHoaDon loaiHoaDon;
 
 
     private String tenKhachHang;
