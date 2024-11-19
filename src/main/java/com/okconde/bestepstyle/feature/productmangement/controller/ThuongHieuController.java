@@ -1,11 +1,17 @@
 package com.okconde.bestepstyle.feature.productmangement.controller;
 
+import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.dto.thuonghieu.request.ThuongHieuRequest;
+import com.okconde.bestepstyle.core.dto.thuonghieu.request.ThuongHieuSearchRequest;
 import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.productmangement.service.ThuongHieuService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -90,5 +96,19 @@ public class ThuongHieuController {
         );
     }
 
+    /**
+     * @apiNote: api phân trang & search thương hiệu
+     */
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<ThuongHieuResponse>>> getPageThuongHieu(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) ThuongHieuSearchRequest thuongHieuSearchRequest
 
+    ){
+
+        Page<ThuongHieuResponse> page = thuongHieuService.searchPageThuongHieu(pageable, thuongHieuSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang thương hiệu thành công", page));
+
+    }
 }
