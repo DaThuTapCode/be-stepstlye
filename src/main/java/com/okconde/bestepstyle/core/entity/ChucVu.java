@@ -46,4 +46,8 @@ public class ChucVu {
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;
 
+    public static final String ADMIN = "ADMIN";
+    public static final String EMPLOYEE = "EMPLOYEE";
+    public static final String CUSTOMER = "CUSTOMER";
+
 }

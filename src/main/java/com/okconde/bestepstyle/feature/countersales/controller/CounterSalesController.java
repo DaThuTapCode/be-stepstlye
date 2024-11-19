@@ -49,6 +49,10 @@ public class CounterSalesController {
         this.counterSalesService = counterSalesService;
     }
 
+    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handleOptions() {
+        return ResponseEntity.ok().build();
+    }
     /**
      * @apiNote API lấy danh sách hóa đơn chờ thanh toán của loại hóa đơn bán tại quầy
      * GET <a href="http://localhost:8080/api/bhtq/list-pending-invoice">...</a>
