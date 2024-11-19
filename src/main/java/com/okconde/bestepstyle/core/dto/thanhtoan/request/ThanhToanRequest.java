@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.dto.thanhtoan.request;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPTTT;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
@@ -29,7 +30,8 @@ public class ThanhToanRequest {
     private String maThanhToan;
 
     @NotBlank(message = "PTTT không được để trống!")
-    private String phuongThucThanhToan;
+    @Enumerated(EnumType.STRING)
+    private StatusPTTT phuongThucThanhToan;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;

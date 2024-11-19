@@ -16,6 +16,7 @@ import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietReque
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.response.HoaDonChiTietResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 
+import com.okconde.bestepstyle.core.util.enumutil.StatusPTTT;
 import com.okconde.bestepstyle.feature.countersales.service.ICounterSalesService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -265,11 +266,12 @@ public class CounterSalesController {
      * @param idHoaDon ID của hóa đơn
      * @return Đối tượng ResponseData chứa thông tin hóa đơn
      */
-    @PostMapping("invoice/pay/{idHoaDon}")
+    @PostMapping("invoice/pay/{idHoaDon}/{phuongThucThanhToan}")
     public ResponseEntity<ResponseData<HoaDonResponse>> payInvoice(
-            @PathVariable Long idHoaDon
+            @PathVariable Long idHoaDon,
+            @PathVariable StatusPTTT phuongThucThanhToan
     ){
-        HoaDonResponse paidInvoice = counterSalesService.markInvoiceAsPaid(idHoaDon);
+        HoaDonResponse paidInvoice = counterSalesService.markInvoiceAsPaid(idHoaDon, phuongThucThanhToan);
 
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),

@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.request.KhachHangSearchRequest;
 import com.okconde.bestepstyle.core.dto.khachhang.response.KhachHangResponse;
 import com.okconde.bestepstyle.core.entity.KhachHang;
+import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.CustomerCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.khachhang.request.KhachHangRequestMapper;
@@ -103,7 +104,7 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     public KhachHangResponse update(Long aLong, KhachHangRequest khachHangRequest) {
         // Tìm khách hàng theo ID, nếu không tồn tại thì ném ra ngoại lệ
         KhachHang existingKH = khachHangRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Khách hàng không tồn tại!"));
+                .orElseThrow(() -> new BusinessException("Khách hàng không tồn tại!"));
 
 //        existingKH.setTrangThai(StatusEnum.ACTIVE);
 
@@ -154,7 +155,7 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     public void delete(Long aLong) {
 
         KhachHang kh = khachHangRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Khách hàng không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Khách hàng không tồn tại"));
         kh.setTrangThai(StatusEnum.INACTIVE);
         khachHangRepository.save(kh);
         
@@ -164,7 +165,7 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     public KhachHangResponse getById(Long aLong) {
 
         KhachHang kh = khachHangRepository.findById(aLong)
-                .orElseThrow(() -> new ResourceNotFoundException("Khách hàng không tồn tại"));
+                .orElseThrow(() -> new BusinessException("Khách hàng không tồn tại"));
         return khachHangResponseMapper.toDTO(kh);
 
     }

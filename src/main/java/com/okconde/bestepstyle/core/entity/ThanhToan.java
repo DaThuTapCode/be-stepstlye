@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.entity;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPTTT;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,7 +23,9 @@ public class ThanhToan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idThanhToan;
     private String maThanhToan;
-    private String phuongThucThanhToan;
+
+    @Enumerated(EnumType.STRING)
+    private StatusPTTT phuongThucThanhToan;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;

@@ -11,6 +11,7 @@ import com.okconde.bestepstyle.core.dto.phieugiamgia.request.PhieuGiamGiaSearchR
 import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPTTT;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -90,7 +91,7 @@ public interface ICounterSalesService {
     /**
      * Tạo hàm chuyển trạng thái hóa đơn
      * @implNote TuanInfinity*/
-    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon);
+    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon, StatusPTTT phuongThucThanhToan);
 
     /**
      *Tạo hàm thanh toán chuyeern khoan
@@ -112,4 +113,5 @@ public interface ICounterSalesService {
      * @implNote TuanIF
      * */
     public PhieuGiamGiaResponse cancelCouponsCounterSales(Long idPhieuGiamGia);
+
 }

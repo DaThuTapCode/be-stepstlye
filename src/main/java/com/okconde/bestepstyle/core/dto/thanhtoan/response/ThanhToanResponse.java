@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.dto.thanhtoan.response;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPTTT;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
@@ -23,7 +24,8 @@ public class ThanhToanResponse {
 
     private String maThanhToan;
 
-    private String phuongThucThanhToan;
+    @Enumerated(EnumType.STRING)
+    private StatusPTTT phuongThucThanhToan;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum trangThai;

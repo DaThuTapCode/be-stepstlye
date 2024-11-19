@@ -1,11 +1,14 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.ThanhToan;
+import com.okconde.bestepstyle.core.util.enumutil.StatusPTTT;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
 
 /**
  * Created by TuanIf on 10/16/2024 16:26:39
@@ -19,6 +22,13 @@ public interface ThanhToanRepository extends JpaRepository<ThanhToan, Long> {
 """)
     Page<ThanhToan> searchPageThanhToan(Pageable pageable,
                                   @Param(value = "maThanhToan") String maThanhToan,
-                                  @Param(value = "phuongThucThanhToan") String phuongThucThanhToan
+                                  StatusPTTT phuongThucThanhToan
     );
+
+    @Query("""
+    select tt from  ThanhToan  tt where tt.phuongThucThanhToan = :phuongThucThanhToan
+""")
+    Optional<ThanhToan> findThanhToanByPhuongThucThanhToan (StatusPTTT phuongThucThanhToan);
+
+
 }

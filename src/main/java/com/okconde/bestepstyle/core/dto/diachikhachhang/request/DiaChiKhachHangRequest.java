@@ -23,9 +23,6 @@ public class DiaChiKhachHangRequest {
 
     private Long idDiaChiKhachHang;
 
-    @NotBlank(message = "Mã địa chỉ khách hàng không được để trống!")
-    @Length(min = 7, message = "Mã địa chỉ khách hàng không được nhỏ hơn 7 ký tự!")
-    @Length(max = 10, message = "Mã địa chỉ khách hàng không được lớn hơn 10 ký tự!")
     private String maDiaChiKhachHang;
 
     private String idTinh;
