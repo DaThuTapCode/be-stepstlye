@@ -1,10 +1,16 @@
 package com.okconde.bestepstyle.feature.productmangement.controller;
 
 import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucRequest;
+import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucSearchRequest;
 import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
+import com.okconde.bestepstyle.core.dto.mausac.reponse.MauSacResponse;
+import com.okconde.bestepstyle.core.dto.mausac.request.MauSacSearchRequest;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.productmangement.service.DanhMucService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -85,4 +91,19 @@ public class DanhMucController {
         );
     }
 
+    /**
+     * @apiNote: api phân trang & search danh mục
+     */
+    @PostMapping("search")
+    public ResponseEntity<ResponseData<Page<DanhMucResponse>>> getPageDanhMuc(
+            @PageableDefault Pageable pageable,
+            @RequestBody(required = false) DanhMucSearchRequest danhMucSearchRequest
+
+    ){
+
+        Page<DanhMucResponse> page = danhMucService.searchPageDanhMuc(pageable, danhMucSearchRequest);
+        return ResponseEntity.ok(new ResponseData(HttpStatus.OK.value(),
+                "Lấy trang danh mục thành công", page));
+
+    }
 }

@@ -1,7 +1,11 @@
 package com.okconde.bestepstyle.feature.productmangement.service;
 
+import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucSearchRequest;
+import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
 import com.okconde.bestepstyle.core.dto.thuonghieu.request.ThuongHieuRequest;
+import com.okconde.bestepstyle.core.dto.thuonghieu.request.ThuongHieuSearchRequest;
 import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
+import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.thuonghieu.request.ThuongHieuRequestMapper;
@@ -9,6 +13,7 @@ import com.okconde.bestepstyle.core.mapper.thuonghieu.response.ThuongHieuRespons
 import com.okconde.bestepstyle.core.repository.ThuongHieuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +72,7 @@ public class ThuongHieuService implements IBaseService<ThuongHieu, Long, ThuongH
 
         thuongHieuExisting.setTenThuongHieu(thuongHieuToUpdate.getTenThuongHieu());
         thuongHieuExisting.setXuatXu(thuongHieuToUpdate.getXuatXu());
-        thuongHieuExisting.setMoTa(thuongHieuToUpdate.getXuatXu());
+        thuongHieuExisting.setMoTa(thuongHieuToUpdate.getMoTa());
 
         ThuongHieu thuongHieuUpdated = thuongHieuRepository.save(thuongHieuExisting);
         return thuongHieuResponseMapper.toDTO(thuongHieuUpdated);
@@ -83,5 +88,13 @@ public class ThuongHieuService implements IBaseService<ThuongHieu, Long, ThuongH
         ThuongHieu thuongHieu = thuongHieuRepository.findById(aLong)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thương hiệu với id: " + aLong));
         return thuongHieuResponseMapper.toDTO(thuongHieu);
+    }
+
+    public Page<ThuongHieuResponse> searchPageThuongHieu(Pageable pageable, ThuongHieuSearchRequest thuongHieuSearchRequest){
+        Page<ThuongHieu> thuongHieus = thuongHieuRepository.searchPageThuongHieu(pageable,
+                thuongHieuSearchRequest.getMaThuongHieu(),
+                thuongHieuSearchRequest.getTenThuongHieu()
+        );
+        return thuongHieus.map(thuongHieuResponseMapper::toDTO);
     }
 }

@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.productmangement.service;
 
 import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucRequest;
+import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucSearchRequest;
 import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -9,6 +10,7 @@ import com.okconde.bestepstyle.core.mapper.danhmuc.response.DanhMucResponseMappe
 import com.okconde.bestepstyle.core.repository.DanhMucRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,5 +88,13 @@ public class DanhMucService implements IBaseService <DanhMuc, Long, DanhMucReque
         DanhMuc danhMuc = danhMucRepository.findById(aLong)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục với id: " +aLong));
         return danhMucResponseMapper.toDTO(danhMuc);
+    }
+
+    public Page<DanhMucResponse> searchPageDanhMuc(Pageable pageable, DanhMucSearchRequest danhMucSearchRequest){
+        Page<DanhMuc> danhMucs = danhMucRepository.searchPageDanhMuc(pageable,
+                danhMucSearchRequest.getMaDanhMuc(),
+                danhMucSearchRequest.getTenDanhMuc()
+        );
+        return danhMucs.map(danhMucResponseMapper::toDTO);
     }
 }
