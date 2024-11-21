@@ -62,8 +62,8 @@ public class ChatLieuService implements IBaseService<ChatLieu, Long, ChatLieuReq
     @Transactional
     public ChatLieuResponse create(ChatLieuRequest chatLieuRequest) {
         chatLieuRequest.setMaChatLieu(GenerateCodeRandomUtil.generateProductCode("CL", 8));
-        if (chatLieuRepository.getChatLieuByMaChatLieu(chatLieuRequest.getMaChatLieu()).isPresent()){
-            throw new AttributeCodeDuplicateException("Mã chất liệu " + chatLieuRequest.getMaChatLieu() + " đã tồn tại");
+        if (chatLieuRepository.getChatLieuBytenChatLieu(chatLieuRequest.getTenChatLieu()).isPresent()){
+            throw new AttributeCodeDuplicateException("Tên chất liệu " + chatLieuRequest.getTenChatLieu() + " đã tồn tại");
         }
         ChatLieu chatLieu = chatLieuRequestMapper.toEntity(chatLieuRequest);
         chatLieu.setTrangThai(StatusEnum.ACTIVE);

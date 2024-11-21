@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 /**
  * Created by Trong Phu on 23/09/2024 22:01
  *
@@ -23,4 +25,9 @@ public interface ThuongHieuRepository extends JpaRepository<ThuongHieu, Long> {
                                       @Param("maThuongHieu") String maThuongHieu,
                                       @Param("tenThuongHieu") String tenThuongHieu
     );
+    @Query("""
+        select th from ThuongHieu th where th.tenThuongHieu = :tenThuongHieu
+    """)
+    Optional<ThuongHieu> getThuongHieuByTenThuongHieu(String tenThuongHieu);
+
 }

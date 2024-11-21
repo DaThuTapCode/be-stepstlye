@@ -29,4 +29,9 @@ public interface TrongLuongRepository extends JpaRepository<TrongLuong, Long> {
         select tl from TrongLuong tl where tl.maTrongLuong = :maTrongLuong
     """)
     Optional<TrongLuong> getTrongLuongByMaTrongLuong(String maTrongLuong);
+
+    @Query("""
+        select tl from TrongLuong tl where tl.giaTri = :giaTri
+    """)
+    Optional<TrongLuong> getTrongLuongByGiaTri(String giaTri);
 }

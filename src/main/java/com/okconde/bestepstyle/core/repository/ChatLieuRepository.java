@@ -30,4 +30,14 @@ public interface ChatLieuRepository extends JpaRepository<ChatLieu, Long> {
         select cl from ChatLieu cl where cl.maChatLieu = :maChatLieu
     """)
     Optional<ChatLieu> getChatLieuByMaChatLieu(String maChatLieu);
+
+    @Query("""
+        select cl from ChatLieu cl where cl.tenChatLieu = :tenChatLieu
+    """)
+    Optional<ChatLieu> getChatLieuBytenChatLieu(String tenChatLieu);
+
+    @Query("""
+        select cl from ChatLieu cl where cl.doBen = :doBen
+    """)
+    Optional<ChatLieu> getChatLieuBydoBen(String doBen);
 }

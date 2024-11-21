@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 /**
  * Created by Trong Phu on 23/09/2024 22:00
  *
@@ -23,4 +25,9 @@ public interface DanhMucRepository extends JpaRepository<DanhMuc, Long> {
                                       @Param("maDanhMuc") String maDanhMuc,
                                       @Param("tenDanhMuc") String tenDanhMuc
     );
+
+    @Query("""
+        select dm from DanhMuc dm where dm.tenDanhMuc = :tenDanhMuc
+    """)
+    Optional<DanhMuc> getDanhMucByTenDanhMuc(String tenDanhMuc);
 }

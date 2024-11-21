@@ -61,9 +61,12 @@ public class TrongLuongService implements IBaseService<TrongLuong, Long, TrongLu
     @Override
     @Transactional
     public TrongLuongResponse create(TrongLuongRequest trongLuongRequest) {
-        //trongLuongRequest.setMaTrongLuong(GenerateCodeRandomUtil.generateProductCode("TL", 8));
+        trongLuongRequest.setMaTrongLuong(GenerateCodeRandomUtil.generateProductCode("TL", 8));
         if (trongLuongRepository.getTrongLuongByMaTrongLuong(trongLuongRequest.getMaTrongLuong()).isPresent()){
             throw new AttributeCodeDuplicateException("Mã trọng lượng " + trongLuongRequest.getMaTrongLuong() + " đã tồn tại");
+        }
+        if (trongLuongRepository.getTrongLuongByGiaTri(trongLuongRequest.getGiaTri()).isPresent()){
+            throw new AttributeCodeDuplicateException("Giá trị trọng lượng " + trongLuongRequest.getGiaTri() + " đã tồn tại");
         }
         TrongLuong entity = trongLuongRequestMapper.toEntity(trongLuongRequest);
         entity.setTrangThai(StatusEnum.ACTIVE);
