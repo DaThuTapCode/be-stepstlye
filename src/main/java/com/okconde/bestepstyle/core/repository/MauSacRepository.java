@@ -35,4 +35,8 @@ public interface MauSacRepository extends JpaRepository<MauSac, Long> {
 """)
     boolean existsByTenMau(String tenMau);
 
+    @Query("""
+        select ms from MauSac ms where ms.giaTri = :giaTri
+    """)
+    Optional<MauSac> getMauSacByGiaTri(String giaTri);
 }

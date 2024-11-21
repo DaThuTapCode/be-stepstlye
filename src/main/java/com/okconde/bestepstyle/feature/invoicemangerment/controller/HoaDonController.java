@@ -137,26 +137,26 @@ public class HoaDonController {
                         list));
     }
 
-    @GetMapping("/generate-invoice/{idHoaDon}")
-    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long idHoaDon) {
-        try {
-            // Gọi service để tạo PDF
-            byte[] pdfBytes = hoaDonService.generateInvoice(idHoaDon);
-
-            // Tạo headers để hiển thị PDF trong trình duyệt
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "inline; filename=hoa_don_" + idHoaDon
-                    + ".pdf");
-
-            // Trả về PDF dưới dạng byte[]
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
-                    .body(pdfBytes);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
-    }
+//    @GetMapping("/generate-invoice/{idHoaDon}")
+//    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long idHoaDon) {
+//        try {
+//            // Gọi service để tạo PDF
+//            byte[] pdfBytes = hoaDonService.generateInvoice(idHoaDon);
+//
+//            // Tạo headers để hiển thị PDF trong trình duyệt
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add("Content-Disposition", "inline; filename=hoa_don_" + idHoaDon
+//                    + ".pdf");
+//
+//            // Trả về PDF dưới dạng byte[]
+//            return ResponseEntity.ok()
+//                    .headers(headers)
+//                    .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+//                    .body(pdfBytes);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(500).body(null);
+//        }
+//    }
 }

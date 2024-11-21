@@ -4,11 +4,13 @@ import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucRequest;
 import com.okconde.bestepstyle.core.dto.danhmuc.request.DanhMucSearchRequest;
 import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
+import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.danhmuc.request.DanhMucRequestMapper;
 import com.okconde.bestepstyle.core.mapper.danhmuc.response.DanhMucResponseMapper;
 import com.okconde.bestepstyle.core.repository.DanhMucRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +57,10 @@ public class DanhMucService implements IBaseService <DanhMuc, Long, DanhMucReque
     @Override
     @Transactional
     public DanhMucResponse create(DanhMucRequest danhMucRequest) {
+        danhMucRequest.setMaDanhMuc(GenerateCodeRandomUtil.generateProductCode("DM", 8));
+        if (danhMucRepository.getDanhMucByTenDanhMuc(danhMucRequest.getTenDanhMuc()).isPresent()){
+            throw new AttributeCodeDuplicateException("Tên danh mục " + danhMucRequest.getTenDanhMuc() + " đã tồn tại");
+        }
         DanhMuc danhMucNew = danhMucRequestMapper.toEntity(danhMucRequest);
         danhMucNew.setNgayTao(LocalDateTime.now());
         danhMucNew.setNgayChinhSua(LocalDateTime.now());

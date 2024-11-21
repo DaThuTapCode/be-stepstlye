@@ -29,4 +29,9 @@ public interface KichCoRepository extends JpaRepository<KichCo, Long> {
         select kc from KichCo kc where kc.maKichCo = :maKichCo
     """)
     Optional<KichCo> getKichCoByMaKichCo(String maKichCo);
+
+    @Query("""
+        select kc from KichCo kc where kc.giaTri = :giaTri
+    """)
+    Optional<KichCo> getKichCoByGiaTri(String giaTri);
 }

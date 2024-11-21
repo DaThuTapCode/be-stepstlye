@@ -7,11 +7,13 @@ import com.okconde.bestepstyle.core.dto.thuonghieu.request.ThuongHieuSearchReque
 import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
+import com.okconde.bestepstyle.core.exception.AttributeCodeDuplicateException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.thuonghieu.request.ThuongHieuRequestMapper;
 import com.okconde.bestepstyle.core.mapper.thuonghieu.response.ThuongHieuResponseMapper;
 import com.okconde.bestepstyle.core.repository.ThuongHieuRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
+import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,6 +60,10 @@ public class ThuongHieuService implements IBaseService<ThuongHieu, Long, ThuongH
 
     @Override
     public ThuongHieuResponse create(ThuongHieuRequest thuongHieuRequest) {
+        thuongHieuRequest.setMaThuongHieu(GenerateCodeRandomUtil.generateProductCode("TH", 8));
+        if (thuongHieuRepository.getThuongHieuByTenThuongHieu(thuongHieuRequest.getTenThuongHieu()).isPresent()){
+            throw new AttributeCodeDuplicateException("Tên thương hiệu " + thuongHieuRequest.getTenThuongHieu() + " đã tồn tại");
+        }
         ThuongHieu thuongHieuNew = thuongHieuRequestMapper.toEntity(thuongHieuRequest);
         thuongHieuNew.setTrangThai(StatusEnum.ACTIVE);
         ThuongHieu thuongHieuSaved = thuongHieuRepository.save(thuongHieuNew);
