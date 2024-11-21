@@ -92,28 +92,14 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
         });
         //Truy vấn kiêm tra tồn tại trước khi thêm
         listSPCTNew.forEach(spctRequest1 -> {
-            if(sanPhamChiTietRepository.checkExitsByAttribute(sanPhamExisting.getIdSanPham(), spctRequest1.getChatLieu().getIdChatLieu(),
-                    spctRequest1.getChatLieuDeGiay().getIdChatLieuDeGiay(),
+            if(sanPhamChiTietRepository.checkExitsByAttribute(
+                    sanPhamExisting.getIdSanPham(),
                     spctRequest1.getKichCo().getIdKichCo(),
-                    spctRequest1.getMauSac().getIdMauSac(),
-                    spctRequest1.getKieuDeGiay().getIdKieuDeGiay(),
-                    spctRequest1.getTrongLuong().getIdTrongLuong())){
+                    spctRequest1.getMauSac().getIdMauSac()
+            )){
                 String errorMessage = String.format(
-                        "Sản phẩm chi tiết với các thuộc tính sau đã tồn tại: " +
-                                "Chất liệu: %s, " +
-                                "Chất liệu đế giày: %s, " +
-                                "Kích cỡ: %s, " +
-                                "Màu sắc: %s, " +
-                                "Kiểu đế giày: %s, " +
-                                "Trọng lượng: %s.",
-                        spctRequest1.getChatLieu().getTenChatLieu(),
-                        spctRequest1.getChatLieuDeGiay().getTenChatLieuDeGiay(),
-                        spctRequest1.getKichCo().getGiaTri(),
-                        spctRequest1.getMauSac().getTenMau(),
-                        spctRequest1.getKieuDeGiay().getTenKieuDeGiay(),
-                        spctRequest1.getTrongLuong().getGiaTri()
+                        "Sản phẩm chi tiết với các thuộc tính sau đã tồn tại"
                 );
-
                 throw new BusinessException(errorMessage);
             }
         });

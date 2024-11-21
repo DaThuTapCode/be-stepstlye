@@ -1,9 +1,11 @@
 package com.okconde.bestepstyle.core.dto.sanpham.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
 import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
 import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucShortResponse;
 import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
+import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
 import com.okconde.bestepstyle.core.entity.DanhMuc;
 import com.okconde.bestepstyle.core.entity.ThuongHieu;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSP;
@@ -48,6 +50,10 @@ public class SanPhamResponse {
     private DanhMucResponse danhMuc;
 
     private ThuongHieuResponse thuongHieu;
+
+    private ChatLieuResponse chatLieu;
+
+    private TrongLuongResponse trongLuong;
 
     private List<SPCTShortResponse> sanPhamChiTiets;
 

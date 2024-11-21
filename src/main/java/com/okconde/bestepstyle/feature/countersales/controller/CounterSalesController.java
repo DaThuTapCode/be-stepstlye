@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.countersales.controller;
 
 
+import com.okconde.bestepstyle.core.config.jwt.JwtTokenUtil;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonShortResponse;
@@ -19,6 +20,7 @@ import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPTTT;
 import com.okconde.bestepstyle.feature.countersales.service.ICounterSalesService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,12 +44,14 @@ import java.util.Map;
 public class CounterSalesController {
     //Service
     private final ICounterSalesService counterSalesService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     //Constructor
     public CounterSalesController(
-            @Qualifier("counterSalesService") ICounterSalesService counterSalesService
+            @Qualifier("counterSalesService") ICounterSalesService counterSalesService, JwtTokenUtil jwtTokenUtil
     ) {
         this.counterSalesService = counterSalesService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
@@ -71,12 +75,15 @@ public class CounterSalesController {
      * @param hoaDonRequest hứng dữ liệu*/
     @PostMapping("/create-pending-invoice-counter-sales")
     public ResponseEntity<ResponseData<HoaDonShortResponse>> createPendingInvoiceCounterSales(
-            @RequestBody(required = false) HoaDonRequest hoaDonRequest
+            @RequestBody(required = false) HoaDonRequest hoaDonRequest,
+            HttpServletRequest request
             ){
+        String token = request.getHeader("Authorization").substring(7);
+        String maNV = jwtTokenUtil.extractUserName(token);
                 return ResponseEntity.ok(
                     new ResponseData<>(HttpStatus.OK.value(),
                             "Tạo hóa đơn bán hàn tại quầy mới thành công",
-                            counterSalesService.createNewPendingInvoiceCounterSales(hoaDonRequest)
+                            counterSalesService.createNewPendingInvoiceCounterSales(hoaDonRequest, maNV)
                     )
                 );
     }

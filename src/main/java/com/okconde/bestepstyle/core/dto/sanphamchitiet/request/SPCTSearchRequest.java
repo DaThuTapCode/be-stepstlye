@@ -23,14 +23,6 @@ public class SPCTSearchRequest {
 
     private Long idSanPham;
 
-    private Long idChatLieu;
-
-    private Long idKieuDeGiay;
-
-    private Long idChatLieuDeGiay;
-
-    private Long idTrongLuong;
-
     private Long idMauSac;
 
     private Long idKichCo;

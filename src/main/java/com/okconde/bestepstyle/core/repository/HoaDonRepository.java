@@ -76,4 +76,11 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
 SELECT h FROM HoaDon h WHERE h.loaiHoaDon = :loaiHoaDon
 """)
     List<HoaDon> getHoaDon(LoaiHoaDon loaiHoaDon);
+
+
+    /** Lay danh sach hoa don theo khach hang*/
+    @Query("""
+                SELECT hd FROM HoaDon  hd where hd.khachHang.maKhachHang = :maKH order by hd.ngayTaoDon desc
+            """)
+    List<HoaDon> getListHoaDonByKhachHang(@Param("maKH") String maKh);
 }

@@ -8,6 +8,7 @@ import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.repository.KhachHangRepository;
 import com.okconde.bestepstyle.core.repository.NhanVienRepository;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +38,7 @@ public class CustomerLoginAndRegisterService {
 
 
     public UserLoginResponse login(UserLoginRequest userLoginRequest) {
-        Optional<KhachHang> optionalKhachHang = khachHangRepository.timKHTheoMaKH(userLoginRequest.getUserName());
+        Optional<KhachHang> optionalKhachHang = khachHangRepository.timKHTheoMaKH(userLoginRequest.getUserName(), StatusEnum.ACTIVE);
         if (optionalKhachHang.isEmpty()) {
             throw new BusinessException("Sai tài khoản hoặc mật khẩu!");
         }

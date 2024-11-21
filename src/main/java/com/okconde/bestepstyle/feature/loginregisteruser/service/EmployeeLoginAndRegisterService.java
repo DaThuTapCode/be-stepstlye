@@ -6,6 +6,7 @@ import com.okconde.bestepstyle.core.dto.dangnhap.response.UserLoginResponse;
 import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.repository.NhanVienRepository;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +34,7 @@ public class EmployeeLoginAndRegisterService {
     }
 
     public UserLoginResponse login(UserLoginRequest userLoginRequest) {
-            Optional<NhanVien> optionalNhanVien = nhanVienRepository.timNVTheoMaNV(userLoginRequest.getUserName());
+            Optional<NhanVien> optionalNhanVien = nhanVienRepository.timNVTheoMaNVVaTrangThai(userLoginRequest.getUserName(), StatusEnum.ACTIVE);
             if (optionalNhanVien.isEmpty()) {
                 throw new BusinessException("Sai tài khoản hoặc mật khẩu!");
             }

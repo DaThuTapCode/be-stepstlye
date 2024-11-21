@@ -44,14 +44,6 @@ public class SPCTShortResponse {
     @Enumerated(EnumType.STRING)
     private StatusSPCT trangThai;
 
-    private ChatLieu chatLieu;
-
-    private KieuDeGiay kieuDeGiay;
-
-    private ChatLieuDeGiay chatLieuDeGiay;
-
-    private TrongLuong trongLuong;
-
     private MauSac mauSac;
 
     private KichCo kichCo;

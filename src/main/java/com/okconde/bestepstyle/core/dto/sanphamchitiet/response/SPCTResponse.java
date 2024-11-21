@@ -46,14 +46,6 @@ public class SPCTResponse {
 
     private SanPhamShortResponse sanPham;
 
-    private ChatLieu chatLieu;
-
-    private KieuDeGiay kieuDeGiay;
-
-    private ChatLieuDeGiay chatLieuDeGiay;
-
-    private TrongLuong trongLuong;
-
     private MauSac mauSac;
 
     private KichCo kichCo;

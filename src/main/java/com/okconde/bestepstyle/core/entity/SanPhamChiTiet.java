@@ -44,22 +44,6 @@ public class SanPhamChiTiet {
     private SanPham sanPham;
 
     @ManyToOne
-    @JoinColumn(name = "id_chat_lieu")
-    private ChatLieu chatLieu;
-
-    @ManyToOne
-    @JoinColumn(name = "id_kieu_de_giay")
-    private KieuDeGiay kieuDeGiay;
-
-    @ManyToOne
-    @JoinColumn(name = "id_chat_lieu_de_giay")
-    private ChatLieuDeGiay chatLieuDeGiay;
-
-    @ManyToOne
-    @JoinColumn(name = "id_trong_luong")
-    private TrongLuong trongLuong;
-
-    @ManyToOne
     @JoinColumn(name = "id_mau_sac")
     private MauSac mauSac;
 

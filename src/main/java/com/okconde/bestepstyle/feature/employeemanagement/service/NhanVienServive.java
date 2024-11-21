@@ -64,7 +64,7 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
     @Transactional
     public NhanVienResponse create(NhanVienRequest nhanVienRequest) {
 //        nhanVienRequest.setMaNhanVien(GenerateCodeRandomUtil.generateProductCode("NV", 8));
-        if (nhanVienRepository.timNVTheoMaNV(nhanVienRequest.getMaNhanVien()).isPresent()){
+        if (nhanVienRepository.timNVTheoMaNVVaTrangThai(nhanVienRequest.getMaNhanVien(), StatusEnum.ACTIVE).isPresent()){
             throw new CustomerCodeDuplicateException("Mã nhân viên " + nhanVienRequest.getMaNhanVien() + " đã tồn tại!");
         }
         NhanVien nhanVienMoi = nhanVienRequestMapper.toEntity(nhanVienRequest);

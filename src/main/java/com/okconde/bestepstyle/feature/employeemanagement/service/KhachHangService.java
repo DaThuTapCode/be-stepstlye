@@ -65,7 +65,7 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
     public KhachHangResponse create(KhachHangRequest khachHangRequest) {
         khachHangRequest.setMaKhachHang(GenerateCodeRandomUtil.generateProductCode("KH", 8));
         // Kiểm tra mã khách hàng trùng
-        if (khachHangRepository.timKHTheoMaKH(khachHangRequest.getMaKhachHang()).isPresent()) {
+        if (khachHangRepository.timKHTheoMaKH(khachHangRequest.getMaKhachHang(), StatusEnum.ACTIVE).isPresent()) {
             throw new CustomerCodeDuplicateException("Mã khách hàng " + khachHangRequest.getMaKhachHang() + " đã tồn tại!");
         }
 

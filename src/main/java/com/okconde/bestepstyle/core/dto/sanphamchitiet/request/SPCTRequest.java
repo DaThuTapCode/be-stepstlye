@@ -43,16 +43,6 @@ public class SPCTRequest {
 
     private SanPhamRequest sanPham;
 
-    private StatusSPCT trangThai;
-
-    private ChatLieuRequest chatLieu;
-
-    private KieuDeGiayRequest kieuDeGiay;
-
-    private ChatLieuDeGiayRequest chatLieuDeGiay;
-
-    private TrongLuongRequest trongLuong;
-
     private MauSacRequest mauSac;
 
     private KichCoRequest kichCo;

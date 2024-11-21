@@ -42,7 +42,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             System.out.printf("\n-----------------------------------------\n");
-            System.out.printf("Token: %s\n", request.getHeader("token"));
+            System.out.printf("Token: %s\n", request.getHeader("Authorization"));
             System.out.printf("HTTP METHOD: %s\n", request.getMethod());
             System.out.printf("-----------------------------------------\n");
 
@@ -51,7 +51,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
 
-            final String authHeader = request.getHeader("token");
+            final String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 System.out.printf("Token is missing or invalid.\n");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");

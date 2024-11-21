@@ -31,7 +31,7 @@ public interface ICounterSalesService {
      * Hàm tạo hóa đơn chờ cho bán hàng tại quầy
      * @param hoaDonRequest đối tượng {@link HoaDonRequest} hứng dữ liệu
      * */
-    HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest);
+    HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest, String maNV);
 
 
     /**

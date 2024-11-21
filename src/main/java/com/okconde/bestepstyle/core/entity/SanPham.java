@@ -47,11 +47,15 @@ public class SanPham {
     @JoinColumn(name = "id_thuong_hieu")
     private ThuongHieu thuongHieu;
 
-    @OneToMany(
-            mappedBy = "sanPham",
-            cascade = {CascadeType.PERSIST},
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne
+    @JoinColumn(name = "id_chat_lieu")
+    private ChatLieu chatLieu;
+
+    @ManyToOne
+    @JoinColumn(name = "id_trong_luong")
+    private TrongLuong trongLuong;
+
+    @OneToMany(mappedBy = "sanPham")
     private List<SanPhamChiTiet> sanPhamChiTiets;
 
 }

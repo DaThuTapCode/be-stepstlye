@@ -1,8 +1,10 @@
 package com.okconde.bestepstyle.core.dto.sanpham.request;
 
+import com.okconde.bestepstyle.core.dto.chatlieu.request.ChatLieuRequest;
 import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTRequest;
 import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
+import com.okconde.bestepstyle.core.dto.trongluong.request.TrongLuongRequest;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSP;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,6 +41,10 @@ public class SanPhamRequest {
     private DanhMucResponse danhMuc;
 
     private ThuongHieuResponse thuongHieu;
+
+    private ChatLieuRequest chatLieu;
+
+    private TrongLuongRequest trongLuong;
 
     private List<SPCTRequest> sanPhamChiTiets;
 

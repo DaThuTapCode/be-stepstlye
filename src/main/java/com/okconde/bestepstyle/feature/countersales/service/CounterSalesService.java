@@ -54,7 +54,7 @@ public class CounterSalesService implements ICounterSalesService {
     private final ThanhToanRepository thanhToanRepository;
     private final KhachHangRepository khachHangRepository;
     private final NhanVienRepository nhanVienRepository;
-
+    private final LichSuHoaDonRepository lichSuHoaDonRepository;
     //  Mapper
     private final HoaDonShortResponseMapper hoaDonShortResponseMapper;
     private final HoaDonResponseMapper hoaDonResponseMapper;
@@ -77,7 +77,7 @@ public class CounterSalesService implements ICounterSalesService {
             HoaDonChiTietRepository hoaDonChiTietRepository,
             ThanhToanRepository thanhToanRepository,
             KhachHangRepository khachHangRepository,
-            NhanVienRepository nhanVienRepository,
+            NhanVienRepository nhanVienRepository, LichSuHoaDonRepository lichSuHoaDonRepository,
             HoaDonShortResponseMapper hoaDonShortResponseMapper,
             HoaDonResponseMapper hoaDonResponseMapper,
             SanPhamShortResponseMapper sanPhamShortResponseMapper,
@@ -93,6 +93,7 @@ public class CounterSalesService implements ICounterSalesService {
         this.thanhToanRepository = thanhToanRepository;
         this.khachHangRepository = khachHangRepository;
         this.nhanVienRepository = nhanVienRepository;
+        this.lichSuHoaDonRepository = lichSuHoaDonRepository;
         this.hoaDonShortResponseMapper = hoaDonShortResponseMapper;
         this.hoaDonResponseMapper = hoaDonResponseMapper;
         this.sanPhamShortResponseMapper = sanPhamShortResponseMapper;
@@ -117,7 +118,13 @@ public class CounterSalesService implements ICounterSalesService {
      */
     @Override
     @Transactional
-    public HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest) {
+    public HoaDonShortResponse createNewPendingInvoiceCounterSales(HoaDonRequest hoaDonRequest, String maNV) {
+
+        NhanVien nhanVien = nhanVienRepository.timNVTheoMaNVVaTrangThai(maNV, StatusEnum.ACTIVE).orElseThrow(
+                () -> new BusinessException("Tài khoản nhân viên không hợp lệ!")
+        );
+
+
         //Kiểm tra số lượng hóa đơn chờ thanh toán tại quầy
         List<HoaDon> listPendingInvoice = hoaDonRepository.getHoaDonByStatus(StatusHoaDon.PENDING, LoaiHoaDon.COUNTERSALES);
         if(listPendingInvoice.size() >= 5) {
@@ -133,7 +140,17 @@ public class CounterSalesService implements ICounterSalesService {
         hoaDonNew.setLoaiHoaDon(LoaiHoaDon.COUNTERSALES);
         hoaDonNew.setTongTien(BigDecimal.ZERO);
         hoaDonNew.setTongTienSauGiam(BigDecimal.ZERO);
+        hoaDonNew.setPhiVanChuyen(BigDecimal.ZERO);
         HoaDon hoaDonSaved = hoaDonRepository.save(hoaDonNew);
+
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setNgayTao(LocalDateTime.now());
+        lichSuHoaDon.setHoaDon(hoaDonSaved);
+        lichSuHoaDon.setMaLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD", 6));
+        lichSuHoaDon.setHanhDong("Tạo hóa đơn tại quầy");
+        lichSuHoaDon.setTrangThai(StatusEnum.ACTIVE);
+        lichSuHoaDon.setNguoiThucHien(nhanVien.getHoTen());
+        lichSuHoaDonRepository.save(lichSuHoaDon);
         return hoaDonShortResponseMapper.toDTO(hoaDonSaved);
     }
 
@@ -351,11 +368,7 @@ public class CounterSalesService implements ICounterSalesService {
                     pageable,
                     spctSearchRequest.getMaSpct(),
                     spctSearchRequest.getIdMauSac(),
-                    spctSearchRequest.getIdChatLieu(),
-                    spctSearchRequest.getIdChatLieuDeGiay(),
-                    spctSearchRequest.getIdKieuDeGiay(),
-                    spctSearchRequest.getIdKichCo(),
-                    spctSearchRequest.getIdTrongLuong()
+                    spctSearchRequest.getIdKichCo()
             );
             // Sử dụng mapper để chuyển đổi từ SanPhamChiTiet sang SPCTResponse
             return sanPhamChiTiets.map(sanPhamChiTietResponseMapper::toDTO);

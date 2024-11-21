@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.repository;
 
 import com.okconde.bestepstyle.core.entity.NhanVien;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +24,7 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Long> {
     Page<NhanVien> searchPageNVByMaAndTenAndSDT(Pageable pageable, String maNV, String tenNV, String SDT);
 
     @Query("""
-                select nv from NhanVien nv where nv.maNhanVien like :maNV
+                select nv from NhanVien nv where nv.maNhanVien like :maNV and nv.trangThai = :trangThai
 """)
-    Optional<NhanVien> timNVTheoMaNV(String maNV);
+    Optional<NhanVien> timNVTheoMaNVVaTrangThai(String maNV, StatusEnum trangThai);
 }

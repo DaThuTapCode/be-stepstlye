@@ -24,9 +24,9 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
     Page<KhachHang> searchPageKHByMaAndTenAndSDT(Pageable pageable, String maKH, String tenKH, String SDT);
 
     @Query("""
-                select kh from KhachHang kh where kh.maKhachHang like :maKH
+                select kh from KhachHang kh where kh.maKhachHang like :maKH and kh.trangThai = :trangThai
 """)
-    Optional<KhachHang> timKHTheoMaKH(String maKH);
+    Optional<KhachHang> timKHTheoMaKH(String maKH, StatusEnum trangThai);
 
     @Query("""
                 select kh from KhachHang kh where kh.idKhachHang = :idKhachHang and kh.trangThai = :trangThai

@@ -33,17 +33,7 @@ public class SPCTSearchParams {
 
     private SanPham sanPham;
 
-    private ChatLieu chatLieu;
-
-    private KieuDeGiay kieuDeGiay;
-
-    private ChatLieuDeGiay chatLieuDeGiay;
-
-    private TrongLuong trongLuong;
-
     private MauSac mauSac;
 
     private KichCo kichCo;
-
-    private List<Anh> anhs;
 }

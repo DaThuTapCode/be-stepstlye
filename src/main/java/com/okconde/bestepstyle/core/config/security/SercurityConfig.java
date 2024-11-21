@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.entity.KhachHang;
 import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.repository.KhachHangRepository;
 import com.okconde.bestepstyle.core.repository.NhanVienRepository;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +34,8 @@ public class SercurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            Optional<NhanVien> optionalNhanVien = nhanVienRepository.timNVTheoMaNV(username);
-            Optional<KhachHang> optionalKhachHang = khachHangRepository.timKHTheoMaKH(username);
+            Optional<NhanVien> optionalNhanVien = nhanVienRepository.timNVTheoMaNVVaTrangThai(username, StatusEnum.ACTIVE);
+            Optional<KhachHang> optionalKhachHang = khachHangRepository.timKHTheoMaKH(username, StatusEnum.ACTIVE);
             if(optionalNhanVien.isPresent()) {
                 return optionalNhanVien.get();
             }else if (optionalKhachHang.isPresent()){

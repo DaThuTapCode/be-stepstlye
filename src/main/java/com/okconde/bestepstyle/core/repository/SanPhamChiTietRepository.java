@@ -24,24 +24,12 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
                             and
                             (:idMauSac is null or spct.mauSac.idMauSac = :idMauSac)
                             and 
-                            (:idChatLieu is null or spct.chatLieu.idChatLieu = :idChatLieu)
-                            and 
-                            (:idChatLieuDeGiay is null or spct.chatLieuDeGiay.idChatLieuDeGiay = :idChatLieuDeGiay)
-                            and 
-                            (:idKieuDeGiay is null or spct.kieuDeGiay.idKieuDeGiay = :idKieuDeGiay)
-                            and 
                             (:idKichCo is null or spct.kichCo.idKichCo = :idKichCo)
-                            and 
-                            (:idTrongLuong is null or spct.trongLuong.idTrongLuong = :idTrongLuong)
-            """)
+                                       """)
     Page<SanPhamChiTiet> searchPageSPCT(Pageable pageable,
                                   @Param(value = "maSpct") String maSpct,
                                   @Param(value = "idMauSac") Long idMauSac,
-                                  @Param(value = "idChatLieu") Long idChatLieu,
-                                        @Param(value = "idChatLieuDeGiay") Long idChatLieuDeGiay,
-                                        @Param(value = "idKieuDeGiay") Long idKieuDeGiay,
-                                        @Param(value = "idKichCo") Long idKichCo,
-                                        @Param(value = "idTrongLuong") Long idTrongLuong
+                                        @Param(value = "idKichCo") Long idKichCo
                                   );
 
     /**
@@ -50,6 +38,14 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
         SELECT spct FROM SanPhamChiTiet spct where spct.idSpct = :idSpct AND spct.trangThai  = :trangThai
     """)
     Optional<SanPhamChiTiet> getSPCTByIdSPCTAndTrangThai(Long idSpct, StatusSPCT trangThai);
+
+
+    /**
+     * Query lấy sản phẩm chi tiết theo danh sach id và trạng thái*/
+    @Query("""
+        SELECT spct FROM SanPhamChiTiet spct where spct.idSpct in :idSpcts AND spct.trangThai  = :trangThai
+    """)
+    List<SanPhamChiTiet> getSPCTByListIdSPCTAndTrangThai(List<Long> idSpcts, StatusSPCT trangThai);
 
 
     /**
@@ -64,26 +60,14 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     WHERE
         spct.sanPham.idSanPham = :idSanPham
     AND
-        spct.chatLieu.idChatLieu = :idChatLieu
-    AND
-        spct.chatLieuDeGiay.idChatLieuDeGiay = :idChatLieuDeGiay
-    AND
         spct.kichCo.idKichCo = :idKichCo
     AND
         spct.mauSac.idMauSac = :idMauSac
-    AND
-        spct.kieuDeGiay.idKieuDeGiay = :idKieuDeGiay
-    AND
-        spct.trongLuong.idTrongLuong = :idTrongLuong 
 """)
     Boolean checkExitsByAttribute(
             Long idSanPham,
-            Long idChatLieu,
-            Long idChatLieuDeGiay,
             Long idKichCo,
-            Long idMauSac,
-            Long idKieuDeGiay,
-            Long idTrongLuong
+            Long idMauSac
     );
 
     @Query("""
