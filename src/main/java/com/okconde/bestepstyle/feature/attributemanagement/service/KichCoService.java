@@ -59,9 +59,12 @@ public class KichCoService implements IBaseService<KichCo, Long, KichCoRequest, 
     @Override
     @Transactional
     public KichCoResponse create(KichCoRequest kichCoRequest) {
-        //kichCoRequest.setMaKichCo(GenerateCodeRandomUtil.generateProductCode("KC", 8));
+        kichCoRequest.setMaKichCo(GenerateCodeRandomUtil.generateProductCode("KC", 8));
         if (kichCoRepository.getKichCoByMaKichCo(kichCoRequest.getMaKichCo()).isPresent()){
             throw new AttributeCodeDuplicateException("Mã kích cỡ " + kichCoRequest.getMaKichCo() + " đã tồn tại");
+        }
+        if (kichCoRepository.getKichCoByGiaTri(String.valueOf(kichCoRequest.getGiaTri())).isPresent()){
+            throw new AttributeCodeDuplicateException("Giá trị kích cỡ " + kichCoRequest.getGiaTri() + " đã tồn tại");
         }
         KichCo entity = kichCoRequestMapper.toEntity(kichCoRequest);
         entity.setTrangThai(StatusEnum.ACTIVE);

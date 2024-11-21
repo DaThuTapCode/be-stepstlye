@@ -31,6 +31,8 @@ public class NhanVienShortResponse {
 
     private String hoTen;
 
+    private String matKhau;
+
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate ngaySinh;
 

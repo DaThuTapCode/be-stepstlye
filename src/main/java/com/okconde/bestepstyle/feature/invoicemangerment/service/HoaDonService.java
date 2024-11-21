@@ -216,7 +216,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         tbl.addCell(new PdfPCell(new Phrase("Ten san pham", tableHeaderFont)));
         tbl.addCell(new PdfPCell(new Phrase("Size", tableHeaderFont)));
         tbl.addCell(new PdfPCell(new Phrase("Mau sac", tableHeaderFont)));
-//        tbl.addCell(new PdfPCell(new Phrase("Chat lieu", tableHeaderFont)));
+        tbl.addCell(new PdfPCell(new Phrase("Chat lieu", tableHeaderFont)));
         tbl.addCell(new PdfPCell(new Phrase("Hang", tableHeaderFont)));
         tbl.addCell(new PdfPCell(new Phrase("Don gia", tableHeaderFont)));
         tbl.addCell(new PdfPCell(new Phrase("So luong", tableHeaderFont)));
@@ -227,7 +227,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
             tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
             tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getKichCo().getGiaTri() + "");
             tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getMauSac().getTenMau());
-//            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getChatLieu().getTenChatLieu());
+            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getChatLieu().getTenChatLieu());
             tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getThuongHieu().getTenThuongHieu());
             tbl.addCell(hoaDonChiTiet.getDonGia() + "đ");
             tbl.addCell(hoaDonChiTiet.getSoLuong() + "đ");
