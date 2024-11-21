@@ -33,6 +33,11 @@ public class NhanVienRequest {
     @Length(max = 10, message = "Mã nhân viên không được vượt quá 10 ký tự!")
     private String maNhanVien;
 
+    @NotBlank(message = "Mật khẩu không được để trống!")
+    @Length(min = 8, message = "Mật khẩu phải lớn hơn 8 ký tự!")
+    @Length(max = 255, message = "Mật khẩu không được vượt quá 255 ký tự!")
+    private String matKhau;
+
     @NotBlank(message = "Tên nhân viên không được để trống!")
     @Length(min = 6, message = "Tên nhân viên phải lớn hơn 6 ký tự!")
     @Length(max = 255, message = "Tên nhân viên không được vượt quá 255 ký tự!")

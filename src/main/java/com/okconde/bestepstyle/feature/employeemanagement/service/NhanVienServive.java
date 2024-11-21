@@ -17,6 +17,8 @@ import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +39,16 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
 
     private final NhanVienRequestMapper nhanVienRequestMapper;
 
+    private final PasswordEncoder passwordEncoder;
+
     public NhanVienServive(
             NhanVienRepository nhanVienRepository,
             NhanVienResponseMapper nhanVienResponseMapper,
-            NhanVienRequestMapper nhanVienRequestMapper) {
+            NhanVienRequestMapper nhanVienRequestMapper, PasswordEncoder passwordEncoder) {
         this.nhanVienRepository = nhanVienRepository;
         this.nhanVienResponseMapper = nhanVienResponseMapper;
         this.nhanVienRequestMapper = nhanVienRequestMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -70,6 +75,7 @@ public class NhanVienServive implements IBaseService<NhanVien, Long, NhanVienReq
         NhanVien nhanVienMoi = nhanVienRequestMapper.toEntity(nhanVienRequest);
         nhanVienMoi.setNgayTao(LocalDateTime.now());
         nhanVienMoi.setNgayChinhSua(LocalDateTime.now());
+        nhanVienMoi.setMatKhau(passwordEncoder.encode(nhanVienRequest.getMatKhau()));
         ChucVu cv = new ChucVu();
         cv.setIdChucVu(2L);
         nhanVienMoi.setChucVu(cv);
