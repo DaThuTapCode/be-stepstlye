@@ -27,10 +27,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -282,7 +285,7 @@ public class CounterSalesController {
 
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
-                        "Hóa đơn được thanh toán thành công",
+                        "Hóa đơn " + paidInvoice.getMaHoaDon() + " được thanh toán thành công",
                         paidInvoice)
         );
     }
@@ -293,17 +296,17 @@ public class CounterSalesController {
      * @return Đối tượng ResponseData chứa thông tin hóa đơn
      */
     @PostMapping("vnpay-bank-transfer/{idHoaDon}")
-    public ResponseEntity<ResponseData<Map<String, String>>> vnpayBankTransfer(
-        @PathVariable Long idHoaDon
-    ){
-        Map<String, String> map = counterSalesService.VnpayBankTransferPayment(idHoaDon);
+    public ResponseEntity<byte[]> vnpayBankTransfer(@PathVariable Long idHoaDon) {
+        // Lấy OutputStream từ service
+        OutputStream outputStream = counterSalesService.vnpayBankTransferPayment(idHoaDon);
+        byte[] imageBytes = ((ByteArrayOutputStream) outputStream).toByteArray();
 
-        return ResponseEntity.ok(
-                new ResponseData<>(HttpStatus.OK.value(),
-                        "Thanh toán chuyển khoản thành công",
-                        map)
-        );
+        // Trả về ResponseEntity chứa dữ liệu hình ảnh
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(imageBytes);
     }
+
 
     /**
      * @apiNote API sửa số lượng spct trong hdct*/
@@ -318,22 +321,21 @@ public class CounterSalesController {
                         null)
         );
     }
+
     /**
-     * @apiNote API hủy phiêu giảm giá
-     * @param idPhieuGiamGia
+     * @apiNote API hủy phiêu giảm giá trong hóa đơn
+     * @param idHoaDon
      */
-    @PostMapping("/cancel-coupons/{idPhieuGiamGia}")
-    public ResponseEntity<ResponseData<PhieuGiamGiaResponse>> cancelCoupons(
-            @PathVariable Long idPhieuGiamGia
+    @PostMapping("/cancel-coupons/{idHoaDon}")
+    public ResponseEntity<ResponseData<Boolean>> cancelCoupons(
+            @PathVariable Long idHoaDon
     ) {
         // Gọi service để hủy PGG
-        PhieuGiamGiaResponse phieuGiamGiaResponse = counterSalesService.cancelCouponsCounterSales(idPhieuGiamGia);
-
         // Trả về ResponseData với trạng thái thành công và thông tin phiếu giảm giá
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Thành công",
-                        phieuGiamGiaResponse)
+                        counterSalesService.cancelCouponsCounterSales(idHoaDon))
         );
     }
 

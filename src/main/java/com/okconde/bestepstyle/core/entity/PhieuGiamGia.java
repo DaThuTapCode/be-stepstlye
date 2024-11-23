@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.entity;
 
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusLoaiGiam;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,7 +33,8 @@ public class PhieuGiamGia {
 
     private String moTa;
 
-    private String loaiGiam;
+    @Enumerated(EnumType.STRING)
+    private StatusLoaiGiam loaiGiam;
 
     private LocalDate ngayBatDau;
 

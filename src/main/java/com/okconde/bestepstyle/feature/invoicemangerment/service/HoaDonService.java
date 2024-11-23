@@ -10,14 +10,19 @@ import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.entity.HoaDon;
 import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
+import com.okconde.bestepstyle.core.entity.LichSuHoaDon;
+import com.okconde.bestepstyle.core.entity.NhanVien;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
 import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonRepository;
+import com.okconde.bestepstyle.core.repository.LichSuHoaDonRepository;
+import com.okconde.bestepstyle.core.repository.NhanVienRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import org.springframework.data.domain.Page;
@@ -50,11 +55,15 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
     //Mapper
     private final HoaDonResponseMapper hoaDonResponseMapper;
     private final HoaDonRequestMapper hoaDonRequestMapper;
+    private final LichSuHoaDonRepository lichSuHoaDonRepository;
+    private final NhanVienRepository nhanVienRepository;
 
-    public HoaDonService(HoaDonResponseMapper hoaDonResponseMapper, HoaDonRepository hoaDonRepository, HoaDonRequestMapper hoaDonRequestMapper) {
+    public HoaDonService(HoaDonResponseMapper hoaDonResponseMapper, HoaDonRepository hoaDonRepository, HoaDonRequestMapper hoaDonRequestMapper, LichSuHoaDonRepository lichSuHoaDonRepository, NhanVienRepository nhanVienRepository) {
         this.hoaDonResponseMapper = hoaDonResponseMapper;
         this.hoaDonRepository = hoaDonRepository;
         this.hoaDonRequestMapper = hoaDonRequestMapper;
+        this.lichSuHoaDonRepository = lichSuHoaDonRepository;
+        this.nhanVienRepository = nhanVienRepository;
     }
 
 
@@ -227,7 +236,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
             tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
             tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getKichCo().getGiaTri() + "");
             tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getMauSac().getTenMau());
-            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getChatLieu().getTenChatLieu());
+//            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getChatLieu().getTenChatLieu());
             tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getThuongHieu().getTenThuongHieu());
             tbl.addCell(hoaDonChiTiet.getDonGia() + "đ");
             tbl.addCell(hoaDonChiTiet.getSoLuong() + "đ");
@@ -253,6 +262,64 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
         // Trả về PDF dưới dạng byte[]
         return baos.toByteArray();
+    }
+
+
+    /** HỦy hóa đơn bán online*/
+    @jakarta.transaction.Transactional
+    public boolean cancelInvoiceOnline(Long idHoaDon) {
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon).orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần hủy!"));
+
+        if(hoaDon.getTrangThai() == StatusHoaDon.PAID) {
+            throw new BusinessException("Hóa đơn đã thanh toán không thể hủy");
+        }
+        hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
+        return true;
+    }
+
+
+    /**
+     * Thay đổi trạng thái hóa đơn
+     */
+    @jakarta.transaction.Transactional
+    public boolean changeStatusInvoice(Long idHoaDon, String maNV, StatusHoaDon trangThaiMoi) {
+        NhanVien nv  = nhanVienRepository.timNVTheoMaNVVaTrangThai(maNV, StatusEnum.ACTIVE).orElseThrow(
+                () -> new BusinessException("Nhân viên không hợp lệ")
+        );
+
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+                .orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần đổi trạng thái"));
+
+        // Định nghĩa thứ tự trạng thái
+        Map<StatusHoaDon, Integer> trangThaiMap = Map.of(
+                StatusHoaDon.PENDINGPROCESSING, 1,
+                StatusHoaDon.CONFIRMED, 2,
+                StatusHoaDon.SHIPPING, 3,
+                StatusHoaDon.DELIVERED, 4,
+                StatusHoaDon.PAID, 5
+        );
+
+        // Lấy trạng thái hiện tại
+        StatusHoaDon trangThaiHienTai = hoaDon.getTrangThai();
+
+        // Kiểm tra nếu trạng thái mới nhỏ hơn hoặc bằng trạng thái hiện tại
+        if (trangThaiMap.get(trangThaiMoi) <= trangThaiMap.get(trangThaiHienTai)) {
+            throw new BusinessException("Trạng thái hóa đơn sai tiến trình hiện tại");
+        }
+
+        // Cập nhật trạng thái
+        hoaDon.setTrangThai(trangThaiMoi);
+       HoaDon hoaDonSaved = hoaDonRepository.save(hoaDon);
+        LichSuHoaDon lichSuHoaDon = LichSuHoaDon.builder()
+                .hoaDon(hoaDonSaved)
+                .maLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD", 6))
+                .hanhDong(trangThaiMoi.toString())
+                .ngayTao(LocalDateTime.now())
+                .nguoiThucHien(nv.getHoTen())
+                .trangThai(StatusEnum.ACTIVE)
+                .build();
+        lichSuHoaDonRepository.save(lichSuHoaDon);
+        return true;
     }
 
 }

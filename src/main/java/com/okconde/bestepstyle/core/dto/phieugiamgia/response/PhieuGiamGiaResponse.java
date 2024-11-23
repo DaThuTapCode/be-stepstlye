@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.core.dto.phieugiamgia.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.okconde.bestepstyle.core.util.enumutil.StatusLoaiGiam;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,7 +32,8 @@ public class PhieuGiamGiaResponse {
 
     private String moTa;
 
-    private String loaiGiam;
+    @Enumerated(EnumType.STRING)
+    private StatusLoaiGiam loaiGiam;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate ngayBatDau;

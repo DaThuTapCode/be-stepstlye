@@ -1,11 +1,14 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.controller;
 
+import com.okconde.bestepstyle.core.config.jwt.JwtTokenUtil;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
 import com.okconde.bestepstyle.feature.invoicemangerment.service.HoaDonService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,10 +34,12 @@ import java.util.Map;
 public class HoaDonController {
 
     private final HoaDonService hoaDonService;
+    private final JwtTokenUtil jwtTokenUtil;
 
 
-    public HoaDonController(HoaDonService hoaDonService) {
+    public HoaDonController(HoaDonService hoaDonService, JwtTokenUtil jwtTokenUtil) {
         this.hoaDonService = hoaDonService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     //Hàm phân trang
@@ -137,26 +142,26 @@ public class HoaDonController {
                         list));
     }
 
-//    @GetMapping("/generate-invoice/{idHoaDon}")
-//    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long idHoaDon) {
-//        try {
-//            // Gọi service để tạo PDF
-//            byte[] pdfBytes = hoaDonService.generateInvoice(idHoaDon);
-//
-//            // Tạo headers để hiển thị PDF trong trình duyệt
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add("Content-Disposition", "inline; filename=hoa_don_" + idHoaDon
-//                    + ".pdf");
-//
-//            // Trả về PDF dưới dạng byte[]
-//            return ResponseEntity.ok()
-//                    .headers(headers)
-//                    .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
-//                    .body(pdfBytes);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(500).body(null);
-//        }
-//    }
+
+    @PostMapping("/huy-hoa-don-online/{idHoaDon}")
+    public ResponseEntity<?> thayDoiTrangThaiHoaDon(
+            @PathVariable Long idHoaDon
+    ) {
+        return  ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(), "Hủy hóa đơn thành công!", hoaDonService.cancelInvoiceOnline(idHoaDon))
+        );
+    }
+
+    @PostMapping("/thay-doi-trang-thai-hoa-don-online/{idHoaDon}/{trangThaiMoi}")
+    public ResponseEntity<?> thayDoiTrangThaiHoaDon(
+            @PathVariable Long idHoaDon,
+            @PathVariable StatusHoaDon trangThaiMoi,
+            HttpServletRequest request
+    ) {
+        String token = request.getHeader("Authorization").substring(7);
+        String maNV = jwtTokenUtil.extractUserName(token);
+        return  ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(), "Chuyển trạng thái thành công!", hoaDonService.changeStatusInvoice(idHoaDon, maNV,trangThaiMoi))
+        );
+    }
 }

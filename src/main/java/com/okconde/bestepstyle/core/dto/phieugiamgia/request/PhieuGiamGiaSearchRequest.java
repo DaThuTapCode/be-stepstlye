@@ -2,6 +2,7 @@ package com.okconde.bestepstyle.core.dto.phieugiamgia.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.StatusLoaiGiam;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,7 +34,8 @@ public class PhieuGiamGiaSearchRequest {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date ngayKetThuc;
 
-    private String loaiGiam;
+    @Enumerated(EnumType.STRING)
+    private StatusLoaiGiam loaiGiam;
 
     @Enumerated(EnumType.STRING)
     private StatusPhieuGiamGia trangThai;

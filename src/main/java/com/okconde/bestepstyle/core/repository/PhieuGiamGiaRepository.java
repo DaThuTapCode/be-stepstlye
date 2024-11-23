@@ -3,6 +3,7 @@ package com.okconde.bestepstyle.core.repository;
 import com.okconde.bestepstyle.core.entity.KhachHang;
 import com.okconde.bestepstyle.core.entity.PhieuGiamGia;
 import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
+import com.okconde.bestepstyle.core.util.enumutil.StatusLoaiGiam;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +43,7 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
                                               @Param(value = "tenPhieuGiamGia") String tenPhieuGiamGia,
                                               @Param(value = "ngayBatDau") Date ngayBatDau,
                                               @Param(value = "ngayKetThuc") Date ngayKetThuc,
-                                              @Param(value = "loaiGiam") String loaiGiam,
+                                              @Param(value = "loaiGiam") StatusLoaiGiam loaiGiam,
                                               StatusPhieuGiamGia trangThai);
 
     // Đếm số lượng phiếu giảm giá theo trạng thái

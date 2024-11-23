@@ -24,13 +24,20 @@ import com.okconde.bestepstyle.core.mapper.sanphamchitiet.response.SPCTResponseM
 import com.okconde.bestepstyle.core.repository.*;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.*;
+import org.apache.commons.io.IOUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -209,8 +216,6 @@ public class CounterSalesService implements ICounterSalesService {
     @Transactional
     public Boolean cancelPendingInvoiceCounterSales(Long idHoaDon) {
         Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(idHoaDon);
-
-
         if (optionalHoaDon.isPresent()) {
             HoaDon hoaDon = optionalHoaDon.get();
             // Kiểm tra trạng thái hóa đơn trước khi hủy
@@ -241,7 +246,7 @@ public class CounterSalesService implements ICounterSalesService {
             hoaDonRepository.save(hoaDon);
             return true;
         } else {
-            throw new BusinessException("Không tìm thấy id: " + idHoaDon);
+            throw new BusinessException("Không tìm thấy hóa đơn");
         }
     }
 
@@ -262,6 +267,9 @@ public class CounterSalesService implements ICounterSalesService {
         // Kiểm tra xem hóa đơn có tồn tại hay không
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonChiTietRequest.getIdHoaDon())
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
+
+        // Chuyển mất phiếu giảm giá
+        hoaDon.setPhieuGiamGia(null);
 
         // Kiểm tra xem sản phẩm chi tiết có tồn tại hay không
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(hoaDonChiTietRequest.getIdSpct())
@@ -292,6 +300,7 @@ public class CounterSalesService implements ICounterSalesService {
 
             // Set lại tổng tiền cho hóa đơn = tổng tiền hiện tại + (đơn giá *  số lượng mới được thêm)
             hoaDon.setTongTien(hoaDon.getTongTien().add(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hoaDonChiTietRequest.getSoLuong()))));
+            hoaDon.setTongTienSauGiam(hoaDon.getTongTien());
         }
         //Chưa thì thêm mới hóa đơn chi tiết
         else {
@@ -312,6 +321,7 @@ public class CounterSalesService implements ICounterSalesService {
 
             // Set lại tổng tiền cho hóa đơn = tổng tiền hiện tại + tổng tiền HDCT
             hoaDon.setTongTien(hoaDon.getTongTien().add(hoaDonChiTiet.getTongTien()));
+            hoaDon.setTongTienSauGiam(hoaDon.getTongTien());
 
             // Lưu hóa đơn chi tiết vào repository
             HoaDonChiTiet savedHoaDonChiTiet = hoaDonChiTietRepository.save(hoaDonChiTiet);
@@ -406,6 +416,9 @@ public class CounterSalesService implements ICounterSalesService {
         BigDecimal tongTienCuaHoaDonChiTiet = hoaDonChiTietExisting.getTongTien();
         BigDecimal tongTien = tongTienHienTaiCuaHoaDon.subtract(tongTienCuaHoaDonChiTiet);
         hoaDonExisting.setTongTien(tongTien);
+        // Chuyển mất phiếu giảm giá
+        hoaDonExisting.setPhieuGiamGia(null);
+        hoaDonExisting.setTongTienSauGiam(hoaDonExisting.getTongTien());
 
         //Xóa cứng hdct
         hoaDonChiTietRepository.delete(hoaDonChiTietExisting);
@@ -435,18 +448,24 @@ public class CounterSalesService implements ICounterSalesService {
      *
      * @implNote TuanIF
      */
-    public Map<String, String> VnpayBankTransferPayment(Long idHoaDon) {
+    public OutputStream vnpayBankTransferPayment(Long idHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
 
-        BigDecimal totalAmount = hoaDon.getTongTien();
-        //Đuờng dẫn thanh toán
-        String paymentUrl = "https://img.vietqr.io/image/TPB-55820092000-print.png?amount=" + totalAmount;
 
-        Map<String, String> map = new HashMap<>();
-        map.put("paymentUrl", paymentUrl);
+        String addInfo = URLEncoder.encode("Thanh toan hoa don: " + hoaDon.getMaHoaDon(), StandardCharsets.UTF_8);
 
-        return  map;
+
+        String paymentUrl = "https://img.vietqr.io/image/MB-phuntt139-print.png?addInfo=" + addInfo + "&amount=" + hoaDon.getTongTienSauGiam();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (InputStream inputStream = new URL(paymentUrl).openStream()) {
+            IOUtils.copy(inputStream, outputStream); // Copy dữ liệu từ input stream đến output stream
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException("Không thể tải ảnh từ URL: ");
+        }
+        return outputStream;
     }
 
     /**
@@ -459,10 +478,31 @@ public class CounterSalesService implements ICounterSalesService {
     public Boolean updatePGGtoHoaDon(Long idHoaDon, Long idPhieuGiamGia) {
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
+
         PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findByPhieuGiamGiaAndTrangThai(idPhieuGiamGia, StatusPhieuGiamGia.ACTIVE)
                 .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại"));
+
         if(phieuGiamGia.getGiaTriHoaDonToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
                 throw new BusinessException("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + phieuGiamGia.getGiaTriHoaDonToiThieu());
+        }
+
+        // Tính lại tổng tiền khi phiếu giảm giá là số tiền
+        if(phieuGiamGia.getLoaiGiam().equals(StatusLoaiGiam.MONEY)){
+            // Kiểm tra nếu giá trị giảm mà lớn hơn hoặc bằng tổng tiền của hóa đơn
+            if(hoaDon.getTongTien().compareTo(phieuGiamGia.getGiaTriGiam()) == -1 || hoaDon.getTongTien().compareTo(phieuGiamGia.getGiaTriGiam()) == 0) {
+                hoaDon.setTongTienSauGiam(BigDecimal.ZERO);
+            }
+            // Kiểm tra nếu giá trị giảm nhỏ hơn tổng tiền của hóa đơn
+            else {
+                BigDecimal tienSauGiamGia = hoaDon.getTongTien().subtract(phieuGiamGia.getGiaTriGiam());
+                hoaDon.setTongTienSauGiam(tienSauGiamGia);
+            }
+        }
+        // Tính lại tổng tiền khi phiếu giảm giá là %
+        else if (phieuGiamGia.getLoaiGiam().equals(StatusLoaiGiam.PERCENT)) {
+
+        }else {
+            throw new BusinessException("Phiếu giảm giá không hợp lệ");
         }
         hoaDon.setPhieuGiamGia(phieuGiamGia);
         return true;
@@ -527,26 +567,27 @@ public class CounterSalesService implements ICounterSalesService {
         BigDecimal tongTienHienTaiCuaHoaDon = hoaDonExisting.getTongTien();
         BigDecimal tongTienHDNew = (tongTienHienTaiCuaHoaDon.subtract(tongTienHDCTTruocKhiThayDoiSoLuong)).add(tongTienHDCTSauKhiThayDoiSoLuong);
         hoaDonExisting.setTongTien(tongTienHDNew);
+        // Chuyển mất phiếu giảm giá
+        hoaDonExisting.setPhieuGiamGia(null);
+        hoaDonExisting.setTongTienSauGiam(hoaDonExisting.getTongTien());
+
         return null;
     }
+
     @Override
     @Transactional
-    public PhieuGiamGiaResponse cancelCouponsCounterSales(Long idPhieuGiamGia) {
-        // Lấy phiếu giảm giá theo id
-        PhieuGiamGia phieuGiamGiaExisting = phieuGiamGiaRepository.findById(idPhieuGiamGia)
-                .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại hoặc không khả dụng"));
+    public boolean cancelCouponsCounterSales(Long idHoaDon) {
+        // Lấy hóa đơn đang chờ thanh toán theo id
+        HoaDon hoaDon = hoaDonRepository.findByIdHoaDonAndTrangThai(idHoaDon, StatusHoaDon.PENDING).orElseThrow(
+                () -> new BusinessException("Không thể hủy sử dụng phiếu giảm giá ở hóa đơn này")
+        );
 
-        // Lấy danh sách các hóa đơn chờ sử dụng phiếu giảm giá này
-        List<HoaDon> hoaDonsToUpdate = hoaDonRepository.findByPhieuGiamGiaAndTrangThai(phieuGiamGiaExisting, StatusHoaDon.PENDING);
+        // Cập nhật lại các thông tin của hóa đơn
+        hoaDon.setPhieuGiamGia(null);
 
-        // Cập nhật phiếu giảm giá của các hóa đơn chờ về null
-        hoaDonsToUpdate.forEach(hoaDon -> {
-            hoaDon.setPhieuGiamGia(null);
-            hoaDonRepository.save(hoaDon);
-        });
+        hoaDon.setTongTienSauGiam(hoaDon.getTongTien());
 
-        // Trả về phản hồi
-        return new PhieuGiamGiaResponse();
+        return true;
     }
 
 }

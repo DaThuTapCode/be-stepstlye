@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 //import org.modelmapper.internal.Pair;
+import org.modelmapper.internal.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -92,33 +93,33 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private boolean isByPassToken(@NonNull HttpServletRequest request) {
-//        final List<Pair<String, String>> bypasstoken = Arrays.asList(
-//                // Sản phẩm
-////                 Đăng nhập
-//                Pair.of(String.format("%s/employee-login/login", apiPrefix), "OPTIONS"),
-//                Pair.of(String.format("%s/customer-login/login", apiPrefix), "POST"),
-//                Pair.of(String.format("%s/thuong-hieu", apiPrefix), "POST"),
-//                Pair.of(String.format("%s/danh-muc", apiPrefix), "POST"),
-//                Pair.of("/images", "GET")
-//                // Sản phẩm chi tiết
-//                // Thương hiệu
-//                // Danh mục
-//                // Màu sắc
-//                // Trọng lượng
-//                // Chất liệu
-//                // Hóa đơn
-//                // Hóa đơn chi tiết
-//                // Khách hàng
-//                // Nhân viên
-//        );
-//        for (Pair<String, String> bypassToken : bypasstoken) {
-//            if (request.getServletPath().contains(bypassToken.getLeft())
-//                    && request.getMethod().equals((bypassToken.getRight()))
-//            ) {
-//                return true;
-//            }
-//        }
-        return true;
+        final List<Pair<String, String>> bypasstoken = Arrays.asList(
+                // Sản phẩm
+//                 Đăng nhập
+                Pair.of(String.format("%s/employee-login/login", apiPrefix), "POST"),
+                Pair.of(String.format("%s/customer-login/login", apiPrefix), "POST"),
+                Pair.of(String.format("%s/thuong-hieu", apiPrefix), "POST"),
+                Pair.of(String.format("%s/danh-muc", apiPrefix), "POST"),
+                Pair.of("/images", "GET")
+                // Sản phẩm chi tiết
+                // Thương hiệu
+                // Danh mục
+                // Màu sắc
+                // Trọng lượng
+                // Chất liệu
+                // Hóa đơn
+                // Hóa đơn chi tiết
+                // Khách hàng
+                // Nhân viên
+        );
+        for (Pair<String, String> bypassToken : bypasstoken) {
+            if (request.getServletPath().contains(bypassToken.getLeft())
+                    && request.getMethod().equals((bypassToken.getRight()))
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

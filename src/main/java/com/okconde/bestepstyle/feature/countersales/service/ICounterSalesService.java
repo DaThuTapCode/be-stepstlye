@@ -15,6 +15,7 @@ import com.okconde.bestepstyle.core.util.enumutil.StatusPTTT;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +97,7 @@ public interface ICounterSalesService {
     /**
      *Tạo hàm thanh toán chuyeern khoan
      * @implNote TuanInfinity*/
-    public Map<String, String> VnpayBankTransferPayment(Long idHoaDon);
+    public OutputStream vnpayBankTransferPayment(Long idHoaDon);
 
     /**
      *Tạo hàm sua PGG
@@ -112,6 +113,6 @@ public interface ICounterSalesService {
      * Hủy phiếu giảm giá theo idPhieuGiamGia
      * @implNote TuanIF
      * */
-    public PhieuGiamGiaResponse cancelCouponsCounterSales(Long idPhieuGiamGia);
+    public boolean cancelCouponsCounterSales(Long idHoaDon);
 
 }
