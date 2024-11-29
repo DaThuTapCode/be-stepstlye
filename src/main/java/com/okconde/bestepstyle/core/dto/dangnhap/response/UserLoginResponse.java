@@ -15,7 +15,7 @@ import lombok.*;
 public class UserLoginResponse {
     private Long id;
     private String fullName;
-    private String username;
+    private String userName;
     private String token;
     private String role;
 }

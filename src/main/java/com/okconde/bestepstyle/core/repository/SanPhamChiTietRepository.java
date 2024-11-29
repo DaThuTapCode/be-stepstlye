@@ -19,17 +19,36 @@ import java.util.Optional;
 public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, Long> {
     @Query("""
                             select distinct spct from SanPhamChiTiet spct
-                            where 
+                            where
+                            (:tenSanPham is null or spct.sanPham.tenSanPham = :tenSanPham)
+                            and
+                            (:maSanPham is null or spct.sanPham.maSanPham = :maSanPham)
+                            and
                             (:maSpct is null or spct.maSpct = :maSpct)
                             and
                             (:idMauSac is null or spct.mauSac.idMauSac = :idMauSac)
-                            and 
+                            and
                             (:idKichCo is null or spct.kichCo.idKichCo = :idKichCo)
-                                       """)
+                            and
+                            (:idChatLieu is null or spct.sanPham.chatLieu.idChatLieu = :idChatLieu)
+                            and
+                            (:idTrongLuong is null or spct.sanPham.trongLuong.idTrongLuong = :idTrongLuong)
+                            and
+                            (:idThuongHieu is null or spct.sanPham.thuongHieu.idThuongHieu = :idThuongHieu)
+                            and
+                            (:idDanhMuc is null or spct.sanPham.danhMuc.idDanhMuc = :idDanhMuc)
+                            order by spct.ngayTao desc
+                            """)
     Page<SanPhamChiTiet> searchPageSPCT(Pageable pageable,
+                                  @Param(value = "tenSanPham") String tenSanPham,
+                                  @Param(value = "maSanPham") String maSanPham,
                                   @Param(value = "maSpct") String maSpct,
                                   @Param(value = "idMauSac") Long idMauSac,
-                                        @Param(value = "idKichCo") Long idKichCo
+                                  @Param(value = "idKichCo") Long idKichCo,
+                                  @Param(value = "idChatLieu") Long idChatLieu,
+                                  @Param(value = "idTrongLuong") Long idTrongLuong,
+                                  @Param(value = "idThuongHieu") Long idThuongHieu,
+                                  @Param(value = "idDanhMuc") Long idDanhMuc
                                   );
 
     /**

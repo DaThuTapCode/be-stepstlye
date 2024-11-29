@@ -36,6 +36,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
                             (:trangThai is null or hd.trangThai = :trangThai)
                             and
                             (:loaiHoaDon is null or hd.loaiHoaDon = :loaiHoaDon)
+                            order by hd.ngayTaoDon desc
             """)
     Page<HoaDon> searchPageHoaDon(Pageable pageable,
                                   @Param(value = "maHoaDon") String maHoaDon,

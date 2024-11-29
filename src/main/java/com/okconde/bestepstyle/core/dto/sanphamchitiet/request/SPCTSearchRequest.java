@@ -19,6 +19,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SPCTSearchRequest {
+
+    private String tenSanPham;
+
+    private String maSanPham;
+
     private String maSpct;
 
     private Long idSanPham;
@@ -26,4 +31,12 @@ public class SPCTSearchRequest {
     private Long idMauSac;
 
     private Long idKichCo;
+
+    private Long idChatLieu;
+
+    private Long idTrongLuong;
+
+    private Long idThuongHieu;
+
+    private Long idDanhMuc;
 }

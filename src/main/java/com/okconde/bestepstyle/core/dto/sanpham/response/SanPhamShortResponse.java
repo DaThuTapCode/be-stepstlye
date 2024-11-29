@@ -1,8 +1,10 @@
 package com.okconde.bestepstyle.core.dto.sanpham.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.okconde.bestepstyle.core.entity.DanhMuc;
-import com.okconde.bestepstyle.core.entity.ThuongHieu;
+import com.okconde.bestepstyle.core.dto.chatlieu.response.ChatLieuResponse;
+import com.okconde.bestepstyle.core.dto.danhmuc.response.DanhMucResponse;
+import com.okconde.bestepstyle.core.dto.thuonghieu.response.ThuongHieuResponse;
+import com.okconde.bestepstyle.core.dto.trongluong.reponse.TrongLuongResponse;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSP;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -39,4 +41,12 @@ public class SanPhamShortResponse {
 
     @Enumerated(EnumType.STRING)
     private StatusSP trangThai;
+
+    private ThuongHieuResponse thuongHieu;
+
+    private DanhMucResponse danhMuc;
+
+    private ChatLieuResponse chatLieu;
+
+    private TrongLuongResponse trongLuong;
 }

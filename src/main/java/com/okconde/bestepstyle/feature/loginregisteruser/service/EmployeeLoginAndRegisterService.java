@@ -46,7 +46,7 @@ public class EmployeeLoginAndRegisterService {
 
             return new UserLoginResponse().builder()
                     .id(optionalNhanVien.get().getIdNhanVien())
-                    .username(optionalNhanVien.get().getUsername())
+                    .userName(optionalNhanVien.get().getUsername())
                     .fullName(optionalNhanVien.get().getHoTen())
                     .token(jwtTokenUtil.gennerateToken(optionalNhanVien.get()))
                     .role(optionalNhanVien.get().getChucVu().getTenChucVu())

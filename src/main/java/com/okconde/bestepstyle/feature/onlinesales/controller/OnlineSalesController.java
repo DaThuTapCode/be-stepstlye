@@ -51,4 +51,42 @@ public class OnlineSalesController {
                 new ResponseData<>(HttpStatus.OK.value(), "Tạo đơn hàng thành công", onlineSalesService.taoDonHangOnlineMotSanPham(hoaDonBanOnlineRequest, maKH))
         );
     }
+
+    @PostMapping("/tao-don-hang")
+    public ResponseEntity<?> taoDonHang(
+            @RequestBody HoaDonBanOnlineRequest hoaDonBanOnlineRequest,
+            HttpServletRequest request
+            ) {
+        if(request.getHeader("Authorization") == null){
+            throw new BusinessException("Vui lòng đăng nhập để đặt hàng!");
+        }
+        String token = request.getHeader("Authorization").substring(7);
+        String maKH = jwtTokenUtil.extractUserName(token);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(), "Tạo đơn hàng thành công", onlineSalesService.taoDonHangOnline(hoaDonBanOnlineRequest))
+        );
+    }
+
+    @PostMapping("/check-so-luong-truoc-khi-chuyen-trang")
+    public ResponseEntity<?> checkSoLuongTruocKhiChuyenTrang(
+            @RequestBody HoaDonBanOnlineRequest hoaDonBanOnlineRequest,
+            HttpServletRequest request
+            ) {
+        if(request.getHeader("Authorization") == null){
+            throw new BusinessException("Vui lòng đăng nhập để đặt hàng!");
+        }
+        String token = request.getHeader("Authorization").substring(7);
+        String maKH = jwtTokenUtil.extractUserName(token);
+        onlineSalesService.kiemTraSoLuongTruocKhiChuyenSangTrangMuaHang(hoaDonBanOnlineRequest, maKH);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(), "Chuyển trang thành công")
+        );
+    }
+
+    @GetMapping("/lay-phieu-giam-gia-hoat-dong")
+    public ResponseEntity<?> layPhieuGiamGiaHoatDong() {
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(), "Lấy danh sách phiếu giảm giá thành công", onlineSalesService.getDanhSachPhieuGiamGia())
+        );
+    }
 }

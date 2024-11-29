@@ -28,4 +28,6 @@ public class HoaDonChiTietBanOnlineRequest {
     @Min(value = 1, message = "Số lượng phải lớn hơn 0")
     private Integer soLuong;
 
+    private BigDecimal donGia;
+
 }

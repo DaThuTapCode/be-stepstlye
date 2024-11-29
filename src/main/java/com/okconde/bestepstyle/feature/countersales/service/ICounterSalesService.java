@@ -51,9 +51,7 @@ public interface ICounterSalesService {
      *
      * @return Page chứa danh sách kết quả
      */
-    default Page<SPCTResponse> searchPageSPCTCounterSales(Pageable pageable, SPCTSearchRequest spctSearchRequest) {
-        return null;
-    }
+     Page<SPCTResponse> searchPageSPCTCounterSales(Pageable pageable, SPCTSearchRequest spctSearchRequest);
 
     /**
      * Lấy danh sách các thuộc tính cần tìm kiếm

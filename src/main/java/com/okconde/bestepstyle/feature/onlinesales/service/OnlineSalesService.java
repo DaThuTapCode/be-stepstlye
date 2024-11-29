@@ -4,6 +4,7 @@ import com.okconde.bestepstyle.core.config.auth.AuthenticationUtil;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonBanOnlineRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
 import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietBanOnlineRequest;
+import com.okconde.bestepstyle.core.dto.phieugiamgia.response.PhieuGiamGiaResponse;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTRequest;
 import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.exception.BusinessException;
@@ -57,8 +58,9 @@ public class OnlineSalesService implements IOnlineSalesService{
     private final SPCTResponseMapper sanPhamChiTietResponseMapper;
 
     private final PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper;
+    private final LichSuHoaDonRepository lichSuHoaDonRepository;
 
-    public OnlineSalesService(HoaDonRepository hoaDonRepository, SanPhamRepository sanPhamRepository, SanPhamChiTietRepository sanPhamChiTietRepository, PhieuGiamGiaRepository phieuGiamGiaRepository, HoaDonChiTietRepository hoaDonChiTietRepository, ThanhToanRepository thanhToanRepository, KhachHangRepository khachHangRepository, NhanVienRepository nhanVienRepository, HoaDonShortResponseMapper hoaDonShortResponseMapper, HoaDonResponseMapper hoaDonResponseMapper, HoaDonRequestMapper hoaDonRequestMapper, SanPhamShortResponseMapper sanPhamShortResponseMapper, HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper, KhachHangResponseMapper khachHangResponseMapper, SPCTResponseMapper sanPhamChiTietResponseMapper, PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper) {
+    public OnlineSalesService(HoaDonRepository hoaDonRepository, SanPhamRepository sanPhamRepository, SanPhamChiTietRepository sanPhamChiTietRepository, PhieuGiamGiaRepository phieuGiamGiaRepository, HoaDonChiTietRepository hoaDonChiTietRepository, ThanhToanRepository thanhToanRepository, KhachHangRepository khachHangRepository, NhanVienRepository nhanVienRepository, HoaDonShortResponseMapper hoaDonShortResponseMapper, HoaDonResponseMapper hoaDonResponseMapper, HoaDonRequestMapper hoaDonRequestMapper, SanPhamShortResponseMapper sanPhamShortResponseMapper, HoaDonChiTietResponseMapper hoaDonChiTietResponseMapper, KhachHangResponseMapper khachHangResponseMapper, SPCTResponseMapper sanPhamChiTietResponseMapper, PhieuGiamGiaResponseMapper phieuGiamGiaResponseMapper, LichSuHoaDonRepository lichSuHoaDonRepository) {
         this.hoaDonRepository = hoaDonRepository;
         this.sanPhamRepository = sanPhamRepository;
         this.sanPhamChiTietRepository = sanPhamChiTietRepository;
@@ -75,6 +77,7 @@ public class OnlineSalesService implements IOnlineSalesService{
         this.khachHangResponseMapper = khachHangResponseMapper;
         this.sanPhamChiTietResponseMapper = sanPhamChiTietResponseMapper;
         this.phieuGiamGiaResponseMapper = phieuGiamGiaResponseMapper;
+        this.lichSuHoaDonRepository = lichSuHoaDonRepository;
     }
 
 
@@ -157,6 +160,124 @@ public class OnlineSalesService implements IOnlineSalesService{
         hoaDonChiTietSaved.setHoaDon(hoaDonSaved);
         return hoaDonResponseMapper.toDTO(hoaDonSaved);
     }
+
+    /**
+     * @param hoaDonBanOnlineRequest
+     * @param maKhachHang
+     */
+    @Override
+    public void kiemTraSoLuongTruocKhiChuyenSangTrangMuaHang(HoaDonBanOnlineRequest hoaDonBanOnlineRequest, String maKhachHang) {
+        // Lấy danh sách các sản phẩm chi tiết từ hoaDonBanOnlineRequest
+        List<HoaDonChiTietBanOnlineRequest> hoaDonChiTietList = hoaDonBanOnlineRequest.getHoaDonChiTiets();
+
+        for (HoaDonChiTietBanOnlineRequest hoaDonChiTiet : hoaDonChiTietList) {
+            SPCTRequest spctRequest = hoaDonChiTiet.getSanPhamChiTiet();
+            Long idSpct = spctRequest.getIdSpct(); // Lấy ID của sản phẩm chi tiết
+            int soLuongMua = hoaDonChiTiet.getSoLuong(); // Số lượng mua của sản phẩm
+
+            // Gọi phương thức để lấy số lượng tồn kho của sản phẩm chi tiết từ cơ sở dữ liệu
+            int soLuongTonKho = getSoLuongTonKhoByIdSpct(idSpct); // Giả sử có phương thức lấy số lượng tồn kho
+
+            // Kiểm tra xem số lượng mua có vượt quá số lượng tồn kho không
+            if (soLuongMua > soLuongTonKho) {
+                throw new BusinessException("Số lượng mua vượt quá số lượng tồn kho của sản phẩm chi tiết : " + idSpct);
+            }
+        }
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public List<PhieuGiamGiaResponse> getDanhSachPhieuGiamGia() {
+        List<PhieuGiamGiaResponse> listToDTO = phieuGiamGiaResponseMapper.listToDTO(phieuGiamGiaRepository.getPhieuGiamGiaByTrangThai(StatusPhieuGiamGia.ACTIVE));
+        return listToDTO;
+    }
+
+    /**
+     * @param hoaDonBanOnlineRequest
+     * @return
+     */
+    @Override
+    @Transactional
+    public HoaDonResponse taoDonHangOnline(HoaDonBanOnlineRequest hoaDonBanOnlineRequest) {
+
+        KhachHang khachHang = khachHangRepository.timKHTheoIDVaTrangThai(hoaDonBanOnlineRequest.getKhachHang().getIdKhachHang(), StatusEnum.ACTIVE)
+                .orElseThrow(() -> new BusinessException("Khách hàng không tồn tại hoặc đã bị chặn mua hàng"));
+
+        PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findByPhieuGiamGiaAndTrangThai(hoaDonBanOnlineRequest.getPhieuGiamGia().getIdPhieuGiamGia(), StatusPhieuGiamGia.ACTIVE)
+                .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại hoặc đã kết thúc"));
+
+        ThanhToan thanhToan = thanhToanRepository.findThanhToanByPhuongThucThanhToan(hoaDonBanOnlineRequest.getThanhToan()).orElseThrow(
+                () -> new BusinessException("Không tìm thấy phương thức thanh toán")
+        );
+
+        HoaDon hoaDonNew = HoaDon.builder()
+                .thanhToan(thanhToan)
+                .tongTien(hoaDonBanOnlineRequest.getTongTien())
+                .tongTienSauGiam(hoaDonBanOnlineRequest.getTongTienSauGiam())
+                .khachHang(khachHang)
+                .phieuGiamGia(phieuGiamGia)
+                .ghiChu(hoaDonBanOnlineRequest.getGhiChu())
+                .tenKhachHang(hoaDonBanOnlineRequest.getTenKhachHang())
+                .soDienThoaiKhachHang(hoaDonBanOnlineRequest.getSoDienThoaiKhachHang())
+                .diaChiGiaoHang(hoaDonBanOnlineRequest.getDiaChiGiaoHang())
+                .maHoaDon(GenerateCodeRandomUtil.generateProductCode("HDO", 7))
+                .phiVanChuyen(hoaDonBanOnlineRequest.getPhiVanChuyen())
+                .ngayTaoDon(LocalDateTime.now())
+                .loaiHoaDon(LoaiHoaDon.ONLINESALES)
+                .trangThai(StatusHoaDon.PENDINGPROCESSING)
+                .build();
+        HoaDon hoaDonSaved = hoaDonRepository.save(hoaDonNew);
+
+        List<HoaDonChiTiet> hoaDonChiTietListNew = new ArrayList<>();
+        // Kiểm tra tính hợp lệ của hóa đơn chi tiết
+        for (HoaDonChiTietBanOnlineRequest hdctol: hoaDonBanOnlineRequest.getHoaDonChiTiets()) {
+            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(hdctol.getSanPhamChiTiet().getIdSpct(), StatusSPCT.ACTIVE).orElseThrow(
+                    () -> new BusinessException("Không tìm thấy sản phẩm cần mua"));
+
+            if(sanPhamChiTiet.getSoLuong() < hdctol.getSoLuong()) {
+                throw new BusinessException("Số lượng sản phẩm cần mua không đủ");
+            }
+
+            if(sanPhamChiTiet.getGia().compareTo(hdctol.getDonGia()) != 0){
+                throw new BusinessException("Sản phẩm đã có sự thay đổi về giá bán vui lòng tải lại trang!");
+            }
+
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - hdctol.getSoLuong());
+
+            HoaDonChiTiet hoaDonChiTiet = HoaDonChiTiet.builder()
+                    .sanPhamChiTiet(sanPhamChiTiet)
+                    .donGia(hdctol.getDonGia())
+                    .trangThai(StatusHoaDonChiTiet.ACTIVE)
+                    .soLuong(hdctol.getSoLuong())
+                    .tongTien(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hdctol.getSoLuong())))
+                    .maHoaDonChiTiet(GenerateCodeRandomUtil.generateProductCode("HCDT", 6))
+                    .hoaDon(hoaDonSaved)
+                    .build();
+            hoaDonChiTietListNew.add(hoaDonChiTiet);
+        }
+
+        hoaDonChiTietRepository.saveAll(hoaDonChiTietListNew);
+
+        LichSuHoaDon lichSuHoaDon = LichSuHoaDon.builder()
+                .hoaDon(hoaDonSaved)
+                .maLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD", 6))
+                .ngayTao(LocalDateTime.now())
+                .trangThai(StatusEnum.ACTIVE)
+                .nguoiThucHien(hoaDonBanOnlineRequest.getKhachHang().getTenKhachHang())
+                .hanhDong("Tạo đơn hàng")
+                .build();
+        lichSuHoaDonRepository.save(lichSuHoaDon);
+        return hoaDonResponseMapper.toDTO(hoaDonSaved);
+    }
+
+    // Phương thức giả lập lấy số lượng tồn kho từ cơ sở dữ liệu
+    private int getSoLuongTonKhoByIdSpct(Long idSpct) {
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(idSpct, StatusSPCT.ACTIVE).orElseThrow(() -> new BusinessException("Không tìm thấy sản phẩm cần mua"));
+        return sanPhamChiTiet.getSoLuong();
+    }
+
 
 
 }

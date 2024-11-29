@@ -50,7 +50,7 @@ public class CustomerLoginAndRegisterService {
 
         return new UserLoginResponse().builder()
                 .id(optionalKhachHang.get().getIdKhachHang())
-                .username(optionalKhachHang.get().getUsername())
+                .userName(optionalKhachHang.get().getUsername())
                 .fullName(optionalKhachHang.get().getTenKhachHang())
                 .token(jwtTokenUtil.gennerateToken(optionalKhachHang.get()))
                 .role(optionalKhachHang.get().getChucVu().getTenChucVu())
