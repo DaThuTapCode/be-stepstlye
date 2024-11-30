@@ -56,6 +56,8 @@ public class HoaDon {
 
     private String ghiChu;
 
+    private String maGiaoDich;
+
     @Enumerated(EnumType.STRING)
     private StatusHoaDon trangThai;
 

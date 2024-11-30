@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,15 +73,29 @@ public class SanPhamController {
                 ));
     }
 
-    @PostMapping(value = "create")
+    @PostMapping(value = "create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseData<SanPhamResponse>> createNewProduct(
-            @RequestBody SanPhamRequest sanPhamRequest
-            ){
+            @ModelAttribute SanPhamRequest sanPhamRequest
+            ) throws Exception {
         return ResponseEntity.ok(
                 new ResponseData<>(
                         HttpStatus.OK.value(),
                         "Thêm sản phẩm mới thành công",
                         sanPhamService.create(sanPhamRequest)
+                )
+        );
+    }
+
+@PutMapping(value = "update/{idSanPham}")
+    public ResponseEntity<ResponseData<SanPhamResponse>> updateProduct(
+            @PathVariable Long idSanPham,
+            @RequestBody SanPhamRequest sanPhamRequest
+            )  {
+        return ResponseEntity.ok(
+                new ResponseData<>(
+                        HttpStatus.OK.value(),
+                        "Cập nhật sản phẩm thành công",
+                        sanPhamService.update(idSanPham, sanPhamRequest)
                 )
         );
     }

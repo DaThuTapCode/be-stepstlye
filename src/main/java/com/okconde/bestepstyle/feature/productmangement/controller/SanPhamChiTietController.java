@@ -36,6 +36,17 @@ public class SanPhamChiTietController {
         );
     }
 
+    @GetMapping(value = "/lay-theo-id-san-pham/{idSanpham}")
+    public ResponseEntity<ResponseData<SPCTResponse>> getSPCTBySanPham(
+            @PathVariable Long idSanpham
+    ){
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Lấy thành công danh sách sản phẩm chi tiết với id sản phẩm: " + idSanpham,
+                        sanPhamChiTietService.getById(idSanpham))
+        );
+    }
+
     @GetMapping(value = "/get-all")
     public ResponseEntity<ResponseData<List<SPCTResponse>>> getAllSanPhamChiTiet(){
         return ResponseEntity.ok(

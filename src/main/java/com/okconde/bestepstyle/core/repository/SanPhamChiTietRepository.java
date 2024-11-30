@@ -20,11 +20,11 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     @Query("""
                             select distinct spct from SanPhamChiTiet spct
                             where
-                            (:tenSanPham is null or spct.sanPham.tenSanPham = :tenSanPham)
+                            (:tenSanPham is null or spct.sanPham.tenSanPham like %:tenSanPham%)
                             and
-                            (:maSanPham is null or spct.sanPham.maSanPham = :maSanPham)
+                            (:maSanPham is null or spct.sanPham.maSanPham like %:maSanPham%)
                             and
-                            (:maSpct is null or spct.maSpct = :maSpct)
+                            (:maSpct is null or spct.maSpct like %:maSpct%)
                             and
                             (:idMauSac is null or spct.mauSac.idMauSac = :idMauSac)
                             and

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -84,4 +85,74 @@ SELECT h FROM HoaDon h WHERE h.loaiHoaDon = :loaiHoaDon
                 SELECT hd FROM HoaDon  hd where hd.khachHang.maKhachHang = :maKH order by hd.ngayTaoDon desc
             """)
     List<HoaDon> getListHoaDonByKhachHang(@Param("maKH") String maKh);
+
+
+
+
+    /**
+     *  Query lay tong doanh thu ngay hom nay
+     * */
+    @Query("""
+    SELECT hd FROM HoaDon hd 
+    WHERE hd.trangThai = :trangThai 
+      AND hd.ngayTaoDon >= :startOfDay 
+      AND hd.ngayTaoDon < :endOfDay
+""")
+    List<HoaDon> layHoaDonTheoTrangThaiVaNgay(
+            @Param("trangThai") StatusHoaDon trangThai,
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endOfDay") LocalDateTime endOfDay
+    );
+
+/**
+ * Query lấy doanh thu theo tháng hiện tại*/
+    @Query("""
+    SELECT hd FROM HoaDon hd 
+    WHERE hd.trangThai = :trangThai 
+      AND hd.ngayTaoDon >= :startOfMonth 
+      AND hd.ngayTaoDon < :endOfMonth
+""")
+    List<HoaDon> layHoaDonTheoTrangThaiVaThang(
+            @Param("trangThai") StatusHoaDon trangThai,
+            @Param("startOfMonth") LocalDateTime startOfMonth,
+            @Param("endOfMonth") LocalDateTime endOfMonth
+    );
+
+
+    /**
+     * Query lấy doanh thu theo năm hiện tại
+     * */
+    @Query("""
+    SELECT hd FROM HoaDon hd 
+    WHERE hd.trangThai = :trangThai 
+      AND hd.ngayTaoDon >= :startOfYear 
+      AND hd.ngayTaoDon < :endOfYear
+""")
+    List<HoaDon> layHoaDonTheoTrangThaiVaNam(
+            @Param("trangThai") StatusHoaDon trangThai,
+            @Param("startOfYear") LocalDateTime startOfYear,
+            @Param("endOfYear") LocalDateTime endOfYear
+    );
+
+    /**
+     * Query lấy tổng doanh thu từng ngày trong một tháng/năm
+     */
+    @Query("""
+    SELECT 
+        FUNCTION('DAY', hd.ngayTaoDon) AS ngay,
+        SUM(hd.tongTienSauGiam + hd.phiVanChuyen) AS doanhThu
+    FROM HoaDon hd
+    WHERE hd.trangThai = :trangThai 
+      AND hd.ngayTaoDon >= :startOfMonth 
+      AND hd.ngayTaoDon < :endOfMonth
+    GROUP BY FUNCTION('DAY', hd.ngayTaoDon)
+    ORDER BY ngay
+""")
+    List<Object[]> layDoanhThuTheoTungNgayTrongThang(
+            @Param("trangThai") StatusHoaDon trangThai,
+            @Param("startOfMonth") LocalDateTime startOfMonth,
+            @Param("endOfMonth") LocalDateTime endOfMonth
+    );
+
+
 }

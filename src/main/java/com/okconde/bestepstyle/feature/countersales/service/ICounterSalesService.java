@@ -90,7 +90,7 @@ public interface ICounterSalesService {
     /**
      * Tạo hàm chuyển trạng thái hóa đơn
      * @implNote TuanInfinity*/
-    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon, StatusPTTT phuongThucThanhToan);
+    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon, StatusPTTT phuongThucThanhToan, String maGiaoDich, String ghiChu, String maNV);
 
     /**
      *Tạo hàm thanh toán chuyeern khoan

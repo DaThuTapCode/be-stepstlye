@@ -89,4 +89,19 @@ public class OnlineSalesController {
                 new ResponseData<>(HttpStatus.OK.value(), "Lấy danh sách phiếu giảm giá thành công", onlineSalesService.getDanhSachPhieuGiamGia())
         );
     }
+
+    @PutMapping("/khach-hang-huy-hoa-don/{idHoaDon}")
+    public ResponseEntity<?> khachHangHuyHoaDon(
+            @PathVariable Long idHoaDon,
+            @RequestParam String lyDoHuy,
+            HttpServletRequest request
+    ){
+        String token = request.getHeader("Authorization").substring(7);
+        String maKH = jwtTokenUtil.extractUserName(token);
+
+        return ResponseEntity.ok(
+          new ResponseData<>(HttpStatus.OK.value(),"Hủy hóa đơn thành công",onlineSalesService.huyHoaDonOnlinePhiaKhachHang(idHoaDon, lyDoHuy, maKH))
+        );
+    }
+
 }

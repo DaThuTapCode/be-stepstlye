@@ -341,9 +341,13 @@ public class CounterSalesService implements ICounterSalesService {
 
     @Override
     @Transactional
-    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon, StatusPTTT phuongThucThanhToan) {
+    public HoaDonResponse markInvoiceAsPaid(Long idHoaDon, StatusPTTT phuongThucThanhToan, String maGiaoDich, String ghiChu, String maNV) {
         HoaDon hoaDon = hoaDonRepository.findByIdHoaDonAndTrangThai(idHoaDon, StatusHoaDon.PENDING)
                 .orElseThrow(() -> new EntityNotFoundException("Hóa Đơn không tồn tại."));
+
+        NhanVien nhanVien = nhanVienRepository.timNVTheoMaNVVaTrangThai(maNV, StatusEnum.ACTIVE).orElseThrow(
+                () -> new BusinessException("Nhân viên xác nhận đơn hàng không hợp lệ!")
+        );
 
         //Kiểm tra điều kiệm thêm sản phẩm trước khi ấn thanh toán
         if(hoaDon.getHoaDonChiTiet().isEmpty()) {
@@ -355,7 +359,7 @@ public class CounterSalesService implements ICounterSalesService {
             PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findByPhieuGiamGiaAndTrangThai(hoaDon.getPhieuGiamGia().getIdPhieuGiamGia(), StatusPhieuGiamGia.ACTIVE)
                     .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại hoặc đã hết hạn"));
 
-            if(hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
+            if(hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu().compareTo(hoaDon.getTongTien()) >= 0) {
                 throw new BusinessException(("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu()) +
                         ("\n Vui lòng chọn lại phiếu giảm giá phù hợp"));
             }
@@ -366,10 +370,27 @@ public class CounterSalesService implements ICounterSalesService {
             throw new BusinessException("Hóa đơn này đã được thanh toán, không thể thanh toán lại.");
         }
 
-        Optional<ThanhToan> thanhToan = thanhToanRepository.findThanhToanByPhuongThucThanhToan(phuongThucThanhToan);
-        hoaDon.setThanhToan(thanhToan.get());
+        ThanhToan thanhToan = thanhToanRepository.findThanhToanByPhuongThucThanhToan(phuongThucThanhToan).orElseThrow(
+                () -> new BusinessException("Phương thức thanh toán không tồn tại")
+        );
+        hoaDon.setThanhToan(thanhToan);
+        hoaDon.setMaGiaoDich(maGiaoDich);
+        hoaDon.setGhiChu(ghiChu);
         hoaDon.setTrangThai(StatusHoaDon.PAID);
         hoaDonRepository.save(hoaDon);
+
+        // Ghi log lịch sử hóa đơn
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setNgayTao(LocalDateTime.now());
+        lichSuHoaDon.setHoaDon(hoaDon);
+        lichSuHoaDon.setMaLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD", 6));
+        lichSuHoaDon.setHanhDong(thanhToan.getPhuongThucThanhToan()
+                .equals(StatusPTTT.CASH) ? "Thanh toán hóa đơn " + hoaDon.getMaHoaDon()
+                :
+                "Thanh toán hóa đơn " + hoaDon.getMaHoaDon()  + " mã giao dịch " + hoaDon.getMaGiaoDich());
+        lichSuHoaDon.setTrangThai(StatusEnum.ACTIVE);
+        lichSuHoaDon.setNguoiThucHien(nhanVien.getMaNhanVien() + " - " + nhanVien.getHoTen());
+        lichSuHoaDonRepository.save(lichSuHoaDon);
         return hoaDonResponseMapper.toDTO(hoaDon);
     }
 

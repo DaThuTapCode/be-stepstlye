@@ -279,9 +279,14 @@ public class CounterSalesController {
     @PostMapping("invoice/pay/{idHoaDon}/{phuongThucThanhToan}")
     public ResponseEntity<ResponseData<HoaDonResponse>> payInvoice(
             @PathVariable Long idHoaDon,
-            @PathVariable StatusPTTT phuongThucThanhToan
+            @PathVariable StatusPTTT phuongThucThanhToan,
+            @RequestParam(required = false) String maGiaoDich,
+            @RequestParam(required = false) String ghiChu,
+            HttpServletRequest request
     ){
-        HoaDonResponse paidInvoice = counterSalesService.markInvoiceAsPaid(idHoaDon, phuongThucThanhToan);
+        String token = request.getHeader("Authorization").substring(7);
+        String maNV = jwtTokenUtil.extractUserName(token);
+        HoaDonResponse paidInvoice = counterSalesService.markInvoiceAsPaid(idHoaDon, phuongThucThanhToan, maGiaoDich, ghiChu, maNV);
 
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
@@ -331,12 +336,12 @@ public class CounterSalesController {
             @PathVariable Long idHoaDon
     ) {
         // Gọi service để hủy PGG
-        // Trả về ResponseData với trạng thái thành công và thông tin phiếu giảm giá
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Thành công",
                         counterSalesService.cancelCouponsCounterSales(idHoaDon))
         );
     }
+
 
 }

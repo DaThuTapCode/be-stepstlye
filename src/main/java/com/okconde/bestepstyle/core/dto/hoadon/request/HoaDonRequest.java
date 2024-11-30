@@ -63,6 +63,8 @@ public class HoaDonRequest {
 
     private String soDienThoaiKhachHang;
 
+    private String maGiaoDich;
+
     private String ghiChu;
 
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")

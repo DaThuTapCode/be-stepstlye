@@ -68,6 +68,7 @@ public class HoaDonResponse {
 
     private String soDienThoaiKhachHang;
 
+    private String maGiaoDich;
 
     private String ghiChu;
 

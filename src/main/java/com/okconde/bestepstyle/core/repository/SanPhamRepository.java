@@ -57,4 +57,9 @@ public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
         SELECT sp FROM SanPham sp WHERE sp.tenSanPham like :tenSanPham
     """)
     Optional<SanPham> getSanPhamByTenSanPham(String tenSanPham);
+
+    @Query("""
+        SELECT sp FROM SanPham sp WHERE sp.idSanPham = :idSanPham and sp.trangThai = :trangThai
+    """)
+    Optional<SanPham> getSanPhamByIdAndTrangThai(Long idSanPham, StatusSP trangThai);
 }

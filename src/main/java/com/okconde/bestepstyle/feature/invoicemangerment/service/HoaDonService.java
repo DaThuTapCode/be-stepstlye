@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -281,7 +280,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
     /**
      * Thay đổi trạng thái hóa đơn
      */
-    @jakarta.transaction.Transactional
+    @Transactional
     public boolean changeStatusInvoice(Long idHoaDon, String maNV, StatusHoaDon trangThaiMoi) {
         NhanVien nv  = nhanVienRepository.timNVTheoMaNVVaTrangThai(maNV, StatusEnum.ACTIVE).orElseThrow(
                 () -> new BusinessException("Nhân viên không hợp lệ")

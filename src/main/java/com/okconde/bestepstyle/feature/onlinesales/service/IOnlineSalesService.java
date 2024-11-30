@@ -28,4 +28,9 @@ public interface IOnlineSalesService {
 
     /**Tạo đơn hàng online*/
     HoaDonResponse taoDonHangOnline(HoaDonBanOnlineRequest hoaDonBanOnlineRequest);
+
+    /**
+     * Hủy đơn hàng online phía khách hàng
+     * */
+    HoaDonResponse huyHoaDonOnlinePhiaKhachHang(Long idHoaDon, String maKH, String lyDoHuy);
 }
