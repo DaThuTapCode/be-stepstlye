@@ -2,12 +2,16 @@ package com.okconde.bestepstyle.feature.productmangement.service;
 
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
+import com.okconde.bestepstyle.core.entity.KichCo;
+import com.okconde.bestepstyle.core.entity.MauSac;
 import com.okconde.bestepstyle.core.entity.SanPham;
 import com.okconde.bestepstyle.core.entity.SanPhamChiTiet;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.sanphamchitiet.request.SPCTRequestMapper;
 import com.okconde.bestepstyle.core.mapper.sanphamchitiet.response.SPCTResponseMapper;
+import com.okconde.bestepstyle.core.repository.KichCoRepository;
+import com.okconde.bestepstyle.core.repository.MauSacRepository;
 import com.okconde.bestepstyle.core.repository.SanPhamChiTietRepository;
 import com.okconde.bestepstyle.core.repository.SanPhamRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
@@ -30,15 +34,19 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
     // Repo
     private final SanPhamChiTietRepository sanPhamChiTietRepository;
     private final SanPhamRepository sanPhamRepository;
+    private final MauSacRepository mauSacRepository;
+    private final KichCoRepository kichCoRepository;
 
     // Mapper
     private final SPCTResponseMapper spctResponseMapper;
     private final SPCTRequestMapper spctRequestMapper;
 
     // Constructor
-    public SanPhamChiTietService(SanPhamChiTietRepository sanPhamChiTietRepository, SanPhamRepository sanPhamRepository, SPCTResponseMapper spctResponseMapper, SPCTRequestMapper spctRequestMapper) {
+    public SanPhamChiTietService(SanPhamChiTietRepository sanPhamChiTietRepository, SanPhamRepository sanPhamRepository, MauSacRepository mauSacRepository, KichCoRepository kichCoRepository, SPCTResponseMapper spctResponseMapper, SPCTRequestMapper spctRequestMapper) {
         this.sanPhamChiTietRepository = sanPhamChiTietRepository;
         this.sanPhamRepository = sanPhamRepository;
+        this.mauSacRepository = mauSacRepository;
+        this.kichCoRepository = kichCoRepository;
         this.spctResponseMapper = spctResponseMapper;
         this.spctRequestMapper = spctRequestMapper;
     }
@@ -60,8 +68,28 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
     }
 
     @Override
-    public SPCTResponse update(Long aLong, SPCTRequest spctRequest) {
-        return null;
+    @Transactional
+    public SPCTResponse update(Long idSpct, SPCTRequest spctRequest) {
+
+        SanPhamChiTiet spct = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(idSpct, StatusSPCT.ACTIVE)
+                .orElseThrow(() -> new BusinessException("Sản phẩm chi tiết không tồn tại"));
+
+        if(sanPhamChiTietRepository.checkExitsByAttribute(spct.getSanPham().getIdSanPham(), spctRequest.getKichCo().getIdKichCo(), spctRequest.getMauSac().getIdMauSac())){
+            throw new BusinessException("Sản phẩm chi tiết này đã tồn tại!");
+        }
+
+        MauSac mauSac = mauSacRepository.findById(spctRequest.getMauSac().getIdMauSac())
+                        .orElseThrow(() -> new BusinessException("Màu sắc không tồn tại"));
+
+        KichCo kichCo = kichCoRepository.findById(spctRequest.getKichCo().getIdKichCo())
+                        .orElseThrow(() -> new BusinessException("Kích cỡ không tồn tại"));
+
+        spct.setNgayChinhSua(LocalDateTime.now());
+        spct.setGia(spctRequest.getGia());
+        spct.setSoLuong(spctRequest.getSoLuong());
+        spct.setMauSac(mauSac);
+        spct.setKichCo(kichCo);
+        return spctResponseMapper.toDTO(sanPhamChiTietRepository.save(spct));
     }
 
     @Override

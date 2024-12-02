@@ -100,7 +100,7 @@ public class OnlineSalesController {
         String maKH = jwtTokenUtil.extractUserName(token);
 
         return ResponseEntity.ok(
-          new ResponseData<>(HttpStatus.OK.value(),"Hủy hóa đơn thành công",onlineSalesService.huyHoaDonOnlinePhiaKhachHang(idHoaDon, lyDoHuy, maKH))
+          new ResponseData<>(HttpStatus.OK.value(),"Hủy hóa đơn thành công",onlineSalesService.huyHoaDonOnlinePhiaKhachHang(idHoaDon, maKH, lyDoHuy))
         );
     }
 

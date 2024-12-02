@@ -359,10 +359,12 @@ public class CounterSalesService implements ICounterSalesService {
             PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findByPhieuGiamGiaAndTrangThai(hoaDon.getPhieuGiamGia().getIdPhieuGiamGia(), StatusPhieuGiamGia.ACTIVE)
                     .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại hoặc đã hết hạn"));
 
-            if(hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu().compareTo(hoaDon.getTongTien()) >= 0) {
-                throw new BusinessException(("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu()) +
-                        ("\n Vui lòng chọn lại phiếu giảm giá phù hợp"));
+            if (hoaDon.getTongTien().compareTo(hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu()) < 0) {
+                throw new BusinessException("Giá trị hóa đơn phải lớn hơn hoặc bằng: "
+                        + hoaDon.getPhieuGiamGia().getGiaTriHoaDonToiThieu()
+                        + "\n Vui lòng chọn lại phiếu giảm giá phù hợp");
             }
+
         }
 
         //Kiểm tra điều kiện hóa đơn đã thanh toán chưa

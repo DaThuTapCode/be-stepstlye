@@ -186,7 +186,7 @@ public class OnlineSalesService implements IOnlineSalesService {
 
             // Kiểm tra xem số lượng mua có vượt quá số lượng tồn kho không
             if (soLuongMua > soLuongTonKho) {
-                throw new BusinessException("Số lượng mua vượt quá số lượng tồn kho của sản phẩm chi tiết : " + idSpct);
+                throw new BusinessException("Số lượng mua vượt quá số lượng tồn kho của sản phẩm chi tiết : " + hoaDonChiTiet.getSanPhamChiTiet().getMaSpct());
             }
         }
     }
@@ -207,7 +207,6 @@ public class OnlineSalesService implements IOnlineSalesService {
     @Override
     @Transactional
     public HoaDonResponse taoDonHangOnline(HoaDonBanOnlineRequest hoaDonBanOnlineRequest) {
-
         KhachHang khachHang = khachHangRepository.timKHTheoIDVaTrangThai(hoaDonBanOnlineRequest.getKhachHang().getIdKhachHang(), StatusEnum.ACTIVE)
                 .orElseThrow(() -> new BusinessException("Khách hàng không tồn tại hoặc đã bị chặn mua hàng"));
         PhieuGiamGia phieuGiamGia = null;
@@ -215,7 +214,6 @@ public class OnlineSalesService implements IOnlineSalesService {
             phieuGiamGia = phieuGiamGiaRepository.findByPhieuGiamGiaAndTrangThai(hoaDonBanOnlineRequest.getPhieuGiamGia().getIdPhieuGiamGia(), StatusPhieuGiamGia.ACTIVE)
                     .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại hoặc đã kết thúc"));
         }
-
 
         ThanhToan thanhToan = thanhToanRepository.findThanhToanByPhuongThucThanhToan(hoaDonBanOnlineRequest.getThanhToan()).orElseThrow(
                 () -> new BusinessException("Không tìm thấy phương thức thanh toán")
@@ -253,8 +251,6 @@ public class OnlineSalesService implements IOnlineSalesService {
                 throw new BusinessException("Sản phẩm đã có sự thay đổi về giá bán vui lòng tải lại trang!");
             }
 
-            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - hdctol.getSoLuong());
-
             HoaDonChiTiet hoaDonChiTiet = HoaDonChiTiet.builder()
                     .sanPhamChiTiet(sanPhamChiTiet)
                     .donGia(hdctol.getDonGia())
@@ -288,9 +284,10 @@ public class OnlineSalesService implements IOnlineSalesService {
      * @return
      */
     @Override
+    @Transactional
     public HoaDonResponse huyHoaDonOnlinePhiaKhachHang(Long idHoaDon, String maKH, String lyDoHuy) {
-        NhanVien nv = nhanVienRepository.timNVTheoMaNVVaTrangThai(maKH, StatusEnum.ACTIVE).orElseThrow(
-                () -> new BusinessException("Nhân viên không hợp lệ")
+        KhachHang khachHang = khachHangRepository.timKHTheoMaKH(maKH, StatusEnum.ACTIVE).orElseThrow(
+                () -> new BusinessException("Vui lòng đăng nhập để hủy")
         );
 
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
@@ -298,7 +295,6 @@ public class OnlineSalesService implements IOnlineSalesService {
 
         // Định nghĩa thứ tự trạng thái
         Map<StatusHoaDon, Integer> trangThaiMap = Map.of(
-                StatusHoaDon.CANCELLED, 0,
                 StatusHoaDon.PENDINGPROCESSING, 1,
                 StatusHoaDon.CONFIRMED, 2,
                 StatusHoaDon.SHIPPING, 3,
@@ -317,15 +313,27 @@ public class OnlineSalesService implements IOnlineSalesService {
         // Cập nhật trạng thái
         hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
         HoaDon hoaDonSaved = hoaDonRepository.save(hoaDon);
+
+        // Cập nhật số lượng lại cho sản phẩm chi tiết
+        for (HoaDonChiTiet hdct: hoaDon.getHoaDonChiTiet()){
+            SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
+            Integer soLuongHienTai = spct.getSoLuong();
+            Integer soLuongTrongHoaDonChiTiet = hdct.getSoLuong();
+            Integer soLuongThayDoi = soLuongHienTai + soLuongTrongHoaDonChiTiet;
+            spct.setSoLuong(soLuongThayDoi);
+        }
+
+        // Ghi log
         LichSuHoaDon lichSuHoaDon = LichSuHoaDon.builder()
                 .hoaDon(hoaDonSaved)
                 .maLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD", 6))
                 .hanhDong("Khách hàng " + maKH + " hủy hóa đơn với lý do: " + lyDoHuy)
                 .ngayTao(LocalDateTime.now())
-                .nguoiThucHien(nv.getHoTen())
+                .nguoiThucHien(khachHang.getMaKhachHang() + "-" + khachHang.getTenKhachHang())
                 .trangThai(StatusEnum.ACTIVE)
                 .build();
         lichSuHoaDonRepository.save(lichSuHoaDon);
+
         return null;
     }
 

@@ -68,6 +68,18 @@ public class SanPhamChiTietController {
         );
     }
 
+@PostMapping(value = "/update/{idSpct}")
+    public ResponseEntity<ResponseData<Boolean>> updateSanPhamChiTiet(
+            @RequestBody SPCTRequest spctRequest,
+            @PathVariable Long idSpct){
+        sanPhamChiTietService.update(idSpct, spctRequest);
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Chỉnh sửa sản phẩm chi tiết thành công",
+                       true)
+        );
+    }
+
     @PostMapping(value = "/get-by-list-id")
     public ResponseEntity<ResponseData<List<SPCTResponse>>> getByListId(
             @RequestBody List<Long> listIdSpct

@@ -8,10 +8,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
-import com.okconde.bestepstyle.core.entity.HoaDon;
-import com.okconde.bestepstyle.core.entity.HoaDonChiTiet;
-import com.okconde.bestepstyle.core.entity.LichSuHoaDon;
-import com.okconde.bestepstyle.core.entity.NhanVien;
+import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietBanOnlineRequest;
+import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
 import com.okconde.bestepstyle.core.mapper.hoadon.request.HoaDonRequestMapper;
@@ -19,11 +17,10 @@ import com.okconde.bestepstyle.core.mapper.hoadon.response.HoaDonResponseMapper;
 import com.okconde.bestepstyle.core.repository.HoaDonRepository;
 import com.okconde.bestepstyle.core.repository.LichSuHoaDonRepository;
 import com.okconde.bestepstyle.core.repository.NhanVienRepository;
+import com.okconde.bestepstyle.core.repository.SanPhamChiTietRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
-import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
-import com.okconde.bestepstyle.core.util.enumutil.StatusEnum;
-import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
+import com.okconde.bestepstyle.core.util.enumutil.*;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -50,16 +48,17 @@ import java.util.Map;
 public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, HoaDonResponse> {
     //Repo
     private final HoaDonRepository hoaDonRepository;
-
+    private final SanPhamChiTietRepository sanPhamChiTietRepository;
     //Mapper
     private final HoaDonResponseMapper hoaDonResponseMapper;
     private final HoaDonRequestMapper hoaDonRequestMapper;
     private final LichSuHoaDonRepository lichSuHoaDonRepository;
     private final NhanVienRepository nhanVienRepository;
 
-    public HoaDonService(HoaDonResponseMapper hoaDonResponseMapper, HoaDonRepository hoaDonRepository, HoaDonRequestMapper hoaDonRequestMapper, LichSuHoaDonRepository lichSuHoaDonRepository, NhanVienRepository nhanVienRepository) {
+    public HoaDonService(HoaDonResponseMapper hoaDonResponseMapper, HoaDonRepository hoaDonRepository, SanPhamChiTietRepository sanPhamChiTietRepository, HoaDonRequestMapper hoaDonRequestMapper, LichSuHoaDonRepository lichSuHoaDonRepository, NhanVienRepository nhanVienRepository) {
         this.hoaDonResponseMapper = hoaDonResponseMapper;
         this.hoaDonRepository = hoaDonRepository;
+        this.sanPhamChiTietRepository = sanPhamChiTietRepository;
         this.hoaDonRequestMapper = hoaDonRequestMapper;
         this.lichSuHoaDonRepository = lichSuHoaDonRepository;
         this.nhanVienRepository = nhanVienRepository;
@@ -288,6 +287,15 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
                 .orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần đổi trạng thái"));
+
+        for (HoaDonChiTiet hdct : hoaDon.getHoaDonChiTiet()) {
+            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(hdct.getSanPhamChiTiet().getIdSpct(), StatusSPCT.ACTIVE).orElseThrow(
+                    () -> new BusinessException("Không tìm thấy sản phẩm"));
+            if (sanPhamChiTiet.getSoLuong() < hdct.getSoLuong()) {
+                throw new BusinessException("Số lượng sản phẩm " + sanPhamChiTiet.getMaSpct() + "trong kho không đủ!");
+            }
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - hdct.getSoLuong());
+        }
 
         // Định nghĩa thứ tự trạng thái
         Map<StatusHoaDon, Integer> trangThaiMap = Map.of(
