@@ -156,16 +156,8 @@ public class CounterSalesController {
      */
     @DeleteMapping("/cancel/{id}")
     public ResponseEntity<ResponseData<String>> cancelPendingInvoiceCounterSales(@PathVariable Long id) {
-        try {
             counterSalesService.cancelPendingInvoiceCounterSales(id);
             return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Hủy hóa đơn chờ thành công", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Đã xảy ra lỗi khi hủy hóa đơn chờ", null));
-        }
     }
 
 

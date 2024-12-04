@@ -33,4 +33,7 @@ public interface IOnlineSalesService {
      * Hủy đơn hàng online phía khách hàng
      * */
     HoaDonResponse huyHoaDonOnlinePhiaKhachHang(Long idHoaDon, String maKH, String lyDoHuy);
+
+    /** Hủy hóa đơn phía admin*/
+    HoaDonResponse huyHoaDonPhiaAdmin(Long idHoaDon, String maNV, String lyDoHuy);
 }

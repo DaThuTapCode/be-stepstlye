@@ -25,8 +25,24 @@ public class CustomerLoginAndRegisterController {
 
 
     @PostMapping(value = "login")
-    public ResponseEntity<ResponseData<UserLoginResponse>> employeeLogin(
+    public ResponseEntity<ResponseData<UserLoginResponse>> customerLogin(
             @RequestBody UserLoginRequest userLoginRequest) {
+
+        /**
+         * Kiểm tra đăng nhập và sinh token
+         * */
+        UserLoginResponse userLoginResponse = customerLoginAndRegisterService.login(userLoginRequest);
+        return ResponseEntity.ok(new ResponseData(
+                HttpStatus.ACCEPTED.value(),
+                "Đăng nhập thành công!",
+                userLoginResponse
+        ));
+    }
+
+    @PostMapping(value = "register")
+    public ResponseEntity<ResponseData<UserLoginResponse>> customerRegister(
+            @RequestBody UserLoginRequest userLoginRequest
+    ) {
 
         /**
          * Kiểm tra đăng nhập và sinh token

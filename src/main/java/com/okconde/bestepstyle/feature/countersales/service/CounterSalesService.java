@@ -222,7 +222,7 @@ public class CounterSalesService implements ICounterSalesService {
     @Override
     @Transactional
     public Boolean cancelPendingInvoiceCounterSales(Long idHoaDon) {
-        Optional<HoaDon> optionalHoaDon = hoaDonRepository.findById(idHoaDon);
+        Optional<HoaDon> optionalHoaDon = hoaDonRepository.findByIdHoaDonAndTrangThai(idHoaDon, StatusHoaDon.PENDING);
         if (optionalHoaDon.isPresent()) {
             HoaDon hoaDon = optionalHoaDon.get();
             // Kiểm tra trạng thái hóa đơn trước khi hủy

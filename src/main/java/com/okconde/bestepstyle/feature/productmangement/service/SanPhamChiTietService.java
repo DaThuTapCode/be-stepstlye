@@ -1,6 +1,7 @@
 package com.okconde.bestepstyle.feature.productmangement.service;
 
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTRequest;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.entity.KichCo;
 import com.okconde.bestepstyle.core.entity.MauSac;
@@ -17,6 +18,7 @@ import com.okconde.bestepstyle.core.repository.SanPhamRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,5 +143,11 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
     public List<SPCTResponse> getSPCTByListId(List<Long> listIdSpct) {
         List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.getSPCTByListIdAndTrangThai(listIdSpct, StatusSPCT.ACTIVE);
         return spctResponseMapper.listToDTO(sanPhamChiTietList);
+    }
+
+    public Page<SPCTResponse> getPageSpctByIdSanPham(Long idSanPham, SPCTSearchRequest spctSearchRequest, Pageable pageable) {
+        Page<SanPhamChiTiet> sanPhamChiTietPage = sanPhamChiTietRepository.getPageSPCTByIdSanPham(idSanPham, StatusSPCT.ACTIVE, pageable);
+        Page<SPCTResponse> spctResponsesPage = sanPhamChiTietPage.map(spctResponseMapper::toDTO);
+        return spctResponsesPage;
     }
 }

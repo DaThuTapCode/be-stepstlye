@@ -28,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by Trong Phu on 19/11/2024 20:59
@@ -270,11 +269,12 @@ public class OnlineSalesService implements IOnlineSalesService {
                 .maLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD", 6))
                 .ngayTao(LocalDateTime.now())
                 .trangThai(StatusEnum.ACTIVE)
-                .nguoiThucHien(hoaDonBanOnlineRequest.getKhachHang().getTenKhachHang())
-                .hanhDong("Tài khoản khách hàng " + khachHang.getMaKhachHang() + "tạo đơn hàng")
+                .nguoiThucHien(khachHang.getMaKhachHang() + "-" + khachHang.getTenKhachHang())
+                .hanhDong("Tài khoản khách hàng " + khachHang.getMaKhachHang() + " tạo đơn hàng")
                 .build();
         lichSuHoaDonRepository.save(lichSuHoaDon);
-        emailUtil.sendBookingEmail("ntpdth2004@gmail.com", "Test subject", "test text");
+
+//        emailUtil.sendBookingEmail("ntpdth2004@gmail.com", "Test subject", "test text");
 
         return hoaDonResponseMapper.toDTO(hoaDonSaved);
     }
@@ -291,7 +291,7 @@ public class OnlineSalesService implements IOnlineSalesService {
         );
 
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
-                .orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần đổi trạng thái"));
+                .orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần hủy"));
 
         // Định nghĩa thứ tự trạng thái
         Map<StatusHoaDon, Integer> trangThaiMap = Map.of(
@@ -306,22 +306,13 @@ public class OnlineSalesService implements IOnlineSalesService {
         StatusHoaDon trangThaiHienTai = hoaDon.getTrangThai();
 
         // Kiểm tra nếu trạng thái mới nhỏ hơn hoặc bằng trạng thái hiện tại
-        if (trangThaiMap.get(StatusHoaDon.SHIPPING) <= trangThaiMap.get(trangThaiHienTai)) {
-            throw new BusinessException("Trạng thái hóa đơn sai tiến trình hiện tại");
+        if (trangThaiMap.get(StatusHoaDon.PENDINGPROCESSING) == trangThaiMap.get(trangThaiHienTai)) {
+            throw new BusinessException("Bạn chỉ được hủy khi đơn hàng đang chờ xác nhận!");
         }
 
         // Cập nhật trạng thái
         hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
         HoaDon hoaDonSaved = hoaDonRepository.save(hoaDon);
-
-        // Cập nhật số lượng lại cho sản phẩm chi tiết
-        for (HoaDonChiTiet hdct: hoaDon.getHoaDonChiTiet()){
-            SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
-            Integer soLuongHienTai = spct.getSoLuong();
-            Integer soLuongTrongHoaDonChiTiet = hdct.getSoLuong();
-            Integer soLuongThayDoi = soLuongHienTai + soLuongTrongHoaDonChiTiet;
-            spct.setSoLuong(soLuongThayDoi);
-        }
 
         // Ghi log
         LichSuHoaDon lichSuHoaDon = LichSuHoaDon.builder()
@@ -337,7 +328,56 @@ public class OnlineSalesService implements IOnlineSalesService {
         return null;
     }
 
-    // Phương thức giả lập lấy số lượng tồn kho từ cơ sở dữ liệu
+    /**
+     * @param idHoaDon
+     * @param maNV
+     * @param lyDoHuy
+     * @return
+     */
+    @Override
+    public HoaDonResponse huyHoaDonPhiaAdmin(Long idHoaDon, String maNV, String lyDoHuy) {
+        NhanVien nhanVien = nhanVienRepository.timNVTheoMaNVVaTrangThai(maNV, StatusEnum.ACTIVE).orElseThrow(
+                () -> new BusinessException("Vui lòng đăng nhập để hủy")
+        );
+
+        HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
+                .orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần hủy"));
+
+        // Định nghĩa thứ tự trạng thái
+        Map<StatusHoaDon, Integer> trangThaiMap = Map.of(
+                StatusHoaDon.PENDINGPROCESSING, 1,
+                StatusHoaDon.CONFIRMED, 2,
+                StatusHoaDon.SHIPPING, 3,
+                StatusHoaDon.DELIVERED, 4,
+                StatusHoaDon.PAID, 5
+        );
+
+        // Lấy trạng thái hiện tại
+        StatusHoaDon trangThaiHienTai = hoaDon.getTrangThai();
+
+        // Kiểm tra nếu trạng thái mới nhỏ hơn hoặc bằng trạng thái hiện tại
+        if (trangThaiMap.get(StatusHoaDon.SHIPPING) < trangThaiMap.get(trangThaiHienTai)) {
+            throw new BusinessException("Bạn chỉ được hủy khi đơn hàng chưa được vận chuyển");
+        }
+
+        // Cập nhật trạng thái
+        hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
+        HoaDon hoaDonSaved = hoaDonRepository.save(hoaDon);
+
+        // Ghi log
+        LichSuHoaDon lichSuHoaDon = LichSuHoaDon.builder()
+                .hoaDon(hoaDonSaved)
+                .maLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD", 6))
+                .hanhDong("Nhân viên " + maNV + " hủy hóa đơn với lý do: " + lyDoHuy)
+                .ngayTao(LocalDateTime.now())
+                .nguoiThucHien(nhanVien.getMaNhanVien() + "-" + nhanVien.getHoTen())
+                .trangThai(StatusEnum.ACTIVE)
+                .build();
+        lichSuHoaDonRepository.save(lichSuHoaDon);
+
+        return null;
+    }
+
     private int getSoLuongTonKhoByIdSpct(Long idSpct) {
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(idSpct, StatusSPCT.ACTIVE).orElseThrow(() -> new BusinessException("Không tìm thấy sản phẩm cần mua"));
         return sanPhamChiTiet.getSoLuong();

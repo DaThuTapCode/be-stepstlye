@@ -140,7 +140,7 @@ SELECT h FROM HoaDon h WHERE h.loaiHoaDon = :loaiHoaDon
     @Query("""
     SELECT 
         FUNCTION('DAY', hd.ngayTaoDon) AS ngay,
-        SUM(hd.tongTienSauGiam + hd.phiVanChuyen) AS doanhThu
+        SUM(hd.tongTienSauGiam) AS doanhThu
     FROM HoaDon hd
     WHERE hd.trangThai = :trangThai 
       AND hd.ngayTaoDon >= :startOfMonth 

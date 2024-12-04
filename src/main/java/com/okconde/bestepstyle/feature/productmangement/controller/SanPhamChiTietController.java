@@ -1,9 +1,13 @@
 package com.okconde.bestepstyle.feature.productmangement.controller;
 
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTRequest;
+import com.okconde.bestepstyle.core.dto.sanphamchitiet.request.SPCTSearchRequest;
 import com.okconde.bestepstyle.core.dto.sanphamchitiet.response.SPCTResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.feature.productmangement.service.SanPhamChiTietService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -88,6 +92,19 @@ public class SanPhamChiTietController {
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy chi tiết sản phẩm lên giỏ hàng thành công",
                         sanPhamChiTietService.getSPCTByListId(listIdSpct))
+        );
+    }
+
+    @PostMapping(value = "/get-by-id-san-pham/{idSanPham}")
+    public ResponseEntity<ResponseData<Page<SPCTResponse>>> getPageBySanPham(
+            @PathVariable Long idSanPham,
+            @RequestBody(required = false) SPCTSearchRequest spctSearchRequest,
+            @PageableDefault Pageable pageable
+            ){
+        return ResponseEntity.ok(
+                new ResponseData<>(HttpStatus.OK.value(),
+                        "Lấy thành công phân trang spct theo id sản phẩm",
+                        sanPhamChiTietService.getPageSpctByIdSanPham(idSanPham, spctSearchRequest, pageable))
         );
     }
 }

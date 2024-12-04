@@ -264,7 +264,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
 
     /** HỦy hóa đơn bán online*/
-    @jakarta.transaction.Transactional
+        @jakarta.transaction.Transactional
     public boolean cancelInvoiceOnline(Long idHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon).orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần hủy!"));
 
@@ -288,13 +288,15 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
                 .orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần đổi trạng thái"));
 
-        for (HoaDonChiTiet hdct : hoaDon.getHoaDonChiTiet()) {
-            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(hdct.getSanPhamChiTiet().getIdSpct(), StatusSPCT.ACTIVE).orElseThrow(
-                    () -> new BusinessException("Không tìm thấy sản phẩm"));
-            if (sanPhamChiTiet.getSoLuong() < hdct.getSoLuong()) {
-                throw new BusinessException("Số lượng sản phẩm " + sanPhamChiTiet.getMaSpct() + "trong kho không đủ!");
+        if(hoaDon.getTrangThai() == StatusHoaDon.PENDINGPROCESSING) {
+            for (HoaDonChiTiet hdct : hoaDon.getHoaDonChiTiet()) {
+                SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(hdct.getSanPhamChiTiet().getIdSpct(), StatusSPCT.ACTIVE).orElseThrow(
+                        () -> new BusinessException("Không tìm thấy sản phẩm"));
+                if (sanPhamChiTiet.getSoLuong() < hdct.getSoLuong()) {
+                    throw new BusinessException("Số lượng sản phẩm " + sanPhamChiTiet.getMaSpct() + "trong kho không đủ!");
+                }
+                sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - hdct.getSoLuong());
             }
-            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - hdct.getSoLuong());
         }
 
         // Định nghĩa thứ tự trạng thái

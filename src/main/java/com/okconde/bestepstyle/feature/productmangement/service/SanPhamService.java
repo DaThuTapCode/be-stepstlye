@@ -16,12 +16,14 @@ import com.okconde.bestepstyle.core.util.enumutil.StatusSP;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
 import com.okconde.bestepstyle.core.util.file.FileUpLoadUtil;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
-import jakarta.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +108,6 @@ public class SanPhamService implements IBaseService<SanPham, Long, SanPhamReques
         // Chuyển SanPhamRequest thành SanPham entity
         SanPham sanPham = sanPhamRequestMapper.toEntity(sanPhamRequest);
 
-        // Lưu sản phẩm cha (bao gồm cả sản phẩm con nếu cascade đã được thiết lập)
         SanPham sanPhamSaved = sanPhamRepository.save(sanPham);
 
         // Liên kết sản phẩm con với sản phẩm cha
@@ -120,12 +121,21 @@ public class SanPhamService implements IBaseService<SanPham, Long, SanPhamReques
                     () -> new BusinessException("Kích cỡ không tồn tại")
             );
             SanPhamChiTiet sanPhamChiTietNew = new SanPhamChiTiet();
+            if(sanPhamChiTiet.getSoLuong() <= 0 ) {
+                throw new BusinessException("Số lượng sản phẩm chi tiết phải lớn hơn 0");
+            }else {
+                sanPhamChiTietNew.setSoLuong(sanPhamChiTiet.getSoLuong());
+            }
+
+            if(sanPhamChiTiet.getGia().compareTo(BigDecimal.ZERO) <= 0){
+                throw new BusinessException("Giá sản phẩm chi tiết phải lớn hơn 0");
+            }else {
+                sanPhamChiTietNew.setGia(sanPhamChiTiet.getGia());
+            }
             sanPhamChiTietNew.setMaSpct(GenerateCodeRandomUtil.generateProductCode("SPCT", 6));
             sanPhamChiTietNew.setMauSac(mauSac);
             sanPhamChiTietNew.setKichCo(kichCo);
-            sanPhamChiTietNew.setGia(sanPhamChiTiet.getGia());
-            sanPhamChiTietNew.setSoLuong(sanPhamChiTiet.getSoLuong());
-            sanPhamChiTietNew.setSanPham(sanPhamSaved); // Liên kết sản phẩm con với sản phẩm cha
+            sanPhamChiTietNew.setSanPham(sanPhamSaved);
             sanPhamChiTietNew.setTrangThai(StatusSPCT.ACTIVE);
             sanPhamChiTietNew.setNgayTao(LocalDateTime.now());
             sanPhamChiTietNew.setNgayChinhSua(LocalDateTime.now());

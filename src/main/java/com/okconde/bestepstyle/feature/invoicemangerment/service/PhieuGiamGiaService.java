@@ -11,6 +11,7 @@ import com.okconde.bestepstyle.core.mapper.phieugiamgia.response.PhieuGiamGiaRes
 import com.okconde.bestepstyle.core.repository.PhieuGiamGiaRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
+import com.okconde.bestepstyle.core.util.enumutil.StatusLoaiGiam;
 import com.okconde.bestepstyle.core.util.enumutil.StatusPhieuGiamGia;
 import com.okconde.bestepstyle.core.util.formater.DateFormater;
 import org.springframework.data.domain.Page;
@@ -87,6 +88,9 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
             phieuGiamGiaRequest.setTrangThai(StatusPhieuGiamGia.ACTIVE);
         }
 
+        if(phieuGiamGiaRequest.getLoaiGiam() == StatusLoaiGiam.MONEY){
+            phieuGiamGiaRequest.setGiaTriGiamToiDa(phieuGiamGiaRequest.getGiaTriGiam());
+        }
 
         phieuGiamGiaRequest.setMaPhieuGiamGia(GenerateCodeRandomUtil.generateProductCode("PGG", 7));
 

@@ -100,7 +100,21 @@ public class OnlineSalesController {
         String maKH = jwtTokenUtil.extractUserName(token);
 
         return ResponseEntity.ok(
-          new ResponseData<>(HttpStatus.OK.value(),"Hủy hóa đơn thành công",onlineSalesService.huyHoaDonOnlinePhiaKhachHang(idHoaDon, maKH, lyDoHuy))
+          new ResponseData<>(HttpStatus.OK.value(),"Hủy đơn hàng thành công",onlineSalesService.huyHoaDonOnlinePhiaKhachHang(idHoaDon, maKH, lyDoHuy))
+        );
+    }
+
+@PutMapping("/admin/{idHoaDon}")
+    public ResponseEntity<?> adminHuyHoaDon(
+            @PathVariable Long idHoaDon,
+            @RequestParam String lyDoHuy,
+            HttpServletRequest request
+    ){
+        String token = request.getHeader("Authorization").substring(7);
+        String maNv = jwtTokenUtil.extractUserName(token);
+
+        return ResponseEntity.ok(
+          new ResponseData<>(HttpStatus.OK.value(),"Hủy đơn hàng thành công",onlineSalesService.huyHoaDonPhiaAdmin(idHoaDon, maNv, lyDoHuy))
         );
     }
 

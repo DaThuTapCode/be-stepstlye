@@ -37,8 +37,11 @@ public class DashboardService implements IDashboardService {
         LocalDateTime endOfDay = startOfDay.plusDays(1);
 
         List<HoaDon> danhSachHoaDon = hoaDonRepository.layHoaDonTheoTrangThaiVaNgay(StatusHoaDon.PAID, startOfDay, endOfDay);
-        return danhSachHoaDon.stream()
-                .map(hd -> hd.getTongTienSauGiam().add(hd.getPhiVanChuyen())) // Cộng tiền sau giảm và phí vận chuyển
+//        return danhSachHoaDon.stream()
+//                .map(hd -> hd.getTongTienSauGiam().add(hd.getPhiVanChuyen())) // Cộng tiền sau giảm và phí vận chuyển
+//                .reduce(BigDecimal.ZERO, BigDecimal::add); // Tính tổng
+         return danhSachHoaDon.stream()
+                .map(hd -> hd.getTongTienSauGiam()) // Cộng tiền sau giảm và phí vận chuyển
                 .reduce(BigDecimal.ZERO, BigDecimal::add); // Tính tổng
     }
 
@@ -51,8 +54,11 @@ public class DashboardService implements IDashboardService {
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1);
 
         List<HoaDon> danhSachHoaDon = hoaDonRepository.layHoaDonTheoTrangThaiVaThang(StatusHoaDon.PAID, startOfMonth, endOfMonth);
+//        return danhSachHoaDon.stream()
+//                .map(hd -> hd.getTongTienSauGiam().add(hd.getPhiVanChuyen()))
+//                .reduce(BigDecimal.ZERO, BigDecimal::add);
         return danhSachHoaDon.stream()
-                .map(hd -> hd.getTongTienSauGiam().add(hd.getPhiVanChuyen()))
+                .map(hd -> hd.getTongTienSauGiam())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -65,8 +71,11 @@ public class DashboardService implements IDashboardService {
         LocalDateTime endOfYear = startOfYear.plusYears(1);
 
         List<HoaDon> danhSachHoaDon = hoaDonRepository.layHoaDonTheoTrangThaiVaNam(StatusHoaDon.PAID, startOfYear, endOfYear);
+//        return danhSachHoaDon.stream()
+//                .map(hd -> hd.getTongTienSauGiam().add(hd.getPhiVanChuyen()))
+//                .reduce(BigDecimal.ZERO, BigDecimal::add);
         return danhSachHoaDon.stream()
-                .map(hd -> hd.getTongTienSauGiam().add(hd.getPhiVanChuyen()))
+                .map(hd -> hd.getTongTienSauGiam())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
