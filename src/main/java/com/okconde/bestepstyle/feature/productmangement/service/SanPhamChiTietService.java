@@ -80,17 +80,17 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
             throw new BusinessException("Sản phẩm chi tiết này đã tồn tại!");
         }
 
-        MauSac mauSac = mauSacRepository.findById(spctRequest.getMauSac().getIdMauSac())
-                        .orElseThrow(() -> new BusinessException("Màu sắc không tồn tại"));
-
-        KichCo kichCo = kichCoRepository.findById(spctRequest.getKichCo().getIdKichCo())
-                        .orElseThrow(() -> new BusinessException("Kích cỡ không tồn tại"));
+//        MauSac mauSac = mauSacRepository.findById(spctRequest.getMauSac().getIdMauSac())
+//                        .orElseThrow(() -> new BusinessException("Màu sắc không tồn tại"));
+//
+//        KichCo kichCo = kichCoRepository.findById(spctRequest.getKichCo().getIdKichCo())
+//                        .orElseThrow(() -> new BusinessException("Kích cỡ không tồn tại"));
 
         spct.setNgayChinhSua(LocalDateTime.now());
         spct.setGia(spctRequest.getGia());
         spct.setSoLuong(spctRequest.getSoLuong());
-        spct.setMauSac(mauSac);
-        spct.setKichCo(kichCo);
+//        spct.setMauSac(mauSac);
+//        spct.setKichCo(kichCo);
         return spctResponseMapper.toDTO(sanPhamChiTietRepository.save(spct));
     }
 

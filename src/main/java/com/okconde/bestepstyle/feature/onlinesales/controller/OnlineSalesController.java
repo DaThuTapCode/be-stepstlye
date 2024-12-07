@@ -104,7 +104,7 @@ public class OnlineSalesController {
         );
     }
 
-@PutMapping("/admin/{idHoaDon}")
+@PutMapping("/admin-huy-don-hang/{idHoaDon}")
     public ResponseEntity<?> adminHuyHoaDon(
             @PathVariable Long idHoaDon,
             @RequestParam String lyDoHuy,

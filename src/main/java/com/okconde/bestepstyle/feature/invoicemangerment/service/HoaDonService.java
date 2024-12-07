@@ -8,7 +8,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
-import com.okconde.bestepstyle.core.dto.hoadonchitiet.request.HoaDonChiTietBanOnlineRequest;
 import com.okconde.bestepstyle.core.entity.*;
 import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.exception.ResourceNotFoundException;
@@ -87,7 +86,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         hoaDonRequest.setTrangThai(StatusHoaDon.PAID);
 
         return hoaDonResponseMapper.toDTO(hoaDonRepository.save(hoaDonRequestMapper.toEntity(hoaDonRequest)));
-    }
+    } 
 
     @Override
     @Transactional
@@ -264,7 +263,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
 
     /** HỦy hóa đơn bán online*/
-        @jakarta.transaction.Transactional
+        @Transactional
     public boolean cancelInvoiceOnline(Long idHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon).orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần hủy!"));
 
@@ -287,6 +286,10 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
                 .orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần đổi trạng thái"));
+
+        if(hoaDon.getTrangThai() == StatusHoaDon.CANCELLED){
+            throw new BusinessException("Hóa đơn này đã bị hủy!");
+        }
 
         if(hoaDon.getTrangThai() == StatusHoaDon.PENDINGPROCESSING) {
             for (HoaDonChiTiet hdct : hoaDon.getHoaDonChiTiet()) {
