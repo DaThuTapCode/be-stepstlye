@@ -96,8 +96,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final List<Pair<String, String>> bypasstoken = Arrays.asList(
                 // Sản phẩm
 //                 Đăng nhập
-                Pair.of(String.format("%s/employee-login/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/customer-login/login", apiPrefix), "POST"),
+                Pair.of(String.format("%s/customer-login/register", apiPrefix), "POST"),
+                Pair.of(String.format("%s/employee-login/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/thuong-hieu", apiPrefix), "POST"),
                 Pair.of(String.format("%s/danh-muc", apiPrefix), "POST"),
                 Pair.of("/images", "GET")

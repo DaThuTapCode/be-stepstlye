@@ -306,7 +306,7 @@ public class OnlineSalesService implements IOnlineSalesService {
         StatusHoaDon trangThaiHienTai = hoaDon.getTrangThai();
 
         // Kiểm tra nếu trạng thái mới nhỏ hơn hoặc bằng trạng thái hiện tại
-        if (trangThaiMap.get(StatusHoaDon.PENDINGPROCESSING) == trangThaiMap.get(trangThaiHienTai)) {
+        if (trangThaiMap.get(StatusHoaDon.PENDINGPROCESSING) != trangThaiMap.get(trangThaiHienTai)) {
             throw new BusinessException("Bạn chỉ được hủy khi đơn hàng đang chờ xác nhận!");
         }
 
@@ -343,6 +343,10 @@ public class OnlineSalesService implements IOnlineSalesService {
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
                 .orElseThrow(() -> new BusinessException("Không tìm thấy hóa đơn cần hủy"));
 
+        if(hoaDon.getTrangThai() == StatusHoaDon.CANCELLED) {
+            throw new BusinessException("Hóa đơn này đã bị hủy trước đó");
+        }
+
         // Định nghĩa thứ tự trạng thái
         Map<StatusHoaDon, Integer> trangThaiMap = Map.of(
                 StatusHoaDon.PENDINGPROCESSING, 1,
@@ -358,6 +362,12 @@ public class OnlineSalesService implements IOnlineSalesService {
         // Kiểm tra nếu trạng thái mới nhỏ hơn hoặc bằng trạng thái hiện tại
         if (trangThaiMap.get(StatusHoaDon.SHIPPING) < trangThaiMap.get(trangThaiHienTai)) {
             throw new BusinessException("Bạn chỉ được hủy khi đơn hàng chưa được vận chuyển");
+        }
+
+        if(trangThaiMap.get(trangThaiHienTai) > trangThaiMap.get(StatusHoaDon.PENDINGPROCESSING)){
+            for (HoaDonChiTiet hoaDonChiTiet: hoaDon.getHoaDonChiTiet()){
+                hoaDonChiTiet.getSanPhamChiTiet().setSoLuong(hoaDonChiTiet.getSoLuong() + hoaDonChiTiet.getSanPhamChiTiet().getSoLuong());
+            }
         }
 
         // Cập nhật trạng thái

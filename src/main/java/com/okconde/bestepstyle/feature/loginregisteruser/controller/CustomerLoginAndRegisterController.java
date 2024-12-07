@@ -1,5 +1,6 @@
 package com.okconde.bestepstyle.feature.loginregisteruser.controller;
 
+import com.okconde.bestepstyle.core.dto.dangnhap.request.CustomerRegisterRequest;
 import com.okconde.bestepstyle.core.dto.dangnhap.request.UserLoginRequest;
 import com.okconde.bestepstyle.core.dto.dangnhap.response.UserLoginResponse;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
@@ -41,13 +42,13 @@ public class CustomerLoginAndRegisterController {
 
     @PostMapping(value = "register")
     public ResponseEntity<ResponseData<UserLoginResponse>> customerRegister(
-            @RequestBody UserLoginRequest userLoginRequest
+            @RequestBody CustomerRegisterRequest customerRegisterRequest
     ) {
 
         /**
          * Kiểm tra đăng nhập và sinh token
          * */
-        UserLoginResponse userLoginResponse = customerLoginAndRegisterService.login(userLoginRequest);
+        UserLoginResponse userLoginResponse = customerLoginAndRegisterService.register(customerRegisterRequest);
         return ResponseEntity.ok(new ResponseData(
                 HttpStatus.ACCEPTED.value(),
                 "Đăng nhập thành công!",
