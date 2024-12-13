@@ -38,6 +38,8 @@ public class PhieuGiamGiaRequest {
     @Length(max = 255, message = "Tên PGG không được vượt quá 255 ký tự!")
     private String tenPhieuGiamGia;
 
+    private Integer soLuong;
+
     private String moTa;
 
     @Enumerated(EnumType.STRING)

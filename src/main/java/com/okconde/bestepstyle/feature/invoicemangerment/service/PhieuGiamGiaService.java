@@ -169,8 +169,8 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
         return counts;
     }
 
-    // Chạy mỗi ngày lúc 00:00 để kiểm tra và cập nhật trạng thái phiếu giảm giá
-    @Scheduled(cron = "0 * * * * *")
+    // Chạy mỗi giây để kiểm tra và cập nhật trạng thái phiếu giảm giá
+    @Scheduled(cron = "* * * * * *")
     @Transactional
     public List<PhieuGiamGiaResponse> expireCouponsIfNeeded() {
         LocalDate today = LocalDate.now();
@@ -187,10 +187,17 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
         // Cập nhật trạng thái của các phiếu giảm giá này thành ACTIVE
         activatingCoupons.forEach(coupon -> coupon.setTrangThai(StatusPhieuGiamGia.ACTIVE));
 
+        // Lấy danh sách phiếu giảm giá cần hết hạn do số lượng bằng 0 (ACTIVE và số lượng = 0)
+        List<PhieuGiamGia> activeCouponsWithZeroQuantity = phieuGiamGiaRepository.findByPhieuGiamGiaAndSoLuong(StatusPhieuGiamGia.ACTIVE, 0);
+
+        // Cập nhật trạng thái phiếu giảm giá
+        activeCouponsWithZeroQuantity.forEach(coupon -> coupon.setTrangThai(StatusPhieuGiamGia.EXPIRED));
+
         // Lưu tất cả các phiếu giảm giá đã được cập nhật
         List<PhieuGiamGia> updatedCoupons = new ArrayList<>();
         updatedCoupons.addAll(expiringCoupons);
         updatedCoupons.addAll(activatingCoupons);
+        updatedCoupons.addAll(activeCouponsWithZeroQuantity);
         phieuGiamGiaRepository.saveAll(updatedCoupons);
 
         // Chuyển đổi danh sách phiếu giảm giá đã cập nhật sang danh sách phản hồi
@@ -205,6 +212,7 @@ public class PhieuGiamGiaService implements IBaseService<PhieuGiamGia, Long, Phi
             response.setIdPhieuGiamGia(coupon.getIdPhieuGiamGia());
             response.setMaPhieuGiamGia(coupon.getMaPhieuGiamGia());
             response.setTenPhieuGiamGia(coupon.getTenPhieuGiamGia());
+            response.setSoLuong(coupon.getSoLuong());
             response.setMoTa(coupon.getMoTa());
             response.setLoaiGiam(coupon.getLoaiGiam());
             response.setNgayBatDau(coupon.getNgayBatDau());

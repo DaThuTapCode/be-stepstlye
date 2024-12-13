@@ -31,6 +31,8 @@ public class PhieuGiamGia {
 
     private String tenPhieuGiamGia;
 
+    private Integer soLuong;
+
     private String moTa;
 
     @Enumerated(EnumType.STRING)

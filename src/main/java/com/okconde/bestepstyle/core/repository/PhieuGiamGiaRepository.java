@@ -74,4 +74,10 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
     """)
     List<PhieuGiamGia> getPhieuGiamGiaByTrangThai(StatusPhieuGiamGia trangThai);
 
+
+    //Tìm phiếu giảm giá theo trạng thái và số lượng
+    @Query(""" 
+        SELECT pgg FROM PhieuGiamGia pgg WHERE pgg.trangThai = :trangThai AND pgg.soLuong = :soLuong
+    """)
+    List<PhieuGiamGia> findByPhieuGiamGiaAndSoLuong(StatusPhieuGiamGia trangThai, int soLuong);
 }

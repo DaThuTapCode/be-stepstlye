@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Trong Phu
  */
 @Service
-public class OnlineSalesService implements IOnlineSalesService {
+public class    OnlineSalesService implements IOnlineSalesService {
 
     //  Repository
     private final HoaDonRepository hoaDonRepository;
@@ -276,6 +276,16 @@ public class OnlineSalesService implements IOnlineSalesService {
 
 //        emailUtil.sendBookingEmail("ntpdth2004@gmail.com", "Test subject", "test text");
 
+        // Cập nhật số lượng phiếu giảm giá
+        if (phieuGiamGia != null) {
+            int newQuantity = phieuGiamGia.getSoLuong() - 1; // Giảm số lượng
+            if (newQuantity < 0) {
+                throw new BusinessException("Số lượng phiếu giảm giá không hợp lệ");
+            }
+            phieuGiamGia.setSoLuong(newQuantity);
+            phieuGiamGiaRepository.save(phieuGiamGia);
+        }
+
         return hoaDonResponseMapper.toDTO(hoaDonSaved);
     }
 
@@ -308,6 +318,14 @@ public class OnlineSalesService implements IOnlineSalesService {
         // Kiểm tra nếu trạng thái mới nhỏ hơn hoặc bằng trạng thái hiện tại
         if (trangThaiMap.get(StatusHoaDon.PENDINGPROCESSING) != trangThaiMap.get(trangThaiHienTai)) {
             throw new BusinessException("Bạn chỉ được hủy khi đơn hàng đang chờ xác nhận!");
+        }
+
+        // Kiểm tra và cộng lại số lượng phiếu giảm giá nếu có
+        PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
+        if (phieuGiamGia != null) {
+            int newQuantity = phieuGiamGia.getSoLuong() + 1;
+            phieuGiamGia.setSoLuong(newQuantity);
+            phieuGiamGiaRepository.save(phieuGiamGia);
         }
 
         // Cập nhật trạng thái
@@ -368,6 +386,14 @@ public class OnlineSalesService implements IOnlineSalesService {
             for (HoaDonChiTiet hoaDonChiTiet: hoaDon.getHoaDonChiTiet()){
                 hoaDonChiTiet.getSanPhamChiTiet().setSoLuong(hoaDonChiTiet.getSoLuong() + hoaDonChiTiet.getSanPhamChiTiet().getSoLuong());
             }
+        }
+
+        // Kiểm tra và cộng lại số lượng phiếu giảm giá nếu có
+        PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
+        if (phieuGiamGia != null) {
+            int newQuantity = phieuGiamGia.getSoLuong() + 1;
+            phieuGiamGia.setSoLuong(newQuantity);
+            phieuGiamGiaRepository.save(phieuGiamGia);
         }
 
         // Cập nhật trạng thái

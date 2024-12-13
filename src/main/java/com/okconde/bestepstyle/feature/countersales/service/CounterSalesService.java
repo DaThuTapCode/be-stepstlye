@@ -515,13 +515,17 @@ public class CounterSalesService implements ICounterSalesService {
     public Boolean updatePGGtoHoaDon(Long idHoaDon, Long idPhieuGiamGia) {
         HoaDon hoaDon = hoaDonRepository.findById(idHoaDon)
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
-
+        // Kiểm tra nếu hóa đơn đã có phiếu giảm giá
+        if (hoaDon.getPhieuGiamGia() != null) {
+            throw new BusinessException("Chỉ được áp dụng một phiếu giảm giá cho mỗi hóa đơn");
+        }
         PhieuGiamGia phieuGiamGia = phieuGiamGiaRepository.findByPhieuGiamGiaAndTrangThai(idPhieuGiamGia, StatusPhieuGiamGia.ACTIVE)
                 .orElseThrow(() -> new BusinessException("Phiếu giảm giá không tồn tại"));
 
         if(phieuGiamGia.getGiaTriHoaDonToiThieu().compareTo(hoaDon.getTongTien()) > 0) {
                 throw new BusinessException("Giá trị hóa đơn phải lớn hơn hoặc bằng: " + phieuGiamGia.getGiaTriHoaDonToiThieu());
         }
+
 
         // Tính lại tổng tiền khi phiếu giảm giá là số tiền
         if(phieuGiamGia.getLoaiGiam().equals(StatusLoaiGiam.MONEY)){
@@ -549,7 +553,20 @@ public class CounterSalesService implements ICounterSalesService {
         }else {
             throw new BusinessException("Phiếu giảm giá không hợp lệ");
         }
+
+        // Giảm số lượng phiếu giảm giá
+        if (phieuGiamGia.getSoLuong() <= 0) {
+            throw new BusinessException("Phiếu giảm giá đã hết");
+        }
+
+        phieuGiamGia.setSoLuong(phieuGiamGia.getSoLuong() - 1);
+
         hoaDon.setPhieuGiamGia(phieuGiamGia);
+
+        // Lưu lại các thay đổi vào database
+        hoaDonRepository.save(hoaDon);
+        phieuGiamGiaRepository.save(phieuGiamGia);
+
         return true;
     }
 
@@ -626,6 +643,17 @@ public class CounterSalesService implements ICounterSalesService {
         HoaDon hoaDon = hoaDonRepository.findByIdHoaDonAndTrangThai(idHoaDon, StatusHoaDon.PENDING).orElseThrow(
                 () -> new BusinessException("Không thể hủy sử dụng phiếu giảm giá ở hóa đơn này")
         );
+
+        // Lấy phiếu giảm giá hiện tại từ hóa đơn
+        PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
+        if (phieuGiamGia != null) {
+            // Tăng lại số lượng phiếu giảm giá lên 1
+            phieuGiamGia.setSoLuong(phieuGiamGia.getSoLuong() + 1);
+
+            // Lưu lại thay đổi vào cơ sở dữ liệu
+            phieuGiamGiaRepository.save(phieuGiamGia);
+        }
+
 
         // Cập nhật lại các thông tin của hóa đơn
         hoaDon.setPhieuGiamGia(null);

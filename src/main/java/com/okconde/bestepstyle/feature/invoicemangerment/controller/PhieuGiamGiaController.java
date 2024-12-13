@@ -112,7 +112,7 @@ public class PhieuGiamGiaController {
         return ResponseEntity.ok(counts);
     }
 
-    //Hàm chuyển trạng thái phiếu giảm giá kho hết hạn
+    //API chuyển trạng thái phiếu giảm giá khi hết hạn
     @GetMapping("expired-active-coupons")
     public ResponseEntity<ResponseData<List<PhieuGiamGiaResponse>>> getExpiredActiveCoupons() {
         List<PhieuGiamGiaResponse> expiredCoupons = phieuGiamGiaService.expireCouponsIfNeeded();
