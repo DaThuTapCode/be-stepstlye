@@ -1,9 +1,11 @@
 package com.okconde.bestepstyle.feature.invoicemangerment.controller;
 
+import com.itextpdf.text.DocumentException;
 import com.okconde.bestepstyle.core.config.jwt.JwtTokenUtil;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.request.HoaDonSearchRequest;
 import com.okconde.bestepstyle.core.dto.hoadon.response.HoaDonResponse;
+import com.okconde.bestepstyle.core.exception.BusinessException;
 import com.okconde.bestepstyle.core.objecthttp.ResponseData;
 import com.okconde.bestepstyle.core.util.enumutil.LoaiHoaDon;
 import com.okconde.bestepstyle.core.util.enumutil.StatusHoaDon;
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -163,5 +166,32 @@ public class HoaDonController {
         return  ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(), "Chuyển trạng thái thành công!", hoaDonService.changeStatusInvoice(idHoaDon, maNV,trangThaiMoi))
         );
+    }
+
+
+    /**
+     * API để xuất hóa đơn dưới dạng PDF
+     * @param idHoaDon ID của hóa đơn cần xuất
+     * @return PDF dưới dạng file đính kèm
+     */
+    @GetMapping("/{idHoaDon}/generate")
+    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long idHoaDon) throws DocumentException, IOException {
+//        try {
+            // Gọi service để tạo file PDF
+            byte[] pdfBytes = hoaDonService.generateInvoice(idHoaDon);
+
+            // Thiết lập headers để trả về file PDF
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=invoice-" + idHoaDon + ".pdf");
+            headers.add("Content-Type", "application/pdf");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+//        } catch (BusinessException e) {
+//            // Trường hợp hóa đơn không hợp lệ
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage().getBytes());
+//        } catch (Exception e) {
+//            // Trường hợp lỗi khác
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống".getBytes());
+//        }
     }
 }

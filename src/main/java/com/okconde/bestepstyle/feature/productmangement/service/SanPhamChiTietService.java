@@ -18,11 +18,14 @@ import com.okconde.bestepstyle.core.repository.SanPhamRepository;
 import com.okconde.bestepstyle.core.service.IBaseService;
 import com.okconde.bestepstyle.core.util.crud.GenerateCodeRandomUtil;
 import com.okconde.bestepstyle.core.util.enumutil.StatusSPCT;
+import com.okconde.bestepstyle.core.util.file.FileUpLoadUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -79,18 +82,10 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
         if(sanPhamChiTietRepository.checkExitsByAttribute(spct.getSanPham().getIdSanPham(), spctRequest.getKichCo().getIdKichCo(), spctRequest.getMauSac().getIdMauSac())){
             throw new BusinessException("Sản phẩm chi tiết này đã tồn tại!");
         }
-
-//        MauSac mauSac = mauSacRepository.findById(spctRequest.getMauSac().getIdMauSac())
-//                        .orElseThrow(() -> new BusinessException("Màu sắc không tồn tại"));
-//
-//        KichCo kichCo = kichCoRepository.findById(spctRequest.getKichCo().getIdKichCo())
-//                        .orElseThrow(() -> new BusinessException("Kích cỡ không tồn tại"));
-
         spct.setNgayChinhSua(LocalDateTime.now());
         spct.setGia(spctRequest.getGia());
         spct.setSoLuong(spctRequest.getSoLuong());
-//        spct.setMauSac(mauSac);
-//        spct.setKichCo(kichCo);
+
         return spctResponseMapper.toDTO(sanPhamChiTietRepository.save(spct));
     }
 
@@ -149,5 +144,17 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
         Page<SanPhamChiTiet> sanPhamChiTietPage = sanPhamChiTietRepository.getPageSPCTByIdSanPham(idSanPham, StatusSPCT.ACTIVE, pageable);
         Page<SPCTResponse> spctResponsesPage = sanPhamChiTietPage.map(spctResponseMapper::toDTO);
         return spctResponsesPage;
+    }
+
+
+    @Transactional
+    public Boolean updateImage(Long idSanPham, Long idMauSac, MultipartFile file) throws IOException {
+
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.getSPCTByListIdAndTrangThaiAndIdSanPhamAndIMauSac(idSanPham, idMauSac, StatusSPCT.ACTIVE);
+        String fileName = FileUpLoadUtil.uploadFile(file, FileUpLoadUtil.FILE_TYPE_IMAGE, 2L);
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            sanPhamChiTiet.setAnh(fileName);
+        }
+        return true;
     }
 }

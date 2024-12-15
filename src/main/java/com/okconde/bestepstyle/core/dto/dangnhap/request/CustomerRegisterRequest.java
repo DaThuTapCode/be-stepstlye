@@ -13,6 +13,8 @@ public class CustomerRegisterRequest {
 
     private String userName;
 
+    private String fullName;
+
     private String password;
 
     private String email;

@@ -68,6 +68,7 @@ public class CustomerLoginAndRegisterService {
         if(optionalKhachHang.isEmpty() && optionalNhanVien.isEmpty()) {
             KhachHang khachHang = new KhachHang();
             khachHang.setMaKhachHang(customerRegisterRequest.getUserName());
+            khachHang.setTenKhachHang(customerRegisterRequest.getFullName());
             khachHang.setMatKhau(passwordEncoder.encode(customerRegisterRequest.getPassword()));
             khachHang.setChucVu(ChucVu.builder().idChucVu(3L).build());
             khachHang.setEmail(customerRegisterRequest.getEmail());

@@ -100,6 +100,14 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     """)
     Page<SanPhamChiTiet> getPageSPCTByIdSanPham(Long idSanPham, StatusSPCT trangThai, Pageable pageable);
 
+    @Query("""
+        select spct from SanPhamChiTiet spct where spct.sanPham.idSanPham = :idSanPham and spct.mauSac.idMauSac = :idMauSac and spct.trangThai = :trangThai
+    """)
+    List<SanPhamChiTiet> getSPCTByListIdAndTrangThaiAndIdSanPhamAndIMauSac(
+            Long idSanPham,
+             Long idMauSac,
+             StatusSPCT trangThai
+    );
 
 }
 

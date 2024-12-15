@@ -9,9 +9,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -32,7 +35,7 @@ public class SanPhamChiTietController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseData<SPCTResponse>> getSanPhamChiTietById(
             @PathVariable Long id
-    ){
+    ) {
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy thành công sản phẩm chi tiết với id: " + id,
@@ -43,7 +46,7 @@ public class SanPhamChiTietController {
     @GetMapping(value = "/lay-theo-id-san-pham/{idSanpham}")
     public ResponseEntity<ResponseData<SPCTResponse>> getSPCTBySanPham(
             @PathVariable Long idSanpham
-    ){
+    ) {
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy thành công danh sách sản phẩm chi tiết với id sản phẩm: " + idSanpham,
@@ -52,7 +55,7 @@ public class SanPhamChiTietController {
     }
 
     @GetMapping(value = "/get-all")
-    public ResponseEntity<ResponseData<List<SPCTResponse>>> getAllSanPhamChiTiet(){
+    public ResponseEntity<ResponseData<List<SPCTResponse>>> getAllSanPhamChiTiet() {
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy thành công danh sách sản phẩm chi tiết",
@@ -63,31 +66,31 @@ public class SanPhamChiTietController {
     @PostMapping(value = "/create-list/{idSanPham}")
     public ResponseEntity<ResponseData<Boolean>> createSanPhamChiTiet(
             @RequestBody List<SPCTRequest> spctRequest,
-            @PathVariable Long idSanPham){
+            @PathVariable Long idSanPham) {
         sanPhamChiTietService.createListSPCTByIDSP(idSanPham, spctRequest);
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Tạo sản phẩm chi tiết thành công",
-                       true)
+                        true)
         );
     }
 
-@PostMapping(value = "/update/{idSpct}")
+    @PostMapping(value = "/update/{idSpct}")
     public ResponseEntity<ResponseData<Boolean>> updateSanPhamChiTiet(
             @RequestBody SPCTRequest spctRequest,
-            @PathVariable Long idSpct){
+            @PathVariable Long idSpct) {
         sanPhamChiTietService.update(idSpct, spctRequest);
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Chỉnh sửa sản phẩm chi tiết thành công",
-                       true)
+                        true)
         );
     }
 
     @PostMapping(value = "/get-by-list-id")
     public ResponseEntity<ResponseData<List<SPCTResponse>>> getByListId(
             @RequestBody List<Long> listIdSpct
-    ){
+    ) {
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy chi tiết sản phẩm lên giỏ hàng thành công",
@@ -100,11 +103,28 @@ public class SanPhamChiTietController {
             @PathVariable Long idSanPham,
             @RequestBody(required = false) SPCTSearchRequest spctSearchRequest,
             @PageableDefault Pageable pageable
-            ){
+    ) {
         return ResponseEntity.ok(
                 new ResponseData<>(HttpStatus.OK.value(),
                         "Lấy thành công phân trang spct theo id sản phẩm",
                         sanPhamChiTietService.getPageSpctByIdSanPham(idSanPham, spctSearchRequest, pageable))
         );
     }
+
+
+    @PostMapping(value = "/update-anh/{idSanPham}/{idMauSac}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseData<Boolean>> updateAnhSanPhamChiTiet(
+            @PathVariable Long idSanPham,
+            @PathVariable Long idMauSac,
+            @RequestParam("file") MultipartFile file) throws IOException {
+            // Xử lý file ảnh
+            sanPhamChiTietService.updateImage(idSanPham, idMauSac, file);
+
+            return ResponseEntity.ok(
+                    new ResponseData<>(HttpStatus.OK.value(),
+                            "Cập nhật ảnh sản phẩm chi tiết thành công",
+                            true)
+            );
+    }
+
 }

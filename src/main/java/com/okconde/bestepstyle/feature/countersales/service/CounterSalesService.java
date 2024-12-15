@@ -441,6 +441,9 @@ public class CounterSalesService implements ICounterSalesService {
         SanPhamChiTiet sanPhamChiTietExisting = sanPhamChiTietRepository.getSPCTByIdSPCTAndTrangThai(hoaDonChiTietExisting.getSanPhamChiTiet().getIdSpct(), StatusSPCT.ACTIVE)
                 .orElseThrow(() -> new BusinessException("Sản phẩm chi tiết không tồn tại"));
 
+        if(hoaDonExisting.getPhieuGiamGia() != null){
+            hoaDonExisting.getPhieuGiamGia().setSoLuong(hoaDonExisting.getPhieuGiamGia().getSoLuong() + 1);
+        }
 
         // Set lại số lượng cho sản phẩm chi tiết ( số lượng = số lượng hiện tại + số lượng trong hóa đơn chi tiết)
         int soLuongHienTai = sanPhamChiTietExisting.getSoLuong();
@@ -588,6 +591,9 @@ public class CounterSalesService implements ICounterSalesService {
         HoaDon hoaDonExisting = hoaDonRepository.findByIdHoaDonAndTrangThai(
                 hoaDonChiTietExisting.getHoaDon().getIdHoaDon(), StatusHoaDon.PENDING)
                 .orElseThrow(() -> new BusinessException("Hóa đơn này không tồn tại hoặc đã được thanh toán"));
+        if(hoaDonExisting.getPhieuGiamGia() != null) {
+            hoaDonExisting.getPhieuGiamGia().setSoLuong(hoaDonExisting.getPhieuGiamGia().getSoLuong() + 1);
+        }
 
         // Kiểm tra tồn tại SPCT
         SanPhamChiTiet sanPhamChiTietExisting = sanPhamChiTietRepository.

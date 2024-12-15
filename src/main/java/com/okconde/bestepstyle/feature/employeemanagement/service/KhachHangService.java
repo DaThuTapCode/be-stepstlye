@@ -109,9 +109,6 @@ public class KhachHangService implements IBaseService<KhachHang, Long, KhachHang
 //        existingKH.setTrangThai(StatusEnum.ACTIVE);
 
         // Cập nhật các trường từ request vào đối tượng khách hàng đã tìm thấy
-        if (khachHangRequest.getMaKhachHang() != null) {
-            existingKH.setMaKhachHang(khachHangRequest.getMaKhachHang());
-        }
 
         if (khachHangRequest.getTenKhachHang() != null) {
             existingKH.setTenKhachHang(khachHangRequest.getTenKhachHang());

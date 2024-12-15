@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -183,12 +184,12 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
         SimpleDateFormat fomater = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String nowS = fomater.format(now);
 
-        // Thêm logo vào hóa đơn
-//        URL url = getClass().getResource("/img/nike.png");
-//        Image logo = Image.getInstance(url);
-//        logo.scaleAbsolute(60f, 60f);
-//        logo.setAlignment(Element.ALIGN_LEFT);
-//        doc.add(logo);
+//         Thêm logo vào hóa đơn
+        URL url = getClass().getResource("/LogoStepStyle.png");
+        Image logo = Image.getInstance(url);
+        logo.scaleAbsolute(60f, 60f);
+        logo.setAlignment(Element.ALIGN_LEFT);
+        doc.add(logo);
         // Định nghĩa font tiếng Việt
         BaseFont baseFont = BaseFont.createFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         Font titleFont = new Font(baseFont, 32, Font.BOLD, BaseColor.BLACK);
@@ -199,17 +200,17 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
         // Thêm tiêu đề hóa đơn
 //        Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 32, Font.BOLD, BaseColor.BLACK);
-        Paragraph title = new Paragraph("HOA DON BAN LE ", titleFont);
+        Paragraph title = new Paragraph("HÓA ĐƠN BÁN LẺ ", titleFont);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         doc.add(title);
         doc.add(new Paragraph("\n"));
 
         // Thêm thông tin hóa đơn
 //        Font infoFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.DARK_GRAY);
-        doc.add(new Paragraph("Ma hoa don: " + hoaDon.getMaHoaDon(), infoFont));
-        doc.add(new Paragraph("Ten khach hang: " + hoaDon.getTenKhachHang(), infoFont));
-        doc.add(new Paragraph("Ngay tao hoa don: " + hoaDon.getNgayTaoDon(), infoFont));
-        doc.add(new Paragraph("Ngay xuat hoa don: " + nowS, infoFont));
+        doc.add(new Paragraph("Mã hóa đơn: " + hoaDon.getMaHoaDon(), infoFont));
+        doc.add(new Paragraph("Tên khách hàng: " + hoaDon.getKhachHang().getTenKhachHang(), infoFont));
+        doc.add(new Paragraph("Ngày tạo hoá đơn: " + hoaDon.getNgayTaoDon(), infoFont));
+        doc.add(new Paragraph("Ngày xuất hóa đơn: " + nowS, infoFont));
 
         // Tạo bảng sản phẩm
         PdfPTable tbl = new PdfPTable(8);
@@ -219,14 +220,14 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
         // Tiêu đề bảng
 //        Font tableHeaderFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD, BaseColor.LIGHT_GRAY);
-        tbl.addCell(new PdfPCell(new Phrase("Ten san pham", tableHeaderFont)));
+        tbl.addCell(new PdfPCell(new Phrase("Tên sản phẩm", tableHeaderFont)));
         tbl.addCell(new PdfPCell(new Phrase("Size", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Mau sac", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Chat lieu", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Hang", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Don gia", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("So luong", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Thanh tien", tableHeaderFont)));
+        tbl.addCell(new PdfPCell(new Phrase("Màu sắc", tableHeaderFont)));
+        tbl.addCell(new PdfPCell(new Phrase("Chất liệu", tableHeaderFont)));
+        tbl.addCell(new PdfPCell(new Phrase("Thương hiệu", tableHeaderFont)));
+        tbl.addCell(new PdfPCell(new Phrase("Đơn giá", tableHeaderFont)));
+        tbl.addCell(new PdfPCell(new Phrase("Số lượng", tableHeaderFont)));
+        tbl.addCell(new PdfPCell(new Phrase("Thành tiền", tableHeaderFont)));
 
         // Thêm dữ liệu sản phẩm vào bảng
         for (HoaDonChiTiet hoaDonChiTiet : hoaDon.getHoaDonChiTiet()) { // Ví dụ, thay 5 bằng số dòng thực tế của bạn
@@ -249,10 +250,8 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
         doc.add(tbl);
 
-        // Thêm thông tin thanh toán
-//        Font footerFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.BLACK);
+
         doc.add(new Paragraph("\n"));
-        doc.add(new Paragraph("Hạn trả hàng 2 ngày sau khi thanh toán hóa đơn", footerFont));
         doc.add(new Paragraph("CHÚC QUÝ KHÁCH MUA SẮM VUI VẺ!!!", footerFont));
 
         doc.close();

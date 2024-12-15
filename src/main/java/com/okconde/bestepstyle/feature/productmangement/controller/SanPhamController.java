@@ -86,11 +86,11 @@ public class SanPhamController {
         );
     }
 
-@PutMapping(value = "update/{idSanPham}")
+    @PutMapping(value = "update/{idSanPham}")
     public ResponseEntity<ResponseData<SanPhamResponse>> updateProduct(
             @PathVariable Long idSanPham,
             @RequestBody SanPhamRequest sanPhamRequest
-            )  {
+    ) {
         return ResponseEntity.ok(
                 new ResponseData<>(
                         HttpStatus.OK.value(),

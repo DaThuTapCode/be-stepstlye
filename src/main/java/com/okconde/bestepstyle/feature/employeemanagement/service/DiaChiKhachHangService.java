@@ -118,6 +118,7 @@ public class DiaChiKhachHangService implements IBaseService<DiaChiKhachHang, Lon
         DiaChiKhachHang dckh = diaChiKhachHangRequestMapper.toEntity(diaChiKhachHangRequest);
         dckh.setMaDiaChiKhachHang(GenerateCodeRandomUtil.generateProductCode("DCKH", 6));
         dckh.setKhachHang(kh);
+        dckh.setTrangThai(StatusEnum.ACTIVE);
         List<DiaChiKhachHang> diaChiKhachHangList = kh.getDiaChiKhachHangs();
         diaChiKhachHangList.add(diaChiKhachHangRepository.save(dckh));
         return null;
