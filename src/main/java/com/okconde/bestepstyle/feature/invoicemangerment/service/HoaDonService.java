@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -169,7 +170,7 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
     }
 
     /**Hàm xuất hóa đơn dưới dạng pdf*/
-    public byte[] generateInvoice(Long idHoaDon) throws DocumentException, DocumentException, IOException {
+    public byte[] generateInvoice(Long idHoaDon) throws DocumentException, IOException {
         // Tạo tài liệu PDF
         HoaDon hoaDon = hoaDonRepository.findByIdHoaDonAndTrangThai(idHoaDon, StatusHoaDon.PAID)
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại hoặc chưa được thanh toán"));
@@ -181,84 +182,99 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
         // Lấy ngày và giờ hiện tại
         Date now = new Date();
-        SimpleDateFormat fomater = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String nowS = fomater.format(now);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String nowFormatted = formatter.format(now);
 
-//         Thêm logo vào hóa đơn
+        // Thêm logo vào hóa đơn
         URL url = getClass().getResource("/LogoStepStyle.png");
         Image logo = Image.getInstance(url);
         logo.scaleAbsolute(60f, 60f);
         logo.setAlignment(Element.ALIGN_LEFT);
         doc.add(logo);
+
         // Định nghĩa font tiếng Việt
         BaseFont baseFont = BaseFont.createFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        Font titleFont = new Font(baseFont, 32, Font.BOLD, BaseColor.BLACK);
-        Font infoFont = new Font(baseFont, 12, Font.NORMAL, BaseColor.DARK_GRAY);
-        Font tableHeaderFont = new Font(baseFont, 12, Font.BOLD, BaseColor.LIGHT_GRAY);
-        Font totalFont = new Font(baseFont, 12, Font.BOLD, BaseColor.BLACK);
-        Font footerFont = new Font(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
+        Font titleFont = new Font(baseFont, 24, Font.BOLD, BaseColor.BLACK);
+        Font infoFont = new Font(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
+        Font deliveryInfoFont = new Font(baseFont, 12, Font.ITALIC, BaseColor.DARK_GRAY);
+        Font footerFont = new Font(baseFont, 12, Font.ITALIC, BaseColor.DARK_GRAY);
 
-        // Thêm tiêu đề hóa đơn
-//        Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 32, Font.BOLD, BaseColor.BLACK);
-        Paragraph title = new Paragraph("HÓA ĐƠN BÁN LẺ ", titleFont);
-        title.setAlignment(Paragraph.ALIGN_CENTER);
+        // Tiêu đề hóa đơn
+        Paragraph title = new Paragraph("HÓA ĐƠN BÁN LẺ", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
         doc.add(title);
         doc.add(new Paragraph("\n"));
 
-        // Thêm thông tin hóa đơn
-//        Font infoFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.DARK_GRAY);
+        // Thông tin hóa đơn
         doc.add(new Paragraph("Mã hóa đơn: " + hoaDon.getMaHoaDon(), infoFont));
         doc.add(new Paragraph("Tên khách hàng: " + hoaDon.getKhachHang().getTenKhachHang(), infoFont));
-        doc.add(new Paragraph("Ngày tạo hoá đơn: " + hoaDon.getNgayTaoDon(), infoFont));
-        doc.add(new Paragraph("Ngày xuất hóa đơn: " + nowS, infoFont));
+        doc.add(new Paragraph("Ngày tạo hóa đơn: " + hoaDon.getNgayTaoDon(), infoFont));
+        doc.add(new Paragraph("Ngày xuất hóa đơn: " + nowFormatted, infoFont));
+        doc.add(new Paragraph("\n"));
 
-        // Tạo bảng sản phẩm
+        // Kiểm tra trạng thái và thêm thông tin giao hàng nếu là OnlineSales
+        if (hoaDon.getLoaiHoaDon() == LoaiHoaDon.ONLINESALES) {
+            doc.add(new Paragraph("Thông tin giao hàng:", deliveryInfoFont));
+            doc.add(new Paragraph("Địa chỉ giao hàng: " + hoaDon.getDiaChiGiaoHang(), infoFont));
+            doc.add(new Paragraph("Số điện thoại: " + hoaDon.getSoDienThoaiKhachHang(), infoFont));
+            if (hoaDon.getNgayNhanHang() != null) {
+                doc.add(new Paragraph("Ngày nhận hàng dự kiến: " + hoaDon.getNgayNhanHang(), infoFont));
+            }
+            doc.add(new Paragraph("\n"));
+        }
+
+        // Tạo bảng sản phẩm (các phần còn lại không thay đổi)
         PdfPTable tbl = new PdfPTable(8);
         tbl.setWidthPercentage(100);
         tbl.setSpacingBefore(10f);
-        tbl.setSpacingAfter(10f);
 
         // Tiêu đề bảng
-//        Font tableHeaderFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD, BaseColor.LIGHT_GRAY);
-        tbl.addCell(new PdfPCell(new Phrase("Tên sản phẩm", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Size", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Màu sắc", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Chất liệu", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Thương hiệu", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Đơn giá", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Số lượng", tableHeaderFont)));
-        tbl.addCell(new PdfPCell(new Phrase("Thành tiền", tableHeaderFont)));
+        PdfPCell headerCell;
+        String[] headers = {"Tên sản phẩm", "Size", "Màu sắc", "Chất liệu", "Thương hiệu", "Đơn giá", "Số lượng", "Thành tiền"};
+        for (String header : headers) {
+            headerCell = new PdfPCell(new Phrase(header, infoFont));
+            headerCell.setBackgroundColor(BaseColor.GRAY);
+            headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            headerCell.setPadding(5);
+            tbl.addCell(headerCell);
+        }
 
         // Thêm dữ liệu sản phẩm vào bảng
-        for (HoaDonChiTiet hoaDonChiTiet : hoaDon.getHoaDonChiTiet()) { // Ví dụ, thay 5 bằng số dòng thực tế của bạn
-            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
-            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getKichCo().getGiaTri() + "");
-            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getMauSac().getTenMau());
-//            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getChatLieu().getTenChatLieu());
-            tbl.addCell(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getThuongHieu().getTenThuongHieu());
-            tbl.addCell(hoaDonChiTiet.getDonGia() + "đ");
-            tbl.addCell(hoaDonChiTiet.getSoLuong() + "đ");
-            tbl.addCell(hoaDonChiTiet.getTongTien() + "đ");
+        for (HoaDonChiTiet chiTiet : hoaDon.getHoaDonChiTiet()) {
+            tbl.addCell(new PdfPCell(new Phrase(chiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham(), infoFont)));
+            tbl.addCell(new PdfPCell(new Phrase(chiTiet.getSanPhamChiTiet().getKichCo().getGiaTri() + "", infoFont)));
+            tbl.addCell(new PdfPCell(new Phrase(chiTiet.getSanPhamChiTiet().getMauSac().getTenMau(), infoFont)));
+            tbl.addCell(new PdfPCell(new Phrase(chiTiet.getSanPhamChiTiet().getSanPham().getChatLieu().getTenChatLieu(), infoFont)));
+            tbl.addCell(new PdfPCell(new Phrase(chiTiet.getSanPhamChiTiet().getSanPham().getThuongHieu().getTenThuongHieu(), infoFont)));
+            tbl.addCell(new PdfPCell(new Phrase(formatCurrency(chiTiet.getDonGia()), infoFont)));
+            tbl.addCell(new PdfPCell(new Phrase(String.valueOf(chiTiet.getSoLuong()), infoFont)));
+            tbl.addCell(new PdfPCell(new Phrase(formatCurrency(chiTiet.getTongTien()), infoFont)));
         }
 
         // Tổng tiền
-//        Font totalFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD, BaseColor.BLACK);
-        PdfPCell totalCell = new PdfPCell(new Phrase(hoaDon.getTongTien() + "đ", totalFont));
+        PdfPCell totalCell = new PdfPCell(new Phrase("Tổng cộng: " + formatCurrency(hoaDon.getTongTien()), infoFont));
         totalCell.setColspan(8);
         totalCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        totalCell.setPadding(10);
         tbl.addCell(totalCell);
 
         doc.add(tbl);
 
-
-        doc.add(new Paragraph("\n"));
-        doc.add(new Paragraph("CHÚC QUÝ KHÁCH MUA SẮM VUI VẺ!!!", footerFont));
+        // Lời cảm ơn
+        Paragraph thankYou = new Paragraph("CHÚC QUÝ KHÁCH MUA SẮM VUI VẺ!", footerFont);
+        thankYou.setAlignment(Element.ALIGN_CENTER);
+        doc.add(thankYou);
 
         doc.close();
 
-        // Trả về PDF dưới dạng byte[]
         return baos.toByteArray();
     }
+
+    private String formatCurrency(BigDecimal amount) {
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        return formatter.format(amount) + "đ";
+    }
+
 
 
     /** HỦy hóa đơn bán online*/
@@ -320,13 +336,14 @@ public class HoaDonService implements IBaseService<HoaDon, Long, HoaDonRequest, 
 
         // Cập nhật trạng thái
         hoaDon.setTrangThai(trangThaiMoi);
+//        if(trangThaiMoi === StatusHoaDon.CONFIRMED)
        HoaDon hoaDonSaved = hoaDonRepository.save(hoaDon);
         LichSuHoaDon lichSuHoaDon = LichSuHoaDon.builder()
                 .hoaDon(hoaDonSaved)
                 .maLichSuHoaDon(GenerateCodeRandomUtil.generateProductCode("LSHD", 6))
                 .hanhDong(trangThaiMoi.toString())
                 .ngayTao(LocalDateTime.now())
-                .nguoiThucHien(nv.getHoTen())
+                .nguoiThucHien( maNV + "-" + nv.getHoTen())
                 .trangThai(StatusEnum.ACTIVE)
                 .build();
         lichSuHoaDonRepository.save(lichSuHoaDon);

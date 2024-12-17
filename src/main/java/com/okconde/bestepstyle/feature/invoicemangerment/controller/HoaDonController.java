@@ -174,7 +174,7 @@ public class HoaDonController {
      * @param idHoaDon ID của hóa đơn cần xuất
      * @return PDF dưới dạng file đính kèm
      */
-    @GetMapping("/{idHoaDon}/generate")
+    @GetMapping("/generate/{idHoaDon}")
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long idHoaDon) throws DocumentException, IOException {
 //        try {
             // Gọi service để tạo file PDF
@@ -186,12 +186,5 @@ public class HoaDonController {
             headers.add("Content-Type", "application/pdf");
 
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
-//        } catch (BusinessException e) {
-//            // Trường hợp hóa đơn không hợp lệ
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage().getBytes());
-//        } catch (Exception e) {
-//            // Trường hợp lỗi khác
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống".getBytes());
-//        }
     }
 }

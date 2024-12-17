@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Trong Phu on 25/09/2024 20:26
@@ -111,9 +112,19 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
         //Set các tham số cần thiết cho danh sách spct mới
         List<SanPhamChiTiet> listSPCTNew = spctRequestMapper.toListEntity(spctRequest);
         listSPCTNew.forEach(spctRequest1 -> {
+            spctRequest1.setTrangThai(StatusSPCT.ACTIVE);
             spctRequest1.setSanPham(sanPhamExisting);
+            spctRequest1.setNgayChinhSua(LocalDateTime.now());
             spctRequest1.setNgayTao(LocalDateTime.now());
             spctRequest1.setMaSpct(GenerateCodeRandomUtil.generateProductCode("SPCT", 6));
+            // Lấy ảnh đầu tiên của sản phẩm chi tiết có cùng màu
+            Optional<String> optionalImage = sanPhamExisting.getSanPhamChiTiets().stream()
+                    .filter(spctExisting -> (spctExisting.getMauSac().getIdMauSac() == spctRequest1.getMauSac().getIdMauSac()) && spctExisting.getAnh() != null) // So sánh theo màu
+                    .map(SanPhamChiTiet::getAnh) // Lấy chuỗi ảnh
+                    .findFirst(); // Lấy ảnh đầu tiên nếu có
+            if (optionalImage.isPresent()){
+                spctRequest1.setAnh(optionalImage.get());
+            }
         });
         //Truy vấn kiêm tra tồn tại trước khi thêm
         listSPCTNew.forEach(spctRequest1 -> {
@@ -123,7 +134,7 @@ public class SanPhamChiTietService implements IBaseService<SanPhamChiTiet, Long,
                     spctRequest1.getMauSac().getIdMauSac()
             )){
                 String errorMessage = String.format(
-                        "Sản phẩm chi tiết với các thuộc tính sau đã tồn tại"
+                        "Sản phẩm chi tiết với các thuộc tính " + "Màu: " + spctRequest1.getMauSac().getTenMau() + " Size: " + spctRequest1.getKichCo().getGiaTri()+  " đã tồn tại"
                 );
                 throw new BusinessException(errorMessage);
             }

@@ -249,6 +249,11 @@ public class CounterSalesService implements ICounterSalesService {
                     }
                 }
             }
+
+            if(hoaDon.getPhieuGiamGia() != null) {
+                hoaDon.getPhieuGiamGia().setSoLuong(hoaDon.getPhieuGiamGia().getSoLuong() + 1);
+            }
+
             hoaDon.setTrangThai(StatusHoaDon.CANCELLED);
             hoaDonRepository.save(hoaDon);
             return true;
@@ -274,6 +279,9 @@ public class CounterSalesService implements ICounterSalesService {
         // Kiểm tra xem hóa đơn có tồn tại hay không
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonChiTietRequest.getIdHoaDon())
                 .orElseThrow(() -> new BusinessException("Hóa đơn không tồn tại"));
+        if(hoaDon.getPhieuGiamGia() != null) {
+            hoaDon.getPhieuGiamGia().setSoLuong(hoaDon.getPhieuGiamGia().getSoLuong() + 1);
+        }
 
         // Chuyển mất phiếu giảm giá
         hoaDon.setPhieuGiamGia(null);
